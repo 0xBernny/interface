@@ -5,6 +5,23 @@ import viteTsConfigPaths from "vite-tsconfig-paths"
 import tailwindcss from "@tailwindcss/vite"
 import { nitro } from "nitro/vite"
 
+function bundleSizeGuard(limitKb: number) {
+  return {
+    name: "bundle-size-guard",
+    enforce: "post" as const,
+    generateBundle(options: any, bundle: any) {
+      for (const [fileName, chunk] of Object.entries(bundle)) {
+        if ((chunk as any).type === "chunk") {
+          const sizeKb = (chunk as any).code.length / 1024;
+          if (sizeKb > limitKb) {
+            throw new Error(`\n[bundle-size-guard] Bundle size budget exceeded!\nChunk "${fileName}" is ${sizeKb.toFixed(2)} KB (budget is ${limitKb} KB).\n\nTo update the budget intentionally, modify the 'bundleSizeGuard' limit in 'vite.config.ts'.\n`);
+          }
+        }
+      }
+    }
+  }
+}
+
 export default defineConfig(({ mode }) => {
   // Determine the target network (e.g. "testnet", "mainnet") from VITE_NETWORK
   // or fall back to the Vite mode string.
@@ -37,11 +54,17 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       tanstackStart(),
       viteReact(),
+      bundleSizeGuard(2000), // Budget: 2000 KB per chunk max
     ],
     // stellar-wallets-kit is ESM but its Freighter module imports named exports
     // from @stellar/freighter-api which ships as CJS. Node's native ESM loader
     // can't always destructure CJS named exports, so we force Vite/Rollup to
     // bundle these packages instead of letting Node load them raw in SSR.
+    build: {
+      rollupOptions: {
+        external: ["@twind/core"],
+      },
+    },
     ssr: {
       noExternal: [
         "@creit.tech/stellar-wallets-kit",
