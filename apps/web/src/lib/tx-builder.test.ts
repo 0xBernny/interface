@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { http, HttpResponse } from "msw"
+import { HttpResponse, http } from "msw"
 import { server } from "../../test/msw/server"
-import { sendAndPoll, TxFailedError, TxTimeoutError } from "./tx-builder"
+import { TxFailedError, TxTimeoutError, sendAndPoll } from "./tx-builder"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Pre-generated signed XDR (manageData op, testnet passphrase).
@@ -25,12 +25,12 @@ const resultMetaXdr = "AAAAAAAAAAA="              // TransactionMeta v0 (8 bytes
 type RpcBody = { id?: string | number; method?: string }
 
 function rpcHandler(
-  routes: Record<string, (body: RpcBody) => object>,
+  routes: Partial<Record<string, (body: RpcBody) => object>>,
 ) {
   return http.post("https://soroban-testnet.stellar.org", async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as RpcBody
     const handler = routes[body.method ?? ""]
-    if (handler) {
+    if (handler !== undefined) {
       return HttpResponse.json({
         jsonrpc: "2.0",
         id: body.id ?? 1,
@@ -43,29 +43,28 @@ function rpcHandler(
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Drive an async promise while advancing fake timers.
-//交替 flush microtasks and advance timers so both fetch (MSW) and setTimeout
+// 交替 flush microtasks and advance timers so both fetch (MSW) and setTimeout
 // (polling sleep) resolve.
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function drive<T>(promise: Promise<T>): Promise<T> {
-  let settled = false
-  let resolvedValue: T | undefined
-  let rejectedError: unknown
+  const state = { settled: false, resolvedValue: undefined as T | undefined, rejectedError: undefined as unknown }
 
   promise.then(
-    (v) => { settled = true; resolvedValue = v },
-    (e) => { settled = true; rejectedError = e },
+    (v) => { state.settled = true; state.resolvedValue = v },
+    (e) => { state.settled = true; state.rejectedError = e },
   )
 
-  for (let i = 0; i < 50 && !settled; i++) {
+  for (let i = 0; i < 50; i++) {
+    if (state.settled) break
     await Promise.resolve()
     await vi.advanceTimersByTimeAsync(10_000)
     await Promise.resolve()
   }
 
   await Promise.resolve()
-  if (rejectedError !== undefined) throw rejectedError
-  return resolvedValue as T
+  if (state.rejectedError !== undefined) throw state.rejectedError
+  return state.resolvedValue as T
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
