@@ -402,6 +402,50 @@ describe("SO4 event dispatch", () => {
     expect(records("PositionChange")[0].changeType).toBe("INCREASE");
   });
 
+  test("indexes position increase with positive funding fee amount", async () => {
+    const positionKey = "pos-funding-1";
+    await dispatchEvent(
+      so4Event("pos_inc", {
+        position_key: positionKey,
+        market: marketToken,
+        account,
+        collateral_token: marketToken,
+        is_long: true,
+        next_size_usd: "500000000000000000000000000000000",
+        next_collateral_amount: "105000000", // 100 base + 5 funding
+        funding_fee_amount: "5000000",       // Positive funding added to margin
+      }),
+    );
+
+    const position = records("Position")[0];
+    const change = records("PositionChange")[0];
+    
+    expect(position.collateralAmount).toBe("105000000");
+    expect(change.fundingFeeAmount).toBe("5000000");
+  });
+
+  test("indexes position decrease with negative funding fee amount", async () => {
+    const positionKey = "pos-funding-2";
+    await dispatchEvent(
+      so4Event("pos_dec", {
+        position_key: positionKey,
+        market: marketToken,
+        account,
+        collateral_token: marketToken,
+        is_long: false,
+        next_size_usd: "500000000000000000000000000000000",
+        next_collateral_amount: "95000000",  // 100 base - 5 funding
+        funding_fee_amount: "-5000000",      // Negative funding subtracted from margin
+      }),
+    );
+
+    const position = records("Position")[0];
+    const change = records("PositionChange")[0];
+    
+    expect(position.collateralAmount).toBe("95000000");
+    expect(change.fundingFeeAmount).toBe("-5000000");
+  });
+
   test("indexes liquidation and ADL events", async () => {
     await dispatchEvent(
       so4Event("liq_exe", {
@@ -542,6 +586,7 @@ describe("SO4 event dispatch", () => {
   test("indexes token mint event with zero-address from", async () => {
     await dispatchEvent(
       so4Event("mint", {
+        from: undefined as unknown as string, // prevent fallback to positional mapping
         to: receiver,
         amount: "5000",
       }, marketToken),
