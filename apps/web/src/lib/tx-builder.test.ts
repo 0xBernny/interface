@@ -154,13 +154,13 @@ describe("sendAndPoll", () => {
       }),
     )
 
-    await expect(
-      drive(sendAndPoll(signedXdr)),
-    ).rejects.toMatchObject({
-      name: "TxFailedError",
-      hash,
-      message: expect.stringContaining(hash),
-    })
+    let err: unknown
+    try {
+      await drive(sendAndPoll(signedXdr))
+    } catch (e) { err = e }
+    expect(err).toBeInstanceOf(TxFailedError)
+    expect((err as TxFailedError).hash).toBe(hash)
+    expect((err as TxFailedError).message).toContain(hash)
   })
 
   it("throws when sendTransaction returns TRY_AGAIN_LATER", async () => {
@@ -184,14 +184,14 @@ describe("sendAndPoll", () => {
       }),
     )
 
-    await expect(
-      drive(sendAndPoll(signedXdr, { timeoutMs })),
-    ).rejects.toMatchObject({
-      name: "TxTimeoutError",
-      hash,
-      timeoutMs,
-      message: expect.stringContaining(hash),
-    })
+    let err: unknown
+    try {
+      await drive(sendAndPoll(signedXdr, { timeoutMs }))
+    } catch (e) { err = e }
+    expect(err).toBeInstanceOf(TxTimeoutError)
+    expect((err as TxTimeoutError).hash).toBe(hash)
+    expect((err as TxTimeoutError).timeoutMs).toBe(timeoutMs)
+    expect((err as TxTimeoutError).message).toContain(hash)
   })
 
   it("throws TxFailedError when poll returns FAILED", async () => {
@@ -210,13 +210,13 @@ describe("sendAndPoll", () => {
       }),
     )
 
-    await expect(
-      drive(sendAndPoll(signedXdr, { timeoutMs: 5_000 })),
-    ).rejects.toMatchObject({
-      name: "TxFailedError",
-      hash,
-      message: expect.stringContaining("failed"),
-    })
+    let err: unknown
+    try {
+      await drive(sendAndPoll(signedXdr, { timeoutMs: 5_000 }))
+    } catch (e) { err = e }
+    expect(err).toBeInstanceOf(TxFailedError)
+    expect((err as TxFailedError).hash).toBe(hash)
+    expect((err as TxFailedError).message).toContain("failed")
   })
 
   it("polls multiple times before success", async () => {
