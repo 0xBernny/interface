@@ -608,6 +608,7 @@ describe("SO4 event dispatch", () => {
   test("indexes token mint event with zero-address from", async () => {
     await dispatchEvent(
       so4Event("mint", {
+        from: undefined as unknown as string, // prevent fallback to positional mapping
         to: receiver,
         amount: "5000",
       }, marketToken),
