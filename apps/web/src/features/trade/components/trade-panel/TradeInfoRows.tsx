@@ -4,8 +4,9 @@ import { useFundingRate } from "../../hooks/useFundingRate"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { estimateLiquidationPrice, formatUsd } from "../../lib/trade-math"
 import { getEstimatedEntryPrice, getPriceImpactPct } from "../../lib/pricing"
+import { FundingRate } from "../FundingRate"
+import type { ReactNode } from "react"
 import type { TradeState } from "../../hooks/useTradeState"
-import { formatPct } from "@/shared/lib/format"
 
 type Props = Pick<
   TradeState,
@@ -65,7 +66,7 @@ export function TradeInfoRows({
         label="Funding"
         value={
           fundingRate
-            ? `${formatPct(fundingRate.ratePerHour * 100, { decimals: 3 })}/h`
+            ? <FundingRate {...fundingRate} />
             : "-"
         }
       />
@@ -102,7 +103,7 @@ function Row({
   bold,
 }: {
   label: string
-  value: string
+  value: ReactNode
   highlight?: boolean
   bold?: boolean
 }) {
