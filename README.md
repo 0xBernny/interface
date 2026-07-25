@@ -197,6 +197,11 @@ bun run --cwd apps/web test
 bun run test:e2e
 ```
 
+Generate the CI coverage reports locally with `bun run test:coverage`. The
+baseline gates are intentionally below current coverage: web requires 65% lines
+and functions; contracts require 85% lines, 65% functions, 85% branches, and
+80% statements. Reports are written to each package's `coverage/` directory.
+
 The end-to-end suite uses Playwright. On a fresh machine, Playwright may need
 browser binaries or OS-level system dependencies before `bun run test:e2e` can
 launch browsers. If Playwright reports missing dependencies, install them with
@@ -337,4 +342,3 @@ SOFTWARE.
   Built by <a href="https://so4.market">so4 labs</a> ·
   <a href="https://twitter.com/so4market">@so4market</a>
 </p>
-
