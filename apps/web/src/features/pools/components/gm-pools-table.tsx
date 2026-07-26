@@ -1,54 +1,82 @@
-
-import type { PoolMarketConfig } from '../data/markets';
+import { useMemo } from 'react'
+import { DataTable, type Column } from '@workspace/ui/components/data-table'
+import { Numeric } from '@workspace/ui/components/numeric'
+import { EmptyState } from '@workspace/ui/components/empty-state'
+import type { PoolMarketConfig } from '../data/markets'
 
 export interface Pool {
-  id: string;
-  name: string;
-  tvl: string;
-  apr: string;
+  id: string
+  name: string
+  tvl: string
+  apr: string
 }
 
 export interface GmPoolsTableProps {
-  isLoading?: boolean;
-  pools?: Array<Pool>;
-  markets?: Array<PoolMarketConfig>;
+  isLoading?: boolean
+  pools?: Array<Pool>
+  markets?: Array<PoolMarketConfig>
+}
+
+function parseNumericString(value: string): number | null {
+  const cleaned = value.replace(/[^0-9.\-]/g, '')
+  if (cleaned === '' || cleaned === '.' || cleaned === '-') return null
+  const num = Number(cleaned)
+  return Number.isNaN(num) ? null : num
 }
 
 export function GmPoolsTable({ isLoading, pools, markets }: GmPoolsTableProps) {
-  const data = pools || (markets ? markets.map(m => ({
-    id: m.marketToken,
-    name: m.displayName,
-    tvl: '...',
-    apr: '...'
-  })) : []);
-  if (isLoading) {
-    return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading pools...</div>;
-  }
+  const data = useMemo(() => {
+    if (isLoading) return []
+    return pools || (markets ? markets.map(m => ({
+      id: m.marketToken,
+      name: m.displayName,
+      tvl: '...',
+      apr: '...'
+    })) : [])
+  }, [isLoading, pools, markets])
 
-  if (data.length === 0) {
-    return <div className="p-8 text-center text-muted-foreground">No pools found.</div>;
+  const columns: Column<Pool>[] = useMemo(() => [
+    {
+      id: 'pool',
+      header: 'Pool',
+      accessor: (row) => <span>{row.name}</span>,
+    },
+    {
+      id: 'tvl',
+      header: 'TVL',
+      accessor: (row) => {
+        if (row.tvl === '...') return <span>...</span>
+        const num = parseNumericString(row.tvl)
+        if (num !== null) return <Numeric value={num} format="usd" compact />
+        return <span>{row.tvl}</span>
+      },
+    },
+    {
+      id: 'apr',
+      header: 'APR',
+      accessor: (row) => {
+        if (row.apr === '...') return <span>...</span>
+        const num = parseNumericString(row.apr)
+        if (num !== null) return <Numeric value={num} format="pct" />
+        return <span>{row.apr}</span>
+      },
+    },
+  ], [])
+
+  if (!isLoading && data.length === 0) {
+    return <EmptyState title="No pools found" />
   }
 
   return (
-    <div className="w-full overflow-auto border rounded-md">
-      <table className="w-full text-sm text-left">
-        <thead className="text-xs uppercase bg-muted text-muted-foreground">
-          <tr>
-            <th className="px-6 py-3 font-medium">Pool</th>
-            <th className="px-6 py-3 font-medium">TVL</th>
-            <th className="px-6 py-3 font-medium">APR</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((pool) => (
-            <tr key={pool.id} className="border-b last:border-0 hover:bg-muted/50 transition-colors">
-              <td className="px-6 py-4">{pool.name}</td>
-              <td className="px-6 py-4">{pool.tvl}</td>
-              <td className="px-6 py-4">{pool.apr}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="w-full overflow-auto">
+      <div className="min-w-[400px]">
+        <DataTable
+          columns={columns}
+          data={data}
+          isLoading={isLoading}
+          keyExtractor={(row) => row.id}
+        />
+      </div>
     </div>
-  );
+  )
 }

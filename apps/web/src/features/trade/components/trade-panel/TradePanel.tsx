@@ -3,12 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/componen
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
+import { Numeric } from "@workspace/ui/components/numeric"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { useTradeFees } from "../../hooks/useTradeFees"
 import { useTokenBalances } from "../../../wallet/hooks/useTokenBalances"
 import {
   estimateLiquidationPrice,
-  formatUsd,
   sizeFromCollateralAndLeverage,
 } from "../../lib/trade-math"
 import { getToken } from "../../data/tokens"
@@ -16,7 +16,7 @@ import { TradeInfoRows } from "./TradeInfoRows"
 import { ConfirmationDialog } from "./ConfirmationDialog"
 import { ApplyReferralCodePrompt } from "./ApplyReferralCodePrompt"
 import { LeverageSlider } from "./LeverageSlider"
-import type { TradeType, useTradeState } from "../../hooks/useTradeState"
+import type { TradeMode, TradeType, useTradeState } from "../../hooks/useTradeState"
 import { NumberInput } from "@/shared/components/NumberInput"
 import { useDebounce } from "@/shared/hooks/useDebounce"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
@@ -95,21 +95,15 @@ export function TradePanel({ trade }: TradePanelProps) {
         </TabsList>
 
         {/* ── Order mode: Market / Limit / Trigger ─────────────────── */}
-        <div className="mt-3 flex gap-1">
-          {availableTradeModes.map((mode) => (
-            <button
-              key={mode}
-              onClick={() => setTradeMode(mode)}
-              className={`rounded px-2 py-0.5 text-xs transition-colors ${
-                tradeMode === mode
-                  ? "bg-muted font-medium text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
+        <Tabs value={tradeMode} onValueChange={(v) => setTradeMode(v as TradeMode)}>
+          <TabsList variant="line" className="w-full">
+            {availableTradeModes.map((mode) => (
+              <TabsTrigger key={mode} value={mode} className="flex-1">
+                {mode}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
 
         <TabsContent value="Long" className="mt-0">
           <TradeInputs trade={trade} validationError={validationError} />
@@ -151,7 +145,7 @@ export function TradePanel({ trade }: TradePanelProps) {
       {tradeFlags.isPosition && sizeUsd > 0 && (
         <div className="flex items-center justify-between rounded-md bg-muted/40 px-3 py-2 text-xs">
           <span className="text-muted-foreground">Position size</span>
-          <span className="font-mono font-medium">{formatUsd(sizeUsd)}</span>
+          <Numeric value={sizeUsd} format="usd" role="neutral" className="font-medium" />
         </div>
       )}
 
@@ -204,9 +198,18 @@ export function TradePanel({ trade }: TradePanelProps) {
         )}
       </div>
 
-      {/* ── Submit button ─────────────────────────────────────────── */}
+      {/* ── Wallet disconnected state ──────────────────────────────── */}
+      {!account && (
+        <div className="rounded-lg border border-dashed border-border bg-muted/20 px-4 py-3 text-center text-xs text-muted-foreground">
+          Connect wallet to trade
+        </div>
+      )}
+
+      {/* ── Price stale warning ────────────────────────────────────── */}
       {priceStale && (
-        <p className="text-center text-xs text-muted-foreground">Waiting for price update…</p>
+        <div className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2 text-xs text-amber-500">
+          <span>Waiting for price update…</span>
+        </div>
       )}
 
       <Button
