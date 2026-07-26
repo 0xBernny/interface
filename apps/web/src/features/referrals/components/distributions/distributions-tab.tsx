@@ -49,8 +49,8 @@ export function DistributionsTab() {
     <div className="space-y-4">
       {/* Info card */}
       <div className="rounded-xl border border-border bg-card p-5">
-        <h3 className="mb-2 text-[13px] font-semibold">Commission Distributions</h3>
-        <p className="text-[12px] leading-relaxed text-muted-foreground">
+        <h3 className="mb-2 text-13 font-semibold">Commission Distributions</h3>
+        <p className="text-xs leading-relaxed text-muted-foreground">
           Commissions from your referrals' trading fees are distributed weekly every Thursday.
           Payments are made in USDC directly to your wallet. Unclaimed distributions accumulate
           and can be claimed at any time.
@@ -62,8 +62,8 @@ export function DistributionsTab() {
             { label: "Claim window", value: "No expiry" },
           ].map(({ label, value }) => (
             <div key={label}>
-              <p className="text-[10px] text-muted-foreground">{label}</p>
-              <p className="mt-0.5 text-[12px] font-medium">{value}</p>
+              <p className="text-10 text-muted-foreground">{label}</p>
+              <p className="mt-0.5 text-xs font-medium">{value}</p>
             </div>
           ))}
         </div>
@@ -72,7 +72,7 @@ export function DistributionsTab() {
       {/* Distributions table */}
       <div className="overflow-hidden rounded-xl border border-border">
         <div className="border-b border-border px-5 py-3.5">
-          <h3 className="text-[13px] font-semibold">History</h3>
+          <h3 className="text-13 font-semibold">History</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs">

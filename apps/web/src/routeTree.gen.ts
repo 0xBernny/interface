@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as ReferralsRouteImport } from './routes/referrals'
 import { Route as PoolsRouteImport } from './routes/pools'
+import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as FaucetRouteImport } from './routes/faucet'
 import { Route as EarnRouteImport } from './routes/earn'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const ReferralsRoute = ReferralsRouteImport.update({
 const PoolsRoute = PoolsRouteImport.update({
   id: '/pools',
   path: '/pools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaucetRoute = FaucetRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/earn': typeof EarnRoute
   '/faucet': typeof FaucetRoute
+  '/gallery': typeof GalleryRoute
   '/pools': typeof PoolsRoute
   '/referrals': typeof ReferralsRoute
   '/trade': typeof TradeRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/earn': typeof EarnRoute
   '/faucet': typeof FaucetRoute
+  '/gallery': typeof GalleryRoute
   '/pools': typeof PoolsRoute
   '/referrals': typeof ReferralsRoute
   '/trade': typeof TradeRoute
@@ -68,20 +76,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/earn': typeof EarnRoute
   '/faucet': typeof FaucetRoute
+  '/gallery': typeof GalleryRoute
   '/pools': typeof PoolsRoute
   '/referrals': typeof ReferralsRoute
   '/trade': typeof TradeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/earn' | '/faucet' | '/pools' | '/referrals' | '/trade'
+  fullPaths:
+    | '/'
+    | '/earn'
+    | '/faucet'
+    | '/gallery'
+    | '/pools'
+    | '/referrals'
+    | '/trade'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/earn' | '/faucet' | '/pools' | '/referrals' | '/trade'
+  to:
+    | '/'
+    | '/earn'
+    | '/faucet'
+    | '/gallery'
+    | '/pools'
+    | '/referrals'
+    | '/trade'
   id:
     | '__root__'
     | '/'
     | '/earn'
     | '/faucet'
+    | '/gallery'
     | '/pools'
     | '/referrals'
     | '/trade'
@@ -91,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EarnRoute: typeof EarnRoute
   FaucetRoute: typeof FaucetRoute
+  GalleryRoute: typeof GalleryRoute
   PoolsRoute: typeof PoolsRoute
   ReferralsRoute: typeof ReferralsRoute
   TradeRoute: typeof TradeRoute
@@ -117,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/pools'
       fullPath: '/pools'
       preLoaderRoute: typeof PoolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faucet': {
@@ -147,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EarnRoute: EarnRoute,
   FaucetRoute: FaucetRoute,
+  GalleryRoute: GalleryRoute,
   PoolsRoute: PoolsRoute,
   ReferralsRoute: ReferralsRoute,
   TradeRoute: TradeRoute,

@@ -41,27 +41,27 @@ export function OpportunityCard({
               />
             ))}
           </div>
-          <span className="text-[15px] font-semibold">{name}</span>
+          <span className="text-15 font-semibold">{name}</span>
         </div>
       </div>
 
       <div className="mb-5 grid grid-cols-2 gap-4">
         <div>
-          <p className="mb-1 text-[11px] text-muted-foreground">APR</p>
-          <p className="font-mono text-[14px] font-semibold text-green-400">
+          <p className="mb-1 text-11 text-muted-foreground">APR</p>
+          <p className="font-mono text-sm font-semibold text-green-400">
             {formatPct(apy, { sign: false })}
           </p>
         </div>
         <div>
-          <p className="mb-1 text-[11px] text-muted-foreground">TVL</p>
-          <p className="font-mono text-[14px] text-muted-foreground">
+          <p className="mb-1 text-11 text-muted-foreground">TVL</p>
+          <p className="font-mono text-sm text-muted-foreground">
             {formatUsd(tvlUsd, { compact: true })}
           </p>
         </div>
       </div>
 
       <Button
-        className="w-full text-[13px] font-medium"
+        className="w-full text-13 font-medium"
         disabled={!isAvailable}
         onClick={() => {
           if (isAvailable) onAction?.()

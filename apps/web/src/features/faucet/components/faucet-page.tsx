@@ -55,7 +55,7 @@ function TokenCard({
 
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg bg-muted/40 px-3 py-2.5">
-          <p className="mb-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="mb-0.5 text-11 font-medium uppercase tracking-wider text-muted-foreground">
             Your balance
           </p>
           {isLoading ? (
@@ -68,7 +68,7 @@ function TokenCard({
         </div>
 
         <div className="rounded-lg bg-muted/40 px-3 py-2.5">
-          <p className="mb-0.5 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          <p className="mb-0.5 text-11 font-medium uppercase tracking-wider text-muted-foreground">
             Claim amount
           </p>
           {isLoading ? (
@@ -82,7 +82,7 @@ function TokenCard({
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <p className="min-w-0 truncate text-[12px] text-muted-foreground">{cooldownText}</p>
+        <p className="min-w-0 truncate text-xs text-muted-foreground">{cooldownText}</p>
         <Button
           variant="outline"
           size="sm"
@@ -125,8 +125,8 @@ export function FaucetPage() {
         {/* Header */}
         <header className="mb-8">
           <div className="flex items-center gap-3">
-            <h1 className="text-[22px] font-semibold tracking-tight">Testnet Faucet</h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-[11px] font-medium text-yellow-600 dark:text-yellow-400">
+            <h1 className="text-22 font-semibold tracking-tight">Testnet Faucet</h1>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-11 font-medium text-yellow-600 dark:text-yellow-400">
               <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
               Stellar Testnet
             </span>
@@ -167,7 +167,7 @@ export function FaucetPage() {
               <div className="flex flex-col gap-4">
                 <div>
                   <p className="text-sm font-medium text-foreground">Claim test tokens</p>
-                  <p className="mt-0.5 text-[13px] text-muted-foreground">
+                  <p className="mt-0.5 text-13 text-muted-foreground">
                     Receive TUSDC, TWBTC, TETH, and TXLM in a single transaction. A cooldown
                     applies between claims.
                   </p>
@@ -181,7 +181,7 @@ export function FaucetPage() {
 
                 {!isConnected ? (
                   <div className="flex flex-col items-center gap-2">
-                    <p className="text-[13px] text-muted-foreground">Connect your wallet to claim test tokens.</p>
+                    <p className="text-13 text-muted-foreground">Connect your wallet to claim test tokens.</p>
                     <ConnectButton />
                   </div>
                 ) : (
@@ -203,7 +203,7 @@ export function FaucetPage() {
                 )}
 
                 {data?.cooldownLedgers != null && data.cooldownLedgers > 0 && (
-                  <p className="text-center text-[12px] text-muted-foreground">
+                  <p className="text-center text-xs text-muted-foreground">
                     Cooldown: {data.cooldownLedgers.toLocaleString()} ledgers between claims
                   </p>
                 )}
@@ -212,7 +212,7 @@ export function FaucetPage() {
 
             {/* Info panel */}
             <div className="rounded-xl border border-border bg-muted/20 px-5 py-4">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <p className="mb-2 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
                 Contract addresses
               </p>
               <dl className="space-y-1.5">
@@ -224,8 +224,8 @@ export function FaucetPage() {
                   })),
                 ].map(({ label, id }) => (
                   <div key={label} className="flex items-center justify-between gap-3">
-                    <dt className="w-12 shrink-0 text-[12px] text-muted-foreground">{label}</dt>
-                    <dd className="min-w-0 truncate font-mono text-[11px] text-foreground/70">
+                    <dt className="w-12 shrink-0 text-xs text-muted-foreground">{label}</dt>
+                    <dd className="min-w-0 truncate font-mono text-11 text-foreground/70">
                       {id}
                     </dd>
                   </div>

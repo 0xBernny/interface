@@ -141,7 +141,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
             shortSymbol={market.shortSymbol}
           />
         </div>
-        <dl className="mt-4 grid grid-cols-2 gap-3 text-[13px]">
+        <dl className="mt-4 grid grid-cols-2 gap-3 text-13">
           <MobileStat
             label="Open interest"
             value={openInterestLabel}
@@ -159,7 +159,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
         </dl>
         {hasFailures ? (
           <p
-            className="mt-3 inline-flex max-w-full items-center rounded border border-yellow-500/25 bg-yellow-500/10 px-2 py-1 text-[12px] text-yellow-700 dark:text-yellow-300"
+            className="mt-3 inline-flex max-w-full items-center rounded border border-yellow-500/25 bg-yellow-500/10 px-2 py-1 text-xs text-yellow-700 dark:text-yellow-300"
             title={failureTitle}
           >
             Partial data
@@ -220,7 +220,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
         />
         {hasFailures ? (
           <p
-            className="mt-2 text-right text-[11px] text-yellow-700 dark:text-yellow-300"
+            className="mt-2 text-right text-11 text-yellow-700 dark:text-yellow-300"
             title={failureTitle}
           >
             Partial data

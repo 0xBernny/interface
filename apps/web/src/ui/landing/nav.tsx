@@ -37,7 +37,7 @@ function Logo() {
           />
         </svg>
       </span>
-      <span className="font-mono-num text-[17px] font-medium tracking-[0.02em] text-foreground">
+      <span className="font-mono-num text-17 font-medium tracking-[0.02em] text-foreground">
         so4<span className="text-muted-foreground">.market</span>
       </span>
     </a>
@@ -66,7 +66,7 @@ export function Nav() {
             <li key={label}>
               <a
                 href={href}
-                className={`text-[13.5px] font-normal transition-colors hover:text-foreground ${
+                className={`text-13-5 font-normal transition-colors hover:text-foreground ${
                   active ? "text-foreground" : "text-muted-foreground"
                 }`}
               >
@@ -79,12 +79,12 @@ export function Nav() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="outline" className="h-[38px] px-4 text-[13.5px]">
+          <Button variant="outline" className="h-[38px] px-4 text-13-5">
             Connect
           </Button>
           <Button
             variant="default"
-            className="hidden h-[38px] gap-2 px-4 text-[13.5px] sm:inline-flex"
+            className="hidden h-[38px] gap-2 px-4 text-13-5 sm:inline-flex"
           >
             Launch app
             <span className="transition-transform group-hover:translate-x-0.5">→</span>

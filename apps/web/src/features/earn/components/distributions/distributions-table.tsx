@@ -43,7 +43,7 @@ function StatusBadge({ status }: { status: DistributionStatus }) {
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-full border px-2 text-[10px] font-medium",
+        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
         STATUS_STYLES[status],
       )}
     >
@@ -101,7 +101,7 @@ export function DistributionsTable({ distributions, onClaim }: DistributionsTabl
                       type="button"
                       onClick={() => onClaim?.(row.epoch)}
                       className={cn(
-                        "inline-flex h-5 cursor-pointer items-center rounded-full border px-2 text-[10px] font-medium",
+                        "inline-flex h-5 cursor-pointer items-center rounded-full border px-2 text-10 font-medium",
                         STATUS_STYLES.claim,
                       )}
                     >

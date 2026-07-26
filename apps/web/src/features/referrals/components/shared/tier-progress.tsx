@@ -20,14 +20,14 @@ export function TierProgress({ tier, volumeUsd }: Props) {
       >
         <span
           className={cn(
-            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
+            "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
             current.colorClass,
             current.ringClass,
           )}
         >
           {current.label}
         </span>
-        <span className="text-[12px] font-medium text-yellow-400">Maximum tier reached!</span>
+        <span className="text-xs font-medium text-yellow-400">Maximum tier reached!</span>
       </div>
     )
   }
@@ -45,17 +45,17 @@ export function TierProgress({ tier, volumeUsd }: Props) {
         <div className="flex items-center gap-2">
           <span
             className={cn(
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
+              "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
               current.colorClass,
               current.ringClass,
             )}
           >
             {current.label}
           </span>
-          <span className="text-[11px] text-muted-foreground">→</span>
+          <span className="text-11 text-muted-foreground">→</span>
           <span
             className={cn(
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
+              "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
               next.colorClass,
               next.ringClass,
             )}
@@ -63,7 +63,7 @@ export function TierProgress({ tier, volumeUsd }: Props) {
             {next.label}
           </span>
         </div>
-        <span className="text-[11px] text-muted-foreground" aria-label="remaining volume">
+        <span className="text-11 text-muted-foreground" aria-label="remaining volume">
           {formatUsd(remaining, { compact: true })} more needed
         </span>
       </div>

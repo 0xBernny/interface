@@ -70,8 +70,8 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
           </svg>
         </div>
         <div>
-          <p className="text-[13px] font-semibold">Enter a referral code to receive a fee discount</p>
-          <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
+          <p className="text-13 font-semibold">Enter a referral code to receive a fee discount</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
             Get up to <span className="font-semibold text-green-400">5% off</span> every open and
             close fee. Rewards scale with the affiliate&apos;s tier.
           </p>
@@ -80,7 +80,7 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-1.5">
-          <label htmlFor="referral-code" className="text-[12px] font-medium text-muted-foreground">
+          <label htmlFor="referral-code" className="text-xs font-medium text-muted-foreground">
             Referral code
           </label>
           <div className="flex gap-2">
@@ -94,7 +94,7 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
               placeholder="e.g. MYCODE123"
               autoComplete="off"
               spellCheck={false}
-              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-[13px] tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-13 tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
             />
             <Button
               type="submit"
@@ -105,12 +105,12 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
               {pending ? "Applying…" : "Apply"}
             </Button>
           </div>
-          {error && <p className="text-[11px] text-destructive">{error}</p>}
+          {error && <p className="text-11 text-destructive">{error}</p>}
         </div>
       </form>
 
       <div className="mt-6 border-t border-border pt-4">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="mb-3 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
           Discount tiers
         </p>
         <div className="grid grid-cols-3 gap-2">
@@ -120,11 +120,11 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
             { label: "Gold", pct: 5, vol: "$25K+ / mo", color: "text-yellow-400 bg-yellow-500/10 ring-yellow-400/20" },
           ].map((tier) => (
             <div key={tier.label} className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${tier.color}`}>
+              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1 ${tier.color}`}>
                 {tier.label}
               </span>
-              <p className="mt-2 text-[15px] font-bold text-green-400">{tier.pct}%</p>
-              <p className="text-[10px] text-muted-foreground">{tier.vol}</p>
+              <p className="mt-2 text-15 font-bold text-green-400">{tier.pct}%</p>
+              <p className="text-10 text-muted-foreground">{tier.vol}</p>
             </div>
           ))}
         </div>
@@ -157,7 +157,7 @@ function Overview({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-[13px] font-semibold">Overview</h2>
+        <h2 className="text-13 font-semibold">Overview</h2>
         <TimePeriodFilter value={period} onChange={onPeriodChange} />
       </div>
 
@@ -188,7 +188,7 @@ function Overview({
       {claimable > 0 && (
         <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
           <div>
-            <p className="text-[11px] text-muted-foreground">Claimable rebates</p>
+            <p className="text-11 text-muted-foreground">Claimable rebates</p>
             <p className="text-lg font-semibold tabular-nums">{formatUsd(claimable)}</p>
           </div>
           <Button size="sm" disabled={claiming} onClick={onClaimRebates}>
@@ -198,7 +198,7 @@ function Overview({
       )}
 
       {stats?.lastUpdated && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-11 text-muted-foreground">
           Last updated:{" "}
           <span className="font-mono text-foreground/60">{fmtDate(stats.lastUpdated)}</span>
         </p>
@@ -221,7 +221,7 @@ function DistributionsHistory() {
   return (
     <div className="overflow-hidden rounded-xl border border-border">
       <div className="border-b border-border px-5 py-3.5">
-        <h3 className="text-[13px] font-semibold">Rebate history</h3>
+        <h3 className="text-13 font-semibold">Rebate history</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
