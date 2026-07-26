@@ -368,6 +368,43 @@ describe("SO4 event dispatch", () => {
     expect(withdrawal.cancellationReason).toBe("expired");
   });
 
+  test("indexes withdrawal create event with all key fields", async () => {
+    await dispatchEvent(so4Event("wth_crt", lifecyclePayload("wth-2")));
+
+    const [withdrawal] = records("Withdrawal");
+    expect(records("Withdrawal")).toHaveLength(1);
+    expect(withdrawal.id).toBe("withdrawal:wth-2");
+    expect(withdrawal.status).toBe("CREATED");
+    expect(withdrawal.account).toBe(account);
+    expect(withdrawal.market).toBe(marketToken);
+    expect(withdrawal.createdLedger).toBe(100);
+  });
+
+  test("indexes withdrawal execute event", async () => {
+    await dispatchEvent(so4Event("wth_crt", lifecyclePayload("wth-3")));
+    await dispatchEvent(so4Event("wth_exe", lifecyclePayload("wth-3")));
+
+    const [withdrawal] = records("Withdrawal");
+    expect(records("Withdrawal")).toHaveLength(1);
+    expect(withdrawal.id).toBe("withdrawal:wth-3");
+    expect(withdrawal.status).toBe("EXECUTED");
+    expect(withdrawal.executedLedger).toBe(100);
+  });
+
+  test("withdrawal lifecycle events are idempotent on rerun", async () => {
+    const event1 = so4Event("wth_crt", lifecyclePayload("wth-4"));
+    const event2 = so4Event("wth_exe", lifecyclePayload("wth-4"));
+
+    await dispatchEvent(event1);
+    await dispatchEvent(event2);
+    await dispatchEvent(event1);
+    await dispatchEvent(event2);
+
+    expect(records("Withdrawal")).toHaveLength(1);
+    const [withdrawal] = records("Withdrawal");
+    expect(withdrawal.status).toBe("EXECUTED");
+  });
+
   test("indexes order lifecycle updates", async () => {
     await dispatchEvent(
       so4Event("ord_crt", lifecyclePayload("ord-1", { order_type: "MARKET", is_long: true })),
@@ -382,6 +419,63 @@ describe("SO4 event dispatch", () => {
     expect(order.status).toBe("UPDATED");
     expect(order.isLong).toBe(true);
     expect(order.acceptablePrice).toBe("2000");
+  });
+
+  test("indexes order freeze event", async () => {
+    await dispatchEvent(
+      so4Event("ord_crt", lifecyclePayload("ord-2", { order_type: "LIMIT", is_long: false })),
+    );
+    await dispatchEvent(
+      so4Event("ord_frz", lifecyclePayload("ord-2")),
+    );
+
+    const [order] = records("Order");
+    expect(records("Order")).toHaveLength(1);
+    expect(order.id).toBe("order:ord-2");
+    expect(order.status).toBe("FROZEN");
+    expect(order.isLong).toBe(false);
+  });
+
+  test("indexes order execute event", async () => {
+    await dispatchEvent(
+      so4Event("ord_crt", lifecyclePayload("ord-3", { order_type: "MARKET", is_long: true })),
+    );
+    await dispatchEvent(
+      so4Event("ord_exe", lifecyclePayload("ord-3")),
+    );
+
+    const [order] = records("Order");
+    expect(records("Order")).toHaveLength(1);
+    expect(order.id).toBe("order:ord-3");
+    expect(order.status).toBe("EXECUTED");
+  });
+
+  test("indexes order cancel event", async () => {
+    await dispatchEvent(
+      so4Event("ord_crt", lifecyclePayload("ord-4", { order_type: "LIMIT" })),
+    );
+    await dispatchEvent(
+      so4Event("ord_can", lifecyclePayload("ord-4", { reason: "user_request" })),
+    );
+
+    const [order] = records("Order");
+    expect(records("Order")).toHaveLength(1);
+    expect(order.id).toBe("order:ord-4");
+    expect(order.status).toBe("CANCELLED");
+  });
+
+  test("order lifecycle events are idempotent on rerun", async () => {
+    const event1 = so4Event("ord_crt", lifecyclePayload("ord-5", { order_type: "MARKET" }));
+    const event2 = so4Event("ord_exe", lifecyclePayload("ord-5"));
+
+    await dispatchEvent(event1);
+    await dispatchEvent(event2);
+    await dispatchEvent(event1);
+    await dispatchEvent(event2);
+
+    expect(records("Order")).toHaveLength(1);
+    const [order] = records("Order");
+    expect(order.status).toBe("EXECUTED");
   });
 
   test("indexes position changes and current position state", async () => {
