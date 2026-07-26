@@ -1,6 +1,21 @@
 import { useState } from "react"
-import { Button } from "@workspace/ui/components/button"
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert"
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { Input } from "@workspace/ui/components/input"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
 import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Stat } from "@workspace/ui/components/stat"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useDistributions, useTraderStats } from "../../hooks/use-referrals-data"
 import { useReferralStats } from "../../queries/useReferralStats"
 import {
@@ -10,10 +25,11 @@ import {
 } from "../../lib/referrals"
 import { TimePeriodFilter } from "../shared/time-period-filter"
 import { StatChartCard } from "../shared/stat-chart-card"
+import { TierBadge } from "../shared/tier-badge"
+import { TIERS } from "../../data/tiers"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { formatUsd } from "@/shared/lib/format"
-
 
 function fmtDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -25,6 +41,12 @@ function fmtDate(iso: string) {
     timeZone: "UTC",
     timeZoneName: "short",
   }).format(new Date(iso))
+}
+
+const DISCOUNT_TIER_VOLUME: Record<string, string> = {
+  Bronze: "Any volume",
+  Silver: "$2.5K+ / mo",
+  Gold: "$25K+ / mo",
 }
 
 type JoinCodeFormProps = {
@@ -61,75 +83,87 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6">
-      <div className="mb-6 flex gap-4 rounded-lg border border-blue-500/20 bg-blue-500/[0.06] p-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-blue-400">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="12" cy="8" r="6" />
-            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
-          </svg>
-        </div>
-        <div>
-          <p className="text-[13px] font-semibold">Enter a referral code to receive a fee discount</p>
-          <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
-            Get up to <span className="font-semibold text-green-400">5% off</span> every open and
-            close fee. Rewards scale with the affiliate&apos;s tier.
-          </p>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="space-y-1.5">
-          <label htmlFor="referral-code" className="text-[12px] font-medium text-muted-foreground">
-            Referral code
-          </label>
-          <div className="flex gap-2">
-            <input
-              id="referral-code"
-              value={code}
-              onChange={(e) => {
-                setCode(e.target.value.toUpperCase())
-                setError(null)
-              }}
-              placeholder="e.g. MYCODE123"
-              autoComplete="off"
-              spellCheck={false}
-              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-[13px] tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
-            />
-            <Button
-              type="submit"
-              size="sm"
-              disabled={pending || !code.trim() || !account}
-              className="h-9 shrink-0 px-5"
-            >
-              {pending ? "Applying…" : "Apply"}
-            </Button>
+    <Card>
+      <CardContent className="p-6">
+        <Alert variant="info" className="mb-6 gap-4">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-info/10">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="12" cy="8" r="6" />
+              <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" />
+            </svg>
+          </span>
+          <div>
+            <AlertTitle>Enter a referral code to receive a fee discount</AlertTitle>
+            <AlertDescription className="mt-0.5">
+              Get up to <span className="font-semibold text-success">5% off</span> every open and
+              close fee. Rewards scale with the affiliate&apos;s tier.
+            </AlertDescription>
           </div>
-          {error && <p className="text-[11px] text-destructive">{error}</p>}
-        </div>
-      </form>
+        </Alert>
 
-      <div className="mt-6 border-t border-border pt-4">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Discount tiers
-        </p>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { label: "Bronze", pct: 5, vol: "Any volume", color: "text-orange-400 bg-orange-500/10 ring-orange-500/20" },
-            { label: "Silver", pct: 5, vol: "$2.5K+ / mo", color: "text-slate-300 bg-slate-500/10 ring-slate-400/20" },
-            { label: "Gold", pct: 5, vol: "$25K+ / mo", color: "text-yellow-400 bg-yellow-500/10 ring-yellow-400/20" },
-          ].map((tier) => (
-            <div key={tier.label} className="rounded-lg border border-border bg-muted/20 p-3 text-center">
-              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${tier.color}`}>
-                {tier.label}
-              </span>
-              <p className="mt-2 text-[15px] font-bold text-green-400">{tier.pct}%</p>
-              <p className="text-[10px] text-muted-foreground">{tier.vol}</p>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="space-y-1.5">
+            <Text
+              size="sm"
+              tone="muted"
+              weight="medium"
+              render={<label htmlFor="referral-code" />}
+            >
+              Referral code
+            </Text>
+            <div className="flex gap-2">
+              <Input
+                id="referral-code"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value.toUpperCase())
+                  setError(null)
+                }}
+                placeholder="e.g. MYCODE123"
+                autoComplete="off"
+                spellCheck={false}
+                aria-invalid={error ? true : undefined}
+                className="h-9 font-mono tracking-widest placeholder:font-sans placeholder:tracking-normal"
+              />
+              <LoadingButton
+                type="submit"
+                size="lg"
+                className="h-9 shrink-0 px-5"
+                isLoading={pending}
+                loadingText="Applying…"
+                disabled={!code.trim() || !account}
+              >
+                Apply
+              </LoadingButton>
             </div>
-          ))}
+            {error && (
+              <Text size="xs" tone="danger">
+                {error}
+              </Text>
+            )}
+          </div>
+        </form>
+
+        <div className="mt-6 border-t border-border pt-4">
+          <Text size="xs" tone="muted" weight="semibold" variant="label" className="mb-3">
+            Discount tiers
+          </Text>
+          <div className="grid grid-cols-3 gap-2">
+            {TIERS.map((tier) => (
+              <Card key={tier.label} variant="muted" className="rounded-lg p-3 text-center">
+                <TierBadge tier={tier} />
+                <NumericText role="positive" size="lg" weight="bold" className="mt-2 block">
+                  {tier.traderDiscountPct}%
+                </NumericText>
+                <Text size="2xs" tone="muted">
+                  {DISCOUNT_TIER_VOLUME[tier.label] ?? "Any volume"}
+                </Text>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -156,13 +190,13 @@ function Overview({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-[13px] font-semibold">Overview</h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <Heading level={3}>Overview</Heading>
         <TimePeriodFilter value={period} onChange={onPeriodChange} />
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Skeleton className="h-36 rounded-xl" />
           <Skeleton className="h-36 rounded-xl" />
         </div>
@@ -186,22 +220,31 @@ function Overview({
       )}
 
       {claimable > 0 && (
-        <div className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
-          <div>
-            <p className="text-[11px] text-muted-foreground">Claimable rebates</p>
-            <p className="text-lg font-semibold tabular-nums">{formatUsd(claimable)}</p>
-          </div>
-          <Button size="sm" disabled={claiming} onClick={onClaimRebates}>
-            {claiming ? "Claiming…" : "Claim rebates"}
-          </Button>
-        </div>
+        <Card className="flex flex-wrap items-center justify-between gap-3 rounded-lg px-4 py-3">
+          <Stat
+            label="Claimable rebates"
+            value={formatUsd(claimable)}
+            role="positive"
+            size="lg"
+          />
+          <LoadingButton
+            size="lg"
+            isLoading={claiming}
+            loadingText="Claiming…"
+            onClick={onClaimRebates}
+          >
+            Claim rebates
+          </LoadingButton>
+        </Card>
       )}
 
       {stats?.lastUpdated && (
-        <p className="text-[11px] text-muted-foreground">
+        <Text size="xs" tone="muted">
           Last updated:{" "}
-          <span className="font-mono text-foreground/60">{fmtDate(stats.lastUpdated)}</span>
-        </p>
+          <NumericText role="muted" size="xs">
+            {fmtDate(stats.lastUpdated)}
+          </NumericText>
+        </Text>
       )}
     </div>
   )
@@ -219,31 +262,33 @@ function DistributionsHistory() {
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border">
-      <div className="border-b border-border px-5 py-3.5">
-        <h3 className="text-[13px] font-semibold">Rebate history</h3>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border bg-muted/25 text-left">
-              <th className="px-5 py-3 font-medium text-muted-foreground">Epoch</th>
-              <th className="px-5 py-3 font-medium text-muted-foreground">Date</th>
-              <th className="px-5 py-3 text-right font-medium text-muted-foreground">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {distributions.map((d) => (
-              <tr key={d.id} className="border-b border-border/40 last:border-b-0">
-                <td className="px-5 py-3 font-mono text-muted-foreground">{d.epoch}</td>
-                <td className="px-5 py-3 text-muted-foreground">{d.date}</td>
-                <td className="px-5 py-3 text-right font-mono">{formatUsd(d.amountUsd)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <Card variant="plain">
+      <CardHeader>
+        <Heading level={3}>Rebate history</Heading>
+      </CardHeader>
+      <Table>
+        <TableHeader>
+          <TableHeadRow>
+            <TableHead>Epoch</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead align="right">Amount</TableHead>
+          </TableHeadRow>
+        </TableHeader>
+        <TableBody>
+          {distributions.map((d) => (
+            <TableRow key={d.id} interactive={false}>
+              <TableCell className="py-3">
+                <NumericText role="muted">{d.epoch}</NumericText>
+              </TableCell>
+              <TableCell className="py-3 text-muted-foreground">{d.date}</TableCell>
+              <TableCell align="right" className="py-3">
+                <NumericText>{formatUsd(d.amountUsd)}</NumericText>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   )
 }
 

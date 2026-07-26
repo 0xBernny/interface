@@ -1,7 +1,9 @@
-import { cn } from "@workspace/ui/lib/utils"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { Text } from "@workspace/ui/components/text"
 import { getTierByLevel } from "../data/tiers"
 import { CodeDisplay } from "./shared/code-display"
 import { FaqAccordion  } from "./shared/faq-accordion"
+import { TierBadge } from "./shared/tier-badge"
 import type {FaqItem} from "./shared/faq-accordion";
 
 const TRADER_FAQS: Array<FaqItem> = [
@@ -46,11 +48,11 @@ type ExternalLinkProps = { href: string; children: React.ReactNode }
 
 function ExternalLink({ href, children }: ExternalLinkProps) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center justify-between py-2.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
+    <Text
+      size="sm"
+      tone="muted"
+      render={<a href={href} target="_blank" rel="noopener noreferrer" />}
+      className="flex items-center justify-between py-2.5 transition-colors hover:text-foreground"
     >
       {children}
       <svg
@@ -67,7 +69,7 @@ function ExternalLink({ href, children }: ExternalLinkProps) {
         <polyline points="15 3 21 3 21 9" />
         <line x1="10" y1="14" x2="21" y2="3" />
       </svg>
-    </a>
+    </Text>
   )
 }
 
@@ -92,7 +94,7 @@ export function ReferralsSidebar({
   const faqs = isAffiliate ? AFFILIATE_FAQS : TRADER_FAQS
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col gap-4 self-start lg:sticky lg:top-20">
+    <aside className="flex w-full shrink-0 flex-col gap-4 self-start lg:sticky lg:top-20 lg:w-72">
       {/* Code section */}
       {activeCode ? (
         <>
@@ -103,65 +105,63 @@ export function ReferralsSidebar({
           />
 
           {/* Benefit badge */}
-          <div className="rounded-xl border border-border bg-card p-4">
-            {isAffiliate ? (
-              <>
-                <div className="mb-2 flex items-center gap-2">
-                  <span
-                    className={cn(
-                      "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
-                      tier.colorClass,
-                      tier.ringClass,
-                    )}
-                  >
-                    {tier.label}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    Tier {tier.level}
-                  </span>
-                </div>
-                <p className="text-[12px] font-semibold text-foreground">
-                  {tier.affiliateCommissionPct}% commission on referral fees
-                </p>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Referees receive a {tier.traderDiscountPct}% fee discount.
-                </p>
-              </>
-            ) : (
-              <>
-                <p className="text-[12px] font-semibold text-green-400">
-                  You're receiving a {traderDiscountPct}% discount on your trades!
-                </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  The reduced rate applies to every open and close fee.
-                </p>
-              </>
-            )}
-          </div>
+          <Card>
+            <CardContent className="p-4">
+              {isAffiliate ? (
+                <>
+                  <div className="mb-2 flex items-center gap-2">
+                    <TierBadge tier={tier} />
+                    <Text size="xs" tone="muted" render={<span />}>
+                      Tier {tier.level}
+                    </Text>
+                  </div>
+                  <Text size="sm" weight="semibold">
+                    {tier.affiliateCommissionPct}% commission on referral fees
+                  </Text>
+                  <Text size="xs" tone="muted" className="mt-0.5">
+                    Referees receive a {tier.traderDiscountPct}% fee discount.
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text size="sm" weight="semibold" tone="success">
+                    You're receiving a {traderDiscountPct}% discount on your trades!
+                  </Text>
+                  <Text size="xs" tone="muted" className="mt-1">
+                    The reduced rate applies to every open and close fee.
+                  </Text>
+                </>
+              )}
+            </CardContent>
+          </Card>
         </>
       ) : (
-        <div className="rounded-xl border border-dashed border-border bg-muted/10 p-4 text-center">
-          <p className="text-[12px] font-medium text-muted-foreground">
-            {isAffiliate ? "No affiliate code yet" : "No referral code active"}
-          </p>
-          <p className="mt-1 text-[11px] text-muted-foreground/60">
-            {isAffiliate
-              ? "Register a code to start earning commissions"
-              : "Enter a code to get a fee discount"}
-          </p>
-        </div>
+        <Card variant="dashed">
+          <CardContent className="p-4 text-center">
+            <Text size="sm" weight="medium" tone="muted">
+              {isAffiliate ? "No affiliate code yet" : "No referral code active"}
+            </Text>
+            <Text size="xs" tone="subtle" className="mt-1">
+              {isAffiliate
+                ? "Register a code to start earning commissions"
+                : "Enter a code to get a fee discount"}
+            </Text>
+          </CardContent>
+        </Card>
       )}
 
       {/* Quick links */}
-      <div className="rounded-xl border border-border bg-card px-4 py-2">
-        <div className="divide-y divide-border/50">
-          {/* TODO: Replace # with actual docs URLs when documentation is published */}
-          <ExternalLink href="#">How it works</ExternalLink>
-          <ExternalLink href="#">Claiming rewards</ExternalLink>
-          <ExternalLink href="#">Tiers</ExternalLink>
-          <ExternalLink href="#">Transferring a referral code</ExternalLink>
-        </div>
-      </div>
+      <Card>
+        <CardContent className="px-4 py-2">
+          <div className="divide-y divide-border/50">
+            {/* TODO: Replace # with actual docs URLs when documentation is published */}
+            <ExternalLink href="#">How it works</ExternalLink>
+            <ExternalLink href="#">Claiming rewards</ExternalLink>
+            <ExternalLink href="#">Tiers</ExternalLink>
+            <ExternalLink href="#">Transferring a referral code</ExternalLink>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* FAQ */}
       <FaqAccordion items={faqs} />

@@ -1,7 +1,9 @@
+import { Card } from "@workspace/ui/components/card"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Text } from "@workspace/ui/components/text"
+import type { NumericRole } from "@workspace/ui/components/numeric"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
-
-
 
 function xAxisLabels(period: TimePeriod): Array<string> {
   const now = new Date()
@@ -38,30 +40,40 @@ function InfoIcon({ className }: InfoIconProps) {
   )
 }
 
+type Accent = "green" | "blue"
+
+/** Accent → semantic token + matching numeric role. */
+const ACCENTS: Record<Accent, { stroke: string; role: NumericRole }> = {
+  green: { stroke: "var(--success)", role: "positive" },
+  blue: { stroke: "var(--info)", role: "neutral" },
+}
+
 type Props = {
   title: string
   tooltip: string
   value: number
   period: TimePeriod
-  accent?: "green" | "blue"
+  accent?: Accent
 }
 
 export function StatChartCard({ title, tooltip, value, period, accent = "blue" }: Props) {
   const labels = xAxisLabels(period)
-  const accentColor = accent === "green" ? "#4ade80" : "#60a5fa"
+  const { stroke, role } = ACCENTS[accent]
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    <Card className="overflow-hidden">
       <div className="px-5 pt-4 pb-2">
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-medium text-muted-foreground">{title}</span>
+          <Text size="xs" tone="muted" weight="medium" render={<span />}>
+            {title}
+          </Text>
           <span title={tooltip} className="cursor-help text-muted-foreground/50 hover:text-muted-foreground">
             <InfoIcon />
           </span>
         </div>
-        <p className="mt-1.5 text-[22px] font-semibold tabular-nums tracking-tight">
+        <NumericText role={role} size="xl" weight="semibold" className="mt-1.5 block">
           {formatUsd(value)}
-        </p>
+        </NumericText>
       </div>
 
       {/* Chart area */}
@@ -105,7 +117,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
             y1={80}
             x2={396}
             y2={80}
-            stroke={accentColor}
+            stroke={stroke}
             strokeOpacity={0.4}
             strokeWidth={1.5}
             strokeLinecap="round"
@@ -130,6 +142,6 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
           })}
         </svg>
       </div>
-    </div>
+    </Card>
   )
 }

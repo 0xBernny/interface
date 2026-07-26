@@ -1,3 +1,6 @@
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { Stat } from "@workspace/ui/components/stat"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { DistributionsTable, type DistributionRow } from "./distributions-table"
 
 // TODO: Replace with live data fetched from Stellar event log or subgraph:
@@ -6,30 +9,33 @@ import { DistributionsTable, type DistributionRow } from "./distributions-table"
 //   - Fields: epochId, timestamp, tokenAmount, tokenAddress, txHash
 const MOCK_DISTRIBUTIONS: DistributionRow[] = []
 
+const SCHEDULE_FACTS = [
+  { label: "Distribution cycle", value: "Weekly" },
+  { label: "Fee allocation", value: "70% to stakers" },
+  { label: "Remaining", value: "27% Treasury" },
+  { label: "Protocol", value: "3% team" },
+]
+
 function InfoCard() {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <h3 className="mb-2 text-[13px] font-semibold">Fee Distribution Schedule</h3>
-      <p className="text-[12px] leading-relaxed text-muted-foreground">
-        Protocol fees are collected continuously and distributed weekly to SO4 stakers and
-        liquidity providers. Your share is proportional to your staking power (staked amount ×
-        duration multiplier). USDC fees are distributed directly; platform fees are used for
-        buybacks and distributed as esSO4.
-      </p>
-      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {[
-          { label: "Distribution cycle", value: "Weekly" },
-          { label: "Fee allocation", value: "70% to stakers" },
-          { label: "Remaining", value: "27% Treasury" },
-          { label: "Protocol", value: "3% team" },
-        ].map(({ label, value }) => (
-          <div key={label}>
-            <p className="text-[10px] text-muted-foreground">{label}</p>
-            <p className="mt-0.5 text-[12px] font-medium">{value}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Card>
+      <CardContent>
+        <Heading level={3} className="mb-2">
+          Fee Distribution Schedule
+        </Heading>
+        <Text size="sm" tone="muted" variant="leading">
+          Protocol fees are collected continuously and distributed weekly to SO4 stakers and
+          liquidity providers. Your share is proportional to your staking power (staked amount ×
+          duration multiplier). USDC fees are distributed directly; platform fees are used for
+          buybacks and distributed as esSO4.
+        </Text>
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {SCHEDULE_FACTS.map(({ label, value }) => (
+            <Stat key={label} label={label} value={value} size="md" />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -38,12 +44,12 @@ export function DistributionsTab() {
     <div className="space-y-4">
       <InfoCard />
 
-      <div className="overflow-hidden rounded-xl border border-border">
-        <div className="border-b border-border px-5 py-3.5">
-          <h3 className="text-[13px] font-semibold">Distribution History</h3>
-        </div>
+      <Card variant="plain">
+        <CardHeader>
+          <Heading level={3}>Distribution History</Heading>
+        </CardHeader>
         <DistributionsTable distributions={MOCK_DISTRIBUTIONS} />
-      </div>
+      </Card>
     </div>
   )
 }

@@ -38,11 +38,11 @@ describe("Tabs accessibility", () => {
     const tab1 = screen.getByRole("tab", { name: "Tab 1" })
     const tab2 = screen.getByRole("tab", { name: "Tab 2" })
 
-    expect(tab1).toHaveAttribute("data-state", "active")
+    expect(tab1).toHaveAttribute("aria-selected", "true")
 
     await user.click(tab2)
-    expect(tab2).toHaveAttribute("data-state", "active")
-    expect(tab1).toHaveAttribute("data-state", "inactive")
+    expect(tab2).toHaveAttribute("aria-selected", "true")
+    expect(tab1).toHaveAttribute("aria-selected", "false")
 
     expect(screen.getByText("Content 2")).toBeInTheDocument()
   })
@@ -60,6 +60,6 @@ describe("Tabs accessibility", () => {
     )
 
     const tab1 = screen.getByRole("tab", { name: "Tab 1" })
-    expect(tab1).toHaveAttribute("data-state")
+    expect(tab1).toHaveAttribute("aria-selected")
   })
 })

@@ -5,8 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
-import { Button } from "@workspace/ui/components/button"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
 import { Input } from "@workspace/ui/components/input"
+import { Text } from "@workspace/ui/components/text"
 import { validateReferralCode } from "../lib/referrals"
 import { useCreateReferralCodeMutation } from "../hooks/useCreateReferralCodeMutation"
 
@@ -59,28 +60,41 @@ export function CreateReferralDialog({
 
         <div className="space-y-4 pt-2">
           <div>
-            <label className="mb-2 block text-sm font-medium">Referral Code</label>
+            <Text
+              size="base"
+              weight="medium"
+              render={<label htmlFor="create-referral-code" />}
+              className="mb-2 block"
+            >
+              Referral Code
+            </Text>
             <Input
+              id="create-referral-code"
               placeholder="e.g. MY_CUSTOM_CODE"
               value={code}
               onChange={handleCodeChange}
-              className={error ? "border-red-500" : ""}
+              aria-invalid={error ? true : undefined}
+              aria-describedby="create-referral-code-hint"
             />
-            {error && <p className="mt-1.5 text-xs text-red-500">{error}</p>}
-            {!error && (
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Minimum 3 characters. Only letters, numbers, and underscores allowed.
-              </p>
-            )}
+            <Text
+              id="create-referral-code-hint"
+              size="xs"
+              tone={error ? "danger" : "muted"}
+              className="mt-1.5"
+            >
+              {error ?? "Minimum 3 characters. Only letters, numbers, and underscores allowed."}
+            </Text>
           </div>
 
-          <Button
+          <LoadingButton
             className="w-full"
-            disabled={mutation.isPending || !!error || code.length === 0}
+            isLoading={mutation.isPending}
+            loadingText="Creating..."
+            disabled={!!error || code.length === 0}
             onClick={() => void handleSubmit()}
           >
-            {mutation.isPending ? "Creating..." : "Create Code"}
-          </Button>
+            Create Code
+          </LoadingButton>
         </div>
       </DialogContent>
     </Dialog>

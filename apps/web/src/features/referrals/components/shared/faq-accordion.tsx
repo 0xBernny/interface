@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useId, useState } from "react"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type FaqItem = {
@@ -25,24 +27,33 @@ function ChevronIcon({ open }: { open: boolean }) {
 
 function AccordionItem({ item }: { item: FaqItem }) {
   const [open, setOpen] = useState(false)
+  const panelId = useId()
 
   return (
     <div className="border-b border-border/60 last:border-b-0">
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={panelId}
         className="flex w-full items-center justify-between gap-3 py-3 text-left"
       >
-        <span className="text-[12px] font-medium leading-snug">{item.q}</span>
+        <Text size="sm" weight="medium" render={<span />} className="leading-snug">
+          {item.q}
+        </Text>
         <ChevronIcon open={open} />
       </button>
 
       <div
+        id={panelId}
         className={cn(
           "overflow-hidden transition-all duration-200",
           open ? "max-h-96 pb-3" : "max-h-0",
         )}
       >
-        <p className="text-[11px] leading-relaxed text-muted-foreground">{item.a}</p>
+        <Text size="xs" tone="muted" variant="leading">
+          {item.a}
+        </Text>
       </div>
     </div>
   )
@@ -55,15 +66,17 @@ type Props = {
 
 export function FaqAccordion({ items, title = "FAQ" }: Props) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-        {title}
-      </p>
-      <div>
-        {items.map((item) => (
-          <AccordionItem key={item.q} item={item} />
-        ))}
-      </div>
-    </div>
+    <Card>
+      <CardContent className="p-4">
+        <Text size="xs" tone="muted" weight="semibold" variant="label" className="mb-1">
+          {title}
+        </Text>
+        <div>
+          {items.map((item) => (
+            <AccordionItem key={item.q} item={item} />
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

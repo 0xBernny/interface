@@ -6,6 +6,7 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog"
 import { Button } from "@workspace/ui/components/button"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
 import { Input } from "@workspace/ui/components/input"
 import { useStakeMutation } from "../../hooks/useStakeMutation"
 
@@ -96,17 +97,15 @@ export function StakeDialog({
             </div>
           )}
 
-          <Button
+          <LoadingButton
             className="w-full"
-            disabled={mutation.isPending || !amount || parseFloat(amount) <= 0}
+            isLoading={mutation.isPending}
+            loadingText="Confirming..."
+            disabled={!amount || parseFloat(amount) <= 0}
             onClick={() => void handleSubmit()}
           >
-            {mutation.isPending
-              ? "Confirming..."
-              : action === "stake"
-                ? "Stake SO4"
-                : "Unstake SO4"}
-          </Button>
+            {action === "stake" ? "Stake SO4" : "Unstake SO4"}
+          </LoadingButton>
         </div>
       </DialogContent>
     </Dialog>

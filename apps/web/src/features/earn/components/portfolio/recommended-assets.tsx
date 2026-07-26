@@ -1,40 +1,13 @@
 import { useState } from "react"
-import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
+import { Card } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Heading, Text } from "@workspace/ui/components/text"
+import { TokenAvatar } from "@workspace/ui/components/token-avatar"
 import { GLV_VAULTS, GM_POOLS } from "../../data/pools"
 import { buySO4, depositGLV, depositGM } from "../../lib/earn"
 import { formatPct } from "@/shared/lib/format"
-
-const TOKEN_COLORS: Record<string, string> = {
-  BTC: "bg-orange-500/10 text-orange-400 ring-orange-500/20",
-  ETH: "bg-indigo-500/10 text-indigo-400 ring-indigo-500/20",
-  XLM: "bg-sky-500/10 text-sky-400 ring-sky-500/20",
-  USDC: "bg-blue-500/10 text-blue-400 ring-blue-500/20",
-  GLV: "bg-teal-500/10 text-teal-400 ring-teal-500/20",
-  SO4: "bg-primary/10 text-primary ring-primary/20",
-}
-
-function TokenAvatar({
-  symbol,
-  size = "md",
-}: {
-  symbol: string
-  size?: "sm" | "md" | "lg"
-}) {
-  const color = TOKEN_COLORS[symbol] ?? "bg-muted/60 text-muted-foreground ring-border"
-  const dimensions = { sm: "h-7 w-7 text-[10px]", md: "h-9 w-9 text-[11px]", lg: "h-11 w-11 text-sm" }
-  return (
-    <div
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-full font-semibold ring-1",
-        color,
-        dimensions[size],
-      )}
-    >
-      {symbol.slice(0, 2)}
-    </div>
-  )
-}
 
 function LightningIcon() {
   return (
@@ -80,6 +53,14 @@ function SO4LogoIcon() {
   )
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Text size="xs" tone="muted" weight="medium" variant="label" render={<span />}>
+      {children}
+    </Text>
+  )
+}
+
 function SO4Card() {
   const [pending, setPending] = useState(false)
 
@@ -90,28 +71,31 @@ function SO4Card() {
   }
 
   return (
-    <div className="flex flex-col justify-between gap-5 rounded-xl border border-border bg-card p-4">
-      <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-        SO4
-      </p>
+    <Card className="flex flex-col justify-between gap-5 p-4">
+      <SectionLabel>SO4</SectionLabel>
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
           <SO4LogoIcon />
         </div>
         <div>
-          <p className="text-[13px] font-semibold">SO4</p>
-          <p className="text-[11px] text-muted-foreground">Accumulating…</p>
+          <Text size="md" weight="semibold">
+            SO4
+          </Text>
+          <Text size="xs" tone="muted">
+            Accumulating…
+          </Text>
         </div>
       </div>
-      <Button
-        size="sm"
-        className="h-8 w-full text-[12px]"
-        disabled={pending}
+      <LoadingButton
+        size="lg"
+        className="w-full"
+        isLoading={pending}
+        loadingText="Opening"
         onClick={handleBuy}
       >
         Buy SO4
-      </Button>
-    </div>
+      </LoadingButton>
+    </Card>
   )
 }
 
@@ -130,32 +114,37 @@ function GlvCard() {
   }
 
   return (
-    <div className="flex flex-col justify-between gap-4 rounded-xl border border-border bg-card p-4">
-      <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-        GLV vaults
-      </p>
+    <Card className="flex flex-col justify-between gap-4 p-4">
+      <SectionLabel>GLV vaults</SectionLabel>
       <div className="flex items-center gap-3">
-        <TokenAvatar symbol="GLV" />
+        <TokenAvatar symbol="GLV" size="md" />
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-semibold">
+          <Text size="md" weight="semibold">
             {vault.name}{" "}
-            <span className="font-normal text-muted-foreground">[{vault.displayPair}]</span>
-          </p>
+            <Text tone="muted" render={<span />}>
+              [{vault.displayPair}]
+            </Text>
+          </Text>
           <div className="flex items-baseline gap-1">
-            <span className="text-base font-bold text-green-400">{formatPct(vault.apy, { sign: false })}</span>
-            <span className="text-[10px] text-muted-foreground">Performance APY</span>
+            <NumericText role="positive" size="lg" weight="bold">
+              {formatPct(vault.apy, { sign: false })}
+            </NumericText>
+            <Text size="2xs" tone="muted" render={<span />}>
+              Performance APY
+            </Text>
           </div>
         </div>
-        <Button
-          size="sm"
-          className="h-8 shrink-0 text-[12px]"
-          disabled={pending}
+        <LoadingButton
+          size="lg"
+          className="shrink-0"
+          isLoading={pending}
+          loadingText="Depositing"
           onClick={() => void handleEarn()}
         >
-          {pending ? "…" : "Earn"}
-        </Button>
+          Earn
+        </LoadingButton>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -174,15 +163,13 @@ function GmCard() {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
+    <Card className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          GM pools
-        </p>
-        <button className="flex items-center gap-1 text-[11px] text-muted-foreground transition-colors hover:text-foreground">
+        <SectionLabel>GM pools</SectionLabel>
+        <Button variant="ghost" size="xs" className="gap-1">
           Explore more
           <ExternalLinkIcon />
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-3">
@@ -190,27 +177,34 @@ function GmCard() {
           <div key={pool.id} className="flex items-center gap-3">
             <TokenAvatar symbol={pool.longToken} size="sm" />
             <div className="min-w-0 flex-1">
-              <p className="text-[12px] font-medium">{pool.name}</p>
-              <p className="text-[10px] text-muted-foreground">
+              <Text size="sm" weight="medium">
+                {pool.name}
+              </Text>
+              <Text size="2xs" tone="muted">
                 [{pool.longToken}-{pool.shortToken}]
-              </p>
+              </Text>
             </div>
             <div className="shrink-0 text-right">
-              <p className="text-[13px] font-bold text-green-400">{formatPct(pool.apy, { sign: false })}</p>
-              <p className="text-[10px] text-muted-foreground">Performance APY</p>
+              <NumericText role="positive" size="md" weight="bold">
+                {formatPct(pool.apy, { sign: false })}
+              </NumericText>
+              <Text size="2xs" tone="muted">
+                Performance APY
+              </Text>
             </div>
-            <Button
+            <LoadingButton
               size="sm"
-              className="h-7 shrink-0 px-3 text-[11px]"
-              disabled={pending === pool.id}
+              className="shrink-0 px-3"
+              isLoading={pending === pool.id}
+              loadingText="Depositing"
               onClick={() => void handleEarn(pool.id, pool.name)}
             >
-              {pending === pool.id ? "…" : "Earn"}
-            </Button>
+              Earn
+            </LoadingButton>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -219,7 +213,7 @@ export function RecommendedAssets() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <LightningIcon />
-        <h2 className="text-[15px] font-semibold">Recommended</h2>
+        <Heading level={2}>Recommended</Heading>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <SO4Card />

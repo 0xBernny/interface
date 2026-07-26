@@ -1,5 +1,9 @@
-import { cn } from "@workspace/ui/lib/utils"
-import { getTierByLevel, getNextTier } from "../../data/tiers"
+import { Alert } from "@workspace/ui/components/alert"
+import { Card } from "@workspace/ui/components/card"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Text } from "@workspace/ui/components/text"
+import { getNextTier, getTierByLevel } from "../../data/tiers"
+import { TierBadge } from "./tier-badge"
 import { formatUsd } from "@/shared/lib/format"
 
 type Props = {
@@ -13,22 +17,12 @@ export function TierProgress({ tier, volumeUsd }: Props) {
 
   if (!next) {
     return (
-      <div
-        role="status"
-        aria-label="tier progress"
-        className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/[0.06] px-4 py-2.5"
-      >
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
-            current.colorClass,
-            current.ringClass,
-          )}
-        >
-          {current.label}
-        </span>
-        <span className="text-[12px] font-medium text-yellow-400">Maximum tier reached!</span>
-      </div>
+      <Alert variant="warning" aria-label="tier progress" className="items-center py-2.5">
+        <TierBadge tier={current} />
+        <Text size="sm" weight="medium" render={<span />}>
+          Maximum tier reached!
+        </Text>
+      </Alert>
     )
   }
 
@@ -36,36 +30,22 @@ export function TierProgress({ tier, volumeUsd }: Props) {
   const remaining = Math.max(next.minVolumeUsd - volumeUsd, 0)
 
   return (
-    <div
+    <Card
       role="status"
       aria-label="tier progress"
-      className="rounded-lg border border-border bg-card px-4 py-3"
+      className="rounded-lg px-4 py-3"
     >
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
-              current.colorClass,
-              current.ringClass,
-            )}
-          >
-            {current.label}
-          </span>
-          <span className="text-[11px] text-muted-foreground">→</span>
-          <span
-            className={cn(
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1",
-              next.colorClass,
-              next.ringClass,
-            )}
-          >
-            {next.label}
-          </span>
+          <TierBadge tier={current} />
+          <Text size="xs" tone="muted" render={<span />}>
+            →
+          </Text>
+          <TierBadge tier={next} />
         </div>
-        <span className="text-[11px] text-muted-foreground" aria-label="remaining volume">
+        <NumericText role="muted" size="xs" aria-label="remaining volume">
           {formatUsd(remaining, { compact: true })} more needed
-        </span>
+        </NumericText>
       </div>
       <div
         role="progressbar"
@@ -76,10 +56,10 @@ export function TierProgress({ tier, volumeUsd }: Props) {
         className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-blue-400 transition-all"
+          className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
-    </div>
+    </Card>
   )
 }

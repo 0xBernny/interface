@@ -18,7 +18,7 @@ describe("Button accessibility", () => {
 
   it("with icon has proper sizing", async () => {
     const { container } = render(
-      <Button size="icon">
+      <Button size="icon" aria-label="Settings">
         <svg viewBox="0 0 24 24" />
       </Button>
     )

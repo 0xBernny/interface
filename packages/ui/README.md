@@ -20,6 +20,23 @@ All components are located in `src/components/` and exported through the package
 - **TokenAvatar** - Token icon with fallback initials
 - **TokenPair** - Overlapping token pair visual
 - **TransactionStatus** - Transaction state indicator with actions
+- **Text / Heading** - Shared type scale and tones; use instead of one-off font sizes
+- **NumericText** - Tabular figures with semantic roles (`positive`, `negative`, `warning`, `accent`, `muted`)
+- **Stat** - Label + numeric value pair with a built-in loading state
+- **Card** - Surface primitive (`default`, `muted`, `dashed`, `plain`) with header/content/footer slots
+- **Table** - Data-table primitives that scroll horizontally instead of widening the page
+- **Alert** - Status messaging (`info`, `success`, `warning`, `danger`, `muted`) with the right ARIA role
+- **LoadingState / EmptyState / ErrorState** - Shared list and table state treatments
+- **Spinner** - Busy indicator, hidden from assistive tech unless labelled
+- **LoadingButton** - Button that owns its pending state, spinner and `aria-busy`
+
+## Semantic tokens
+
+`src/styles/globals.css` defines the semantic colour roles every component draws
+from: `--success`, `--warning`, `--info`, `--destructive`, plus the trading
+aliases `--long` / `--short` and the `--chart-*` roles the trading chart reads
+through its typed adapter. Prefer these over palette classes such as
+`text-green-400` so light and dark themes stay in sync.
 
 ## Testing
 

@@ -27,6 +27,15 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-long: var(--long);
+    --color-short: var(--short);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -67,6 +76,7 @@
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
@@ -75,6 +85,30 @@
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
+
+    /* Semantic status roles — shared by badges, alerts, numeric text and the
+       trading chart so a "long" candle is the same green as a positive PnL. */
+    --success: oklch(0.596 0.145 163.225);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.681 0.162 75.834);
+    --warning-foreground: oklch(0.21 0 0);
+    --info: oklch(0.546 0.245 262.881);
+    --info-foreground: oklch(0.985 0 0);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    /* Trading chart surface roles. The chart renders to canvas and cannot use
+       Tailwind classes, so it reads these through the typed chart adapter. */
+    --chart-surface: var(--background);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: var(--border);
+    --chart-crosshair: oklch(0.708 0 0);
+    --chart-crosshair-label: oklch(0.955 0 0);
+    --chart-border: var(--border);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --radius: 0;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -102,6 +136,7 @@
     --accent: oklch(0.269 0 0);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.145 0 0);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
@@ -110,6 +145,26 @@
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
+
+    --success: oklch(0.792 0.184 158.6);
+    --success-foreground: oklch(0.145 0 0);
+    --warning: oklch(0.828 0.159 82.5);
+    --warning-foreground: oklch(0.145 0 0);
+    --info: oklch(0.707 0.165 254.624);
+    --info-foreground: oklch(0.145 0 0);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    --chart-surface: oklch(0.145 0 0);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: oklch(0.269 0 0);
+    --chart-crosshair: oklch(0.44 0 0);
+    --chart-crosshair-label: oklch(0.269 0 0);
+    --chart-border: oklch(0.269 0 0);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.685 0.169 237.323);

@@ -2,11 +2,27 @@ import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Badge } from "@workspace/ui/components/badge"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@workspace/ui/components/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@workspace/ui/components/dialog"
 import { Skeleton } from "@workspace/ui/components/skeleton"
-import { useTheme } from "@/ui/theme-provider"
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert"
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Stat } from "@workspace/ui/components/stat"
+import { EmptyState, ErrorState, LoadingState } from "@workspace/ui/components/states"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { Separator } from "@workspace/ui/components/separator"
+import { useTheme } from "@/ui/theme-provider"
 
 function ComponentSection({
   title,
@@ -195,6 +211,214 @@ function TabsExamples() {
   )
 }
 
+function TypographyExamples() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="mb-3 text-sm font-semibold">Headings</h3>
+        <Heading level={1}>Level 1 — page title</Heading>
+        <Heading level={2}>Level 2 — section</Heading>
+        <Heading level={3}>Level 3 — card title</Heading>
+        <Heading level={4}>Level 4 — table caption</Heading>
+      </div>
+
+      <div className="space-y-1">
+        <h3 className="mb-3 text-sm font-semibold">Body sizes</h3>
+        {(["2xs", "xs", "sm", "md", "base", "lg"] as const).map((size) => (
+          <Text key={size} size={size}>
+            {size} — the quick brown fox jumps over the lazy dog
+          </Text>
+        ))}
+      </div>
+
+      <div className="space-y-1">
+        <h3 className="mb-3 text-sm font-semibold">Tones</h3>
+        {(["default", "muted", "subtle", "primary", "success", "warning", "info", "danger"] as const).map(
+          (tone) => (
+            <Text key={tone} tone={tone}>
+              {tone}
+            </Text>
+          ),
+        )}
+      </div>
+    </div>
+  )
+}
+
+function NumericExamples() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h3 className="mb-3 text-sm font-semibold">Semantic roles</h3>
+        <div className="flex flex-wrap gap-6">
+          <NumericText role="neutral">$12,450.00</NumericText>
+          <NumericText role="muted">$12,450.00</NumericText>
+          <NumericText role="positive">+18.42%</NumericText>
+          <NumericText role="negative">-4.10%</NumericText>
+          <NumericText role="warning">$1.02</NumericText>
+          <NumericText role="accent">15%</NumericText>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="mb-3 text-sm font-semibold">Stats</h3>
+        <div className="flex flex-wrap gap-8">
+          <Stat label="Total investment value" value="$104,220.00" />
+          <Stat label="Total pending rewards" value="$412.90" role="positive" />
+          <Stat label="Loading" value="—" isLoading />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SurfaceExamples() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <Card padding="md">
+        <Text size="sm" tone="muted">
+          Card — default surface
+        </Text>
+      </Card>
+      <Card variant="muted" padding="md">
+        <Text size="sm" tone="muted">
+          Card — muted surface
+        </Text>
+      </Card>
+      <Card variant="dashed" padding="md">
+        <Text size="sm" tone="muted">
+          Card — dashed placeholder
+        </Text>
+      </Card>
+      <Card variant="plain">
+        <CardHeader>
+          <Heading level={3}>Card — plain frame</Heading>
+        </CardHeader>
+        <CardContent>
+          <Text size="sm" tone="muted">
+            Used when the body is a table.
+          </Text>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function TableExamples() {
+  return (
+    <Card variant="plain">
+      <CardHeader>
+        <Heading level={3}>Distribution history</Heading>
+      </CardHeader>
+      <Table>
+        <TableHeader>
+          <TableHeadRow>
+            <TableHead>Epoch</TableHead>
+            <TableHead>Token</TableHead>
+            <TableHead align="right">Amount</TableHead>
+            <TableHead>Status</TableHead>
+          </TableHeadRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell>
+              <NumericText role="muted">W-12</NumericText>
+            </TableCell>
+            <TableCell>
+              <NumericText>USDC</NumericText>
+            </TableCell>
+            <TableCell align="right">
+              <NumericText>$125.50</NumericText>
+            </TableCell>
+            <TableCell>
+              <Badge variant="success">Distributed</Badge>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <NumericText role="muted">W-13</NumericText>
+            </TableCell>
+            <TableCell>
+              <NumericText>esSO4</NumericText>
+            </TableCell>
+            <TableCell align="right">
+              <NumericText>$0.00</NumericText>
+            </TableCell>
+            <TableCell>
+              <Badge variant="muted">Upcoming</Badge>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </Card>
+  )
+}
+
+function AlertExamples() {
+  return (
+    <div className="space-y-3">
+      {(["info", "success", "warning", "danger", "muted"] as const).map((variant) => (
+        <Alert key={variant} variant={variant}>
+          <div>
+            <AlertTitle>{variant}</AlertTitle>
+            <AlertDescription>
+              Shared alert surface — colours come from semantic tokens.
+            </AlertDescription>
+          </div>
+        </Alert>
+      ))}
+    </div>
+  )
+}
+
+function StateExamples() {
+  return (
+    <div className="space-y-4">
+      <Card variant="plain">
+        <LoadingState rows={2} label="Loading positions" />
+      </Card>
+      <Card variant="plain">
+        <EmptyState
+          title="You have no deposits"
+          description="Start earning by depositing into a pool"
+          action={
+            <Button variant="outline" size="sm">
+              Browse pools
+            </Button>
+          }
+        />
+      </Card>
+      <Card variant="plain">
+        <ErrorState description="We could not reach the RPC node." onRetry={() => {}} />
+      </Card>
+    </div>
+  )
+}
+
+function LoadingButtonExamples() {
+  const [loading, setLoading] = useState(false)
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <LoadingButton>Claim</LoadingButton>
+      <LoadingButton isLoading loadingText="Claiming">
+        Claim
+      </LoadingButton>
+      <LoadingButton
+        variant="outline"
+        isLoading={loading}
+        loadingText="Working…"
+        onClick={() => {
+          setLoading(true)
+          setTimeout(() => setLoading(false), 1500)
+        }}
+      >
+        Try it
+      </LoadingButton>
+    </div>
+  )
+}
+
 export function DesignSystemPage() {
   const { theme, setTheme } = useTheme()
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">("desktop")
@@ -251,6 +475,27 @@ export function DesignSystemPage() {
             <a href="#skeletons" className="whitespace-nowrap text-primary hover:underline">
               Skeletons
             </a>
+            <a href="#typography" className="whitespace-nowrap text-primary hover:underline">
+              Typography
+            </a>
+            <a href="#numeric" className="whitespace-nowrap text-primary hover:underline">
+              Numeric
+            </a>
+            <a href="#surfaces" className="whitespace-nowrap text-primary hover:underline">
+              Surfaces
+            </a>
+            <a href="#tables" className="whitespace-nowrap text-primary hover:underline">
+              Tables
+            </a>
+            <a href="#alerts" className="whitespace-nowrap text-primary hover:underline">
+              Alerts
+            </a>
+            <a href="#states" className="whitespace-nowrap text-primary hover:underline">
+              States
+            </a>
+            <a href="#loading-buttons" className="whitespace-nowrap text-primary hover:underline">
+              Loading buttons
+            </a>
           </nav>
         </div>
       </div>
@@ -288,6 +533,60 @@ export function DesignSystemPage() {
 
         <ComponentSection title="Skeletons" description="Skeleton loaders for content placeholders">
           <SkeletonExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection
+          title="Typography"
+          description="Heading and Text — the shared type scale that replaces one-off font sizes"
+        >
+          <TypographyExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection
+          title="Numeric"
+          description="NumericText and Stat — tabular figures with semantic roles for financial values"
+        >
+          <NumericExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection title="Surfaces" description="Card variants used across every feature">
+          <SurfaceExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection title="Tables" description="Shared data-table primitives">
+          <TableExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection title="Alerts" description="Status messaging built on semantic tokens">
+          <AlertExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection
+          title="States"
+          description="Loading, empty and error treatments shared by every list and table"
+        >
+          <StateExamples />
+        </ComponentSection>
+
+        <Separator />
+
+        <ComponentSection
+          title="Loading buttons"
+          description="Buttons that own their pending state, spinner and aria-busy"
+        >
+          <LoadingButtonExamples />
         </ComponentSection>
       </div>
     </div>

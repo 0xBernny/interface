@@ -28,7 +28,7 @@ describe("CodeDisplay", () => {
     const user = userEvent.setup()
     render(<CodeDisplay code={code} />)
     await user.click(screen.getByRole("button", { name: /copy code/i }))
-    expect(screen.getByRole("button", { name: /copy code/i })).toHaveClass("text-green-400")
+    expect(screen.getByRole("button", { name: /copy code/i })).toHaveClass("text-success")
   })
 
   it("shows a success toast on successful copy", async () => {
@@ -50,7 +50,7 @@ describe("CodeDisplay", () => {
     await user.click(screen.getByRole("button", { name: /copy code/i }))
     expect(execCommand).toHaveBeenCalledWith("copy")
     expect(toast.success).toHaveBeenCalledWith("Referral code copied!")
-    expect(screen.getByRole("button", { name: /copy code/i })).toHaveClass("text-green-400")
+    expect(screen.getByRole("button", { name: /copy code/i })).toHaveClass("text-success")
   })
 
   it("shows error toast when both clipboard API and fallback fail", async () => {

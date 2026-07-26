@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navbar } from "../../../ui/Navbar"
 import { useTraderStats } from "../hooks/use-referrals-data"
@@ -49,10 +50,10 @@ export function ReferralsPage() {
       <Navbar variant="app" />
       <div className="mx-auto w-full max-w-260 px-4 pb-16 pt-8 sm:px-6 lg:px-12">
         <header className="mb-8">
-          <h1 className="text-[22px] font-semibold tracking-tight">Referrals</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <Heading level={1}>Referrals</Heading>
+          <Text size="base" tone="muted" className="mt-1">
             Get fee discounts and earn up to 15% commission through the SO4 referral program
-          </p>
+          </Text>
         </header>
 
         <Tabs
@@ -60,7 +61,7 @@ export function ReferralsPage() {
           onValueChange={(v) => setTab(v as ReferralsTab)}
           className="gap-6"
         >
-          <TabsList className="h-9">
+          <TabsList className="h-9 w-full overflow-x-auto sm:w-fit">
             <TabsTrigger value="traders">Traders</TabsTrigger>
             <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
             <TabsTrigger
@@ -73,8 +74,8 @@ export function ReferralsPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* 2-column: tab content (flex-1) + sticky sidebar (w-72) */}
-          <div className="flex gap-5">
+          {/* Stacks on mobile; 2-column (content + sticky sidebar) from lg up */}
+          <div className="flex flex-col gap-5 lg:flex-row">
             <div className="min-w-0 flex-1">
               <TabsContent value="traders">
                 <TradersTab
