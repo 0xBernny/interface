@@ -75,7 +75,7 @@ function TypeBadge({ kind }: { kind: string }) {
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-full border px-2 text-[10px] font-medium",
+        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
         KIND_BADGE[kind] ?? "bg-muted text-muted-foreground border-border",
       )}
     >
@@ -106,7 +106,7 @@ export function AssetsList() {
   return (
     <div className="overflow-hidden rounded-xl border border-border">
       <div className="border-b border-border px-5 py-3.5">
-        <h2 className="text-[13px] font-semibold">My assets</h2>
+        <h2 className="text-13 font-semibold">My assets</h2>
       </div>
 
       {isLoading ? (

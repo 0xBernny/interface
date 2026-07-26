@@ -46,14 +46,14 @@ export function CodeDisplay({ code, label = "Active referral code", onEdit, clas
 
   return (
     <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-3 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
         {label}
       </p>
 
       <div className="flex items-center gap-2">
         {/* Code pill */}
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-muted/40 px-3 py-2">
-          <span className="truncate font-mono text-[15px] font-bold tracking-widest text-foreground">
+          <span className="truncate font-mono text-15 font-bold tracking-widest text-foreground">
             {code}
           </span>
           <button
@@ -73,7 +73,7 @@ export function CodeDisplay({ code, label = "Active referral code", onEdit, clas
         {onEdit && (
           <button
             onClick={onEdit}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-[12px] font-medium text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
           >
             <svg
               width="11"

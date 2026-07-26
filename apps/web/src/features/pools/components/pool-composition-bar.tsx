@@ -20,7 +20,7 @@ export function PoolCompositionBar({
         <div className="bg-cyan-500" style={{ width: `${safeLong}%` }} />
         <div className="bg-emerald-500" style={{ width: `${safeShort}%` }} />
       </div>
-      <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
+      <div className="mt-2 flex items-center justify-between gap-3 text-11 text-muted-foreground">
         <span className="truncate">
           {longSymbol} {safeLong.toFixed(0)}%
         </span>

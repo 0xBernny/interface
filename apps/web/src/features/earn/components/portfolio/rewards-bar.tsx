@@ -20,7 +20,7 @@ function StatItem({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <span className="text-11 text-muted-foreground">{label}</span>
       {isLoading ? (
         <Skeleton className="h-5 w-20" />
       ) : (
@@ -87,7 +87,7 @@ export function RewardsBar() {
       {bannerOpen && (
         <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/[0.07] px-4 py-3 text-blue-400">
           <InfoIcon />
-          <p className="flex-1 text-[12px] leading-relaxed">
+          <p className="flex-1 text-xs leading-relaxed">
             Protocol fees are accumulating in the Treasury for SO4 buybacks. Rewards will be
             distributed to stakers proportional to staking power{" "}
             <span className="font-medium">(duration × amount staked)</span> when the buyback
@@ -150,7 +150,7 @@ export function RewardsBar() {
             size="sm"
             disabled={claiming || !hasPendingRewards}
             onClick={() => void handleClaim()}
-            className="h-9 gap-2 text-[12px]"
+            className="h-9 gap-2 text-xs"
           >
             <GiftIcon />
             {claiming ? "Claiming…" : "Claim rewards"}

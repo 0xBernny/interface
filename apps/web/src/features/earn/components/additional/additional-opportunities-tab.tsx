@@ -24,8 +24,8 @@ function SectionCard({
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-prose space-y-1.5">
-          <h3 className="text-[13px] font-semibold">{title}</h3>
-          <p className="text-[12px] leading-relaxed text-muted-foreground">{description}</p>
+          <h3 className="text-13 font-semibold">{title}</h3>
+          <p className="text-xs leading-relaxed text-muted-foreground">{description}</p>
           {children && <div className="pt-2">{children}</div>}
         </div>
         <div className="shrink-0">{action}</div>
@@ -46,11 +46,11 @@ function StatRow({
   return (
     <div className="flex items-center gap-6">
       <div>
-        <p className="text-[10px] text-muted-foreground">{label}</p>
+        <p className="text-10 text-muted-foreground">{label}</p>
         {isLoading ? (
           <Skeleton className="mt-0.5 h-4 w-24" />
         ) : (
-          <p className="text-[12px] font-medium tabular-nums">{value}</p>
+          <p className="text-xs font-medium tabular-nums">{value}</p>
         )}
       </div>
     </div>
@@ -97,7 +97,7 @@ export function AdditionalOpportunitiesTab() {
           <Button
             size="sm"
             variant="outline"
-            className="h-8 text-[12px]"
+            className="h-8 text-xs"
             disabled={vestPending || !hasEsSO4}
             onClick={() => void handleVest()}
           >
@@ -123,7 +123,7 @@ export function AdditionalOpportunitiesTab() {
         action={
           <Button
             size="sm"
-            className="h-8 text-[12px]"
+            className="h-8 text-xs"
             disabled={compoundPending || !hasMultiplierPoints}
             onClick={() => void handleCompound()}
           >
@@ -148,7 +148,7 @@ export function AdditionalOpportunitiesTab() {
         description="Share your referral code to earn fee discounts and rebates. Referrers receive a percentage of their referees' trading fees, paid in USDC every epoch."
         action={
           <Link to="/referrals">
-            <Button size="sm" variant="outline" className="h-8 text-[12px]">
+            <Button size="sm" variant="outline" className="h-8 text-xs">
               Go to Referrals →
             </Button>
           </Link>

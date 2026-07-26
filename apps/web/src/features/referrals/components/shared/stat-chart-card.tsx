@@ -54,12 +54,12 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
     <div className="overflow-hidden rounded-xl border border-border bg-card">
       <div className="px-5 pt-4 pb-2">
         <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-medium text-muted-foreground">{title}</span>
+          <span className="text-11 font-medium text-muted-foreground">{title}</span>
           <span title={tooltip} className="cursor-help text-muted-foreground/50 hover:text-muted-foreground">
             <InfoIcon />
           </span>
         </div>
-        <p className="mt-1.5 text-[22px] font-semibold tabular-nums tracking-tight">
+        <p className="mt-1.5 text-22 font-semibold tabular-nums tracking-tight">
           {formatUsd(value)}
         </p>
       </div>
