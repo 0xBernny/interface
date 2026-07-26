@@ -100,22 +100,22 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
 
         {/* Candle bodies */}
         <g opacity="0.5">
-          <rect x="8" y="120" width="6" height="22" fill="#34D399" />
-          <line x1="11" x2="11" y1="110" y2="148" stroke="#34D399" strokeWidth="1" />
-          <rect x="20" y="115" width="6" height="18" fill="#34D399" />
-          <line x1="23" x2="23" y1="108" y2="138" stroke="#34D399" strokeWidth="1" />
-          <rect x="32" y="118" width="6" height="14" fill="#F87171" />
-          <line x1="35" x2="35" y1="112" y2="138" stroke="#F87171" strokeWidth="1" />
-          <rect x="44" y="112" width="6" height="22" fill="#34D399" />
-          <line x1="47" x2="47" y1="104" y2="140" stroke="#34D399" strokeWidth="1" />
-          <rect x="56" y="105" width="6" height="20" fill="#34D399" />
-          <line x1="59" x2="59" y1="98" y2="130" stroke="#34D399" strokeWidth="1" />
-          <rect x="68" y="108" width="6" height="14" fill="#F87171" />
-          <line x1="71" x2="71" y1="102" y2="128" stroke="#F87171" strokeWidth="1" />
-          <rect x="80" y="98" width="6" height="22" fill="#34D399" />
-          <line x1="83" x2="83" y1="90" y2="125" stroke="#34D399" strokeWidth="1" />
-          <rect x="92" y="92" width="6" height="16" fill="#34D399" />
-          <line x1="95" x2="95" y1="84" y2="115" stroke="#34D399" strokeWidth="1" />
+          <rect x="8" y="120" width="6" height="22" className="fill-emerald-400" />
+          <line x1="11" x2="11" y1="110" y2="148" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="20" y="115" width="6" height="18" className="fill-emerald-400" />
+          <line x1="23" x2="23" y1="108" y2="138" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="32" y="118" width="6" height="14" className="fill-red-400" />
+          <line x1="35" x2="35" y1="112" y2="138" className="stroke-red-400" strokeWidth="1" />
+          <rect x="44" y="112" width="6" height="22" className="fill-emerald-400" />
+          <line x1="47" x2="47" y1="104" y2="140" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="56" y="105" width="6" height="20" className="fill-emerald-400" />
+          <line x1="59" x2="59" y1="98" y2="130" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="68" y="108" width="6" height="14" className="fill-red-400" />
+          <line x1="71" x2="71" y1="102" y2="128" className="stroke-red-400" strokeWidth="1" />
+          <rect x="80" y="98" width="6" height="22" className="fill-emerald-400" />
+          <line x1="83" x2="83" y1="90" y2="125" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="92" y="92" width="6" height="16" className="fill-emerald-400" />
+          <line x1="95" x2="95" y1="84" y2="115" className="stroke-emerald-400" strokeWidth="1" />
         </g>
 
         {/* Price area fill */}

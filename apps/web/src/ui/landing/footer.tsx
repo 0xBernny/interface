@@ -141,9 +141,16 @@ export function Footer() {
         </div>
 
         {/* Big wordmark */}
+        {/* ds-allow: text-[16.4vw] is fluid viewport-relative display type
+            (scales the whole wordmark with page width) — not a fixed size
+            a px-based token scale can represent. */}
         <div className="font-trading relative select-none overflow-hidden border-t border-border py-7 text-[16.4vw] font-semibold leading-[0.82] tracking-[-0.06em] text-foreground">
           <div className="flex items-start gap-[0.06em] whitespace-nowrap">
             <span>so4.market</span>
+            {/* ds-allow: text-[0.18em] is intentionally relative to the
+                wordmark's own (fluid, vw-based) font-size above, so it
+                scales proportionally with it — a fixed token would break
+                that relationship. */}
             <span className="mt-[0.04em] inline-flex h-[0.32em] w-[0.32em] shrink-0 items-center justify-center rounded-full border-[0.025em] border-current text-[0.18em] font-normal">
               C
             </span>

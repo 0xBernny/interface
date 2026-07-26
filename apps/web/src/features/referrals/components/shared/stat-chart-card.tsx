@@ -1,3 +1,4 @@
+import { cn } from "@workspace/ui/lib/utils"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -48,7 +49,7 @@ type Props = {
 
 export function StatChartCard({ title, tooltip, value, period, accent = "blue" }: Props) {
   const labels = xAxisLabels(period)
-  const accentColor = accent === "green" ? "#4ade80" : "#60a5fa"
+  const accentStrokeClass = accent === "green" ? "stroke-green-400" : "stroke-blue-400"
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -105,7 +106,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
             y1={80}
             x2={396}
             y2={80}
-            stroke={accentColor}
+            className={cn(accentStrokeClass)}
             strokeOpacity={0.4}
             strokeWidth={1.5}
             strokeLinecap="round"
