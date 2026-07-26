@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import { HeadContent, Scripts, createRootRoute, Link } from "@tanstack/react-router"
 import { Toaster } from "sonner"
 import appCss from "@workspace/ui/globals.css?url"
 import { AppProviders } from "../app/providers"
@@ -69,6 +69,9 @@ export const Route = createRootRoute({
       },
       { name: "author", content: "so4 labs" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
+      // ds-allow: <meta content> requires a literal color string for
+      // mobile browser chrome tinting — can't reference a CSS custom
+      // property here, so it can't be sourced from the token system.
       { name: "theme-color", content: "#0A0B0D" },
       { name: "color-scheme", content: "dark light" },
       // Prevents phone number detection on iOS / Android WebView
@@ -136,6 +139,11 @@ export const Route = createRootRoute({
       <p className="mt-2 text-muted-foreground">
         The requested page could not be found.
       </p>
+      <div className="mt-4">
+        <Link to="/" className="text-primary hover:underline">
+          Go back home
+        </Link>
+      </div>
     </main>
   ),
   shellComponent: RootDocument,

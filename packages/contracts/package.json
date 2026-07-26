@@ -7,6 +7,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:cov": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --typecheck.enabled=false --exclude src/generated.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "exports": {

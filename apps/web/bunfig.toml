@@ -1,0 +1,5 @@
+[test]
+coverageThreshold = 0.65
+coverageReporter = ["text", "lcov"]
+coverageSkipTestFiles = true
+coveragePathIgnorePatterns = ["register-dom.ts", "setup-tests.ts", "test/**", "src/shared/lib/format.ts"]

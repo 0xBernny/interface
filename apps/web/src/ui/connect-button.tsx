@@ -62,7 +62,7 @@ export function ConnectButton({
       <Button
         disabled
         variant="outline"
-        className="h-9.5 px-4 text-[13.5px]"
+        className="h-9.5 px-4 text-13-5"
         aria-live="polite"
         aria-label="Connecting wallet"
       >
@@ -83,7 +83,7 @@ export function ConnectButton({
         <Button
           id="wallet-account-trigger"
           variant="outline"
-          className="h-9.5 max-w-34 px-3 text-[13.5px] whitespace-nowrap sm:max-w-none"
+          className="h-9.5 max-w-34 whitespace-nowrap px-3 text-13-5 sm:max-w-none"
           onClick={() => setOpen((v) => !v)}
           aria-label={`Wallet connected as ${shortenAddress(address)}`}
           aria-haspopup="menu"
@@ -195,7 +195,7 @@ export function ConnectButton({
     <>
       <Button
         variant="outline"
-        className="h-9.5 px-3 text-[13.5px] whitespace-nowrap sm:px-4"
+        className="h-9.5 whitespace-nowrap px-3 text-13-5 sm:px-4"
         onClick={() => setWalletModalOpen(true)}
         aria-label="Connect wallet"
         aria-haspopup="dialog"

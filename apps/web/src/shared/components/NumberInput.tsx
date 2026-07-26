@@ -47,7 +47,7 @@ export function NumberInput({
             type="button"
             size="sm"
             variant="outline"
-            className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-[11px]"
+            className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-11"
             onClick={onMax}
           >
             {maxButtonLabel}

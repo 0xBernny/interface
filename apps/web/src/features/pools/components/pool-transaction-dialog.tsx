@@ -310,7 +310,7 @@ function TransactionSteps({ steps }: { steps: Array<TransactionStep> }) {
         {steps.map((step, index) => (
           <li key={step.id} className="flex gap-3">
             <span
-              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-medium ${
+              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-10 font-medium ${
                 step.status === "confirmed"
                   ? "border-emerald-500 bg-emerald-500/10 text-emerald-500"
                   : step.status === "active"
@@ -331,7 +331,7 @@ function TransactionSteps({ steps }: { steps: Array<TransactionStep> }) {
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-medium text-foreground">{step.label}</p>
-                <span className="shrink-0 text-[11px] text-muted-foreground">
+                <span className="shrink-0 text-11 text-muted-foreground">
                   {step.status === "confirmed"
                     ? "Confirmed"
                     : step.status === "active"
@@ -343,11 +343,11 @@ function TransactionSteps({ steps }: { steps: Array<TransactionStep> }) {
                           : "Waiting"}
                 </span>
               </div>
-              <p className="mt-0.5 break-words text-[11px] leading-relaxed text-muted-foreground">
+              <p className="mt-0.5 break-words text-11 leading-relaxed text-muted-foreground">
                 {step.description}
               </p>
               {step.txHash ? (
-                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                <p className="mt-1 font-mono text-11 text-muted-foreground">
                   Tx {formatTxHash(step.txHash)}
                 </p>
               ) : null}

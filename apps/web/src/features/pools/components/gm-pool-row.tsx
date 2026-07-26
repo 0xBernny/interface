@@ -1,5 +1,6 @@
 import { useEffect } from "react"
 import { Skeleton } from "@workspace/ui/components/skeleton"
+import { StatusBadge } from "@workspace/ui/components/status-badge"
 import { usePoolRowData } from "../hooks/use-pool-row-data"
 import {
   getComposition,
@@ -103,7 +104,6 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
   const tvlUsd = getPoolTvlUsd(poolValue)
   const apy = getEstimatedApy(poolValue)
   const openInterestUsd = getOpenInterestUsd(data?.openInterest)
-  // Display funding as an hourly percentage, matching the trade page convention.
   const funding = getFundingRatePerHourPct(data?.fundingInfo?.fundingFactorPerSecond)
   const userGmBalance = data?.userGmBalance ?? 0n
   const hasUserGm = userGmBalance > 0n
@@ -113,7 +113,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
   const tvlTitle = formatUsd(tvlUsd)
   const openInterestLabel = formatCompactUsd(openInterestUsd)
   const openInterestTitle = formatUsd(openInterestUsd)
-  const fundingLabel = funding === 0 ? "—" : formatPct(funding, { decimals: 4 })
+  const fundingLabel = funding === 0 ? "\u2014" : formatPct(funding, { decimals: 4 })
   const apyLabel = apy == null ? "Est. pending" : `${formatPct(apy, { sign: false })} est.`
   const userGmLabel = formatToken(rawToDisplay(userGmBalance), "GM", { decimals: 4 })
   const userGmTitle = formatToken(Number(formatSorobanAmount(userGmBalance, 7, 7)), "GM", {
@@ -141,7 +141,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
             shortSymbol={market.shortSymbol}
           />
         </div>
-        <dl className="mt-4 grid grid-cols-2 gap-3 text-[13px]">
+        <dl className="mt-4 grid grid-cols-2 gap-3 text-13">
           <MobileStat
             label="Open interest"
             value={openInterestLabel}
@@ -158,12 +158,9 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
           <MobileStat label="Funding / hr" value={fundingLabel} isLoading={isLoading} />
         </dl>
         {hasFailures ? (
-          <p
-            className="mt-3 inline-flex max-w-full items-center rounded border border-yellow-500/25 bg-yellow-500/10 px-2 py-1 text-[12px] text-yellow-700 dark:text-yellow-300"
-            title={failureTitle}
-          >
-            Partial data
-          </p>
+          <div className="mt-3">
+            <StatusBadge variant="warning">Partial data</StatusBadge>
+          </div>
         ) : null}
         <div className="mt-4">
           <PoolActions
@@ -219,12 +216,9 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
           userGmBalance={userGmBalance}
         />
         {hasFailures ? (
-          <p
-            className="mt-2 text-right text-[11px] text-yellow-700 dark:text-yellow-300"
-            title={failureTitle}
-          >
-            Partial data
-          </p>
+          <div className="mt-2">
+            <StatusBadge variant="warning">Partial data</StatusBadge>
+          </div>
         ) : null}
       </td>
     </tr>

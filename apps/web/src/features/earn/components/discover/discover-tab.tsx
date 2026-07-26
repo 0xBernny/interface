@@ -28,7 +28,7 @@ function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: 
         <div className="h-full bg-blue-400/70" style={{ width: `${longPct}%` }} />
         <div className="h-full bg-amber-400/70" style={{ width: `${shortPct}%` }} />
       </div>
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-10 text-muted-foreground">
         {longPct}% / {shortPct}%
       </p>
     </div>
@@ -46,7 +46,7 @@ function FilterButton({ active, onClick, children }: FilterButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors",
+        "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
         active
           ? "bg-background text-foreground shadow-sm"
           : "text-muted-foreground hover:text-foreground",
@@ -68,7 +68,7 @@ function SortButton({ active, onClick, children }: SortButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "rounded px-1.5 py-0.5 text-[12px] transition-colors",
+        "rounded px-1.5 py-0.5 text-xs transition-colors",
         active ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >
@@ -157,7 +157,7 @@ export function DiscoverTab() {
           </FilterButton>
         </div>
 
-        <div className="ml-auto flex items-center gap-1 text-[12px] text-muted-foreground">
+        <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
           <span>Sort</span>
           <SortButton active={sort === "apy"} onClick={() => setSort("apy")}>
             APY {sort === "apy" && "↓"}
@@ -172,23 +172,23 @@ export function DiscoverTab() {
       {/* Your deposit summary */}
       {stakingInfo && (stakingInfo.stakedSO4 > 0n || stakingInfo.stakedEsSO4 > 0n || stakingInfo.stakedMultiplierPoints > 0n) && (
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="mb-2 text-[12px] font-semibold text-muted-foreground">Your Deposit</p>
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">Your Deposit</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <div>
-              <p className="text-[10px] text-muted-foreground">Staked SO4</p>
-              <p className="text-[13px] font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedSO4, 7), "SO4")}</p>
+              <p className="text-10 text-muted-foreground">Staked SO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedSO4, 7), "SO4")}</p>
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground">Staked esSO4</p>
-              <p className="text-[13px] font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedEsSO4, 7), "esSO4")}</p>
+              <p className="text-10 text-muted-foreground">Staked esSO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedEsSO4, 7), "esSO4")}</p>
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground">Multiplier Points</p>
-              <p className="text-[13px] font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedMultiplierPoints, 7), "MP")}</p>
+              <p className="text-10 text-muted-foreground">Multiplier Points</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedMultiplierPoints, 7), "MP")}</p>
             </div>
             <div>
-              <p className="text-[10px] text-muted-foreground">Pending Rewards</p>
-              <p className="text-[13px] font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
+              <p className="text-10 text-muted-foreground">Pending Rewards</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
             </div>
           </div>
         </div>
@@ -226,15 +226,15 @@ export function DiscoverTab() {
 
       {/* Legend */}
       <div className="flex items-center gap-5 px-1">
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-full bg-blue-400/70" />
           Long token
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
           Short token
         </div>
-        <p className="ml-auto text-[11px] text-muted-foreground">
+        <p className="ml-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
         </p>
       </div>
@@ -342,7 +342,7 @@ function DiscoverRow({
       <td className="px-5 py-4">
         <span
           className={cn(
-            "inline-flex h-5 items-center rounded-full border px-2 text-[10px] font-medium",
+            "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
             row.kind === "glv"
               ? "border-teal-500/20 bg-teal-500/10 text-teal-400"
               : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
@@ -364,7 +364,7 @@ function DiscoverRow({
         {longPct !== undefined ? (
           <PoolCompositionBar longPct={longPct} shortPct={shortPct ?? 0} />
         ) : (
-          <span className="text-[11px] text-muted-foreground">Diversified</span>
+          <span className="text-11 text-muted-foreground">Diversified</span>
         )}
       </td>
       <td className="px-5 py-4 text-right">

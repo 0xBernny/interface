@@ -22,7 +22,7 @@ export function TimePeriodFilter({ value, onChange }: Props) {
           key={p.value}
           onClick={() => onChange(p.value)}
           className={cn(
-            "rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors",
+            "rounded-md px-2.5 py-1 text-11 font-medium transition-colors",
             value === p.value
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground",
