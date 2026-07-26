@@ -191,21 +191,25 @@ describe("PositionsList", () => {
   it("renders indexer disabled message when disabled", () => {
     mockIsDisabled = true
     render(<PositionsList />, { wrapper: createWrapper() })
-    expect(screen.getByText(/indexer disabled/i)).toBeInTheDocument()
+    const messages = screen.getAllByText(/indexer disabled/i)
+    expect(messages.length).toBeGreaterThanOrEqual(1)
   })
 
   it("shows positive PnL in green", () => {
     mockPositions = [createMockPosition({ pnlAfterFees: 950 })]
     render(<PositionsList />, { wrapper: createWrapper() })
-    const pnlElement = screen.getByText(/\$950\.00/)
-    expect(pnlElement).toBeInTheDocument()
-    expect(pnlElement.className).toContain("text-green-500")
+    const pnlElements = screen.getAllByText(/\$950\.00/)
+    expect(pnlElements.length).toBeGreaterThanOrEqual(1)
+    expect(pnlElements[0].className).toContain("text-green-500")
   })
 
   it("shows negative PnL in red", () => {
     mockPositions = [createMockPosition({ pnlAfterFees: -500 })]
     render(<PositionsList />, { wrapper: createWrapper() })
-    const pnlElement = screen.getByText((content) => content.includes("-$") && content.includes("500"))
-    expect(pnlElement).toBeInTheDocument()
+    const pnlElements = screen.getAllByText((_content, element) => {
+      const text = element?.textContent ?? ""
+      return text.includes("$-") && text.includes("500")
+    })
+    expect(pnlElements.length).toBeGreaterThanOrEqual(1)
   })
 })

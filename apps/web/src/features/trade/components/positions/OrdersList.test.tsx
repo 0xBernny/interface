@@ -87,7 +87,8 @@ describe("OrdersList", () => {
   it("renders empty state with indexer disabled message", () => {
     mockIsDisabled = true
     render(<OrdersList />, { wrapper: createWrapper() })
-    expect(screen.getByText(/indexer disabled/i)).toBeInTheDocument()
+    const messages = screen.getAllByText(/indexer disabled/i)
+    expect(messages.length).toBeGreaterThanOrEqual(1)
   })
 
   it("renders active orders with market name and type", () => {

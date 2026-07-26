@@ -173,12 +173,12 @@ describe("TradePanel", () => {
     expect(screen.getByRole("tab", { name: "Swap" })).toBeInTheDocument()
   })
 
-  it("renders order mode buttons (Market, Limit, Trigger)", () => {
+  it("renders order mode tabs (Market, Limit, Trigger)", () => {
     render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
 
-    expect(screen.getByRole("button", { name: "Market" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Limit" })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Trigger" })).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: "Market" })).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: "Limit" })).toBeInTheDocument()
+    expect(screen.getByRole("tab", { name: "Trigger" })).toBeInTheDocument()
   })
 
   it("renders collateral input for position trades", () => {
