@@ -50,8 +50,8 @@ export function ReferralsPage() {
       <Navbar variant="app" />
       <div className="mx-auto w-full max-w-260 px-4 pb-16 pt-8 sm:px-6 lg:px-12">
         <header className="mb-8">
-          <Heading level={1}>Referrals</Heading>
-          <Text size="base" tone="muted" className="mt-1">
+          <h1 className="text-22 font-semibold tracking-tight">Referrals</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Get fee discounts and earn up to 15% commission through the SO4 referral program
           </Text>
         </header>

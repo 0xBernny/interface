@@ -30,6 +30,7 @@ export function TimePeriodFilter({ value, onChange }: Props) {
           aria-pressed={value === p.value}
           onClick={() => onChange(p.value)}
           className={cn(
+            "rounded-md px-2.5 py-1 text-11 font-medium transition-colors",
             value === p.value
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground",

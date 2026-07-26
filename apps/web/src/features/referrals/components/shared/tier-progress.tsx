@@ -17,12 +17,22 @@ export function TierProgress({ tier, volumeUsd }: Props) {
 
   if (!next) {
     return (
-      <Alert variant="warning" aria-label="tier progress" className="items-center py-2.5">
-        <TierBadge tier={current} />
-        <Text size="sm" weight="medium" render={<span />}>
-          Maximum tier reached!
-        </Text>
-      </Alert>
+      <div
+        role="status"
+        aria-label="tier progress"
+        className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/[0.06] px-4 py-2.5"
+      >
+        <span
+          className={cn(
+            "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
+            current.colorClass,
+            current.ringClass,
+          )}
+        >
+          {current.label}
+        </span>
+        <span className="text-xs font-medium text-yellow-400">Maximum tier reached!</span>
+      </div>
     )
   }
 
@@ -37,13 +47,27 @@ export function TierProgress({ tier, volumeUsd }: Props) {
     >
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <TierBadge tier={current} />
-          <Text size="xs" tone="muted" render={<span />}>
-            →
-          </Text>
-          <TierBadge tier={next} />
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
+              current.colorClass,
+              current.ringClass,
+            )}
+          >
+            {current.label}
+          </span>
+          <span className="text-11 text-muted-foreground">→</span>
+          <span
+            className={cn(
+              "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
+              next.colorClass,
+              next.ringClass,
+            )}
+          >
+            {next.label}
+          </span>
         </div>
-        <NumericText role="muted" size="xs" aria-label="remaining volume">
+        <span className="text-11 text-muted-foreground" aria-label="remaining volume">
           {formatUsd(remaining, { compact: true })} more needed
         </NumericText>
       </div>

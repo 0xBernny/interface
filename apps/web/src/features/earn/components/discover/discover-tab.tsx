@@ -44,7 +44,7 @@ function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: 
         <div className="h-full bg-long/70" style={{ width: `${longPct}%` }} />
         <div className="h-full bg-warning/70" style={{ width: `${shortPct}%` }} />
       </div>
-      <Text size="2xs" tone="muted">
+      <p className="text-10 text-muted-foreground">
         {longPct}% / {shortPct}%
       </Text>
     </div>
@@ -63,8 +63,12 @@ function FilterButton({ active, onClick, children }: ToggleButtonProps) {
       variant="ghost"
       size="lg"
       onClick={onClick}
-      aria-pressed={active}
-      className={cn(active && "bg-background text-foreground shadow-sm")}
+      className={cn(
+        "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+        active
+          ? "bg-background text-foreground shadow-sm"
+          : "text-muted-foreground hover:text-foreground",
+      )}
     >
       {children}
     </Button>
@@ -77,8 +81,10 @@ function SortButton({ active, onClick, children }: ToggleButtonProps) {
       variant="ghost"
       size="sm"
       onClick={onClick}
-      aria-pressed={active}
-      className={cn(active ? "font-semibold text-foreground" : "text-muted-foreground")}
+      className={cn(
+        "rounded px-1.5 py-0.5 text-xs transition-colors",
+        active ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground",
+      )}
     >
       {children}
     </Button>
@@ -165,10 +171,8 @@ export function DiscoverTab() {
           </FilterButton>
         </div>
 
-        <div className="ml-auto flex items-center gap-1">
-          <Text size="sm" tone="muted" render={<span />}>
-            Sort
-          </Text>
+        <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+          <span>Sort</span>
           <SortButton active={sort === "apy"} onClick={() => setSort("apy")}>
             APY {sort === "apy" && "↓"}
           </SortButton>
@@ -183,33 +187,24 @@ export function DiscoverTab() {
 
       {/* Your deposit summary */}
       {stakingInfo && (stakingInfo.stakedSO4 > 0n || stakingInfo.stakedEsSO4 > 0n || stakingInfo.stakedMultiplierPoints > 0n) && (
-        <Card>
-          <CardContent className="p-4">
-            <Text size="sm" tone="muted" weight="semibold" className="mb-2">
-              Your Deposit
-            </Text>
-            <div className="flex flex-wrap gap-x-6 gap-y-2">
-              <Stat
-                label="Staked SO4"
-                size="md"
-                value={formatToken(fromSorobanAmount(stakingInfo.stakedSO4, 7), "SO4")}
-              />
-              <Stat
-                label="Staked esSO4"
-                size="md"
-                value={formatToken(fromSorobanAmount(stakingInfo.stakedEsSO4, 7), "esSO4")}
-              />
-              <Stat
-                label="Multiplier Points"
-                size="md"
-                value={formatToken(fromSorobanAmount(stakingInfo.stakedMultiplierPoints, 7), "MP")}
-              />
-              <Stat
-                label="Pending Rewards"
-                size="md"
-                role="positive"
-                value={formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}
-              />
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">Your Deposit</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <div>
+              <p className="text-10 text-muted-foreground">Staked SO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedSO4, 7), "SO4")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Staked esSO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedEsSO4, 7), "esSO4")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Multiplier Points</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedMultiplierPoints, 7), "MP")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Pending Rewards</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
             </div>
           </CardContent>
         </Card>
@@ -244,15 +239,15 @@ export function DiscoverTab() {
 
       {/* Legend */}
       <div className="flex items-center gap-5 px-1">
-        <Text size="xs" tone="muted" render={<span />} className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-long/70" />
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
+          <span className="h-2.5 w-2.5 rounded-full bg-blue-400/70" />
           Long token
-        </Text>
-        <Text size="xs" tone="muted" render={<span />} className="flex items-center gap-1.5">
-          <span className="size-2.5 rounded-full bg-warning/70" />
+        </div>
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
+          <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
           Short token
-        </Text>
-        <Text size="xs" tone="muted" className="ml-auto">
+        </div>
+        <p className="ml-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
         </Text>
       </div>
@@ -355,30 +350,33 @@ function DiscoverRow({
           <TokenIcon symbol={row.longToken} size={32} />
           <span className="font-medium">{row.name}</span>
         </div>
-      </TableCell>
-      <TableCell className="py-4">
-        <Badge variant={POOL_KIND_BADGE[row.kind]}>{row.kind.toUpperCase()}</Badge>
-      </TableCell>
-      <TableCell align="right" className="py-4">
-        <NumericText role="positive" weight="semibold">
-          {formatPct(apy, { sign: false })}
-        </NumericText>
-      </TableCell>
-      <TableCell align="right" className="py-4">
-        <NumericText role="muted">{formatUsd(tvl, { compact: true })}</NumericText>
-      </TableCell>
-      <TableCell align="right" className="py-4">
-        <NumericText role="muted">
-          {userBalance > 0 ? userBalance.toLocaleString(undefined, { maximumFractionDigits: 4 }) : "0"}
-        </NumericText>
-      </TableCell>
-      <TableCell className="py-4">
+      </td>
+      <td className="px-5 py-4">
+        <span
+          className={cn(
+            "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
+            row.kind === "glv"
+              ? "border-teal-500/20 bg-teal-500/10 text-teal-400"
+              : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
+          )}
+        >
+          {row.kind.toUpperCase()}
+        </span>
+      </td>
+      <td className="px-5 py-4 text-right">
+        <span className="font-mono font-semibold text-green-400">{formatPct(apy, { sign: false })}</span>
+      </td>
+      <td className="px-5 py-4 text-right font-mono text-muted-foreground">
+        {formatUsd(tvl, { compact: true })}
+      </td>
+      <td className="px-5 py-4 text-right font-mono text-muted-foreground">
+        {userBalance > 0 ? userBalance.toLocaleString(undefined, { maximumFractionDigits: 4 }) : "0"}
+      </td>
+      <td className="px-5 py-4">
         {longPct !== undefined ? (
           <PoolCompositionBar longPct={longPct} shortPct={shortPct ?? 0} />
         ) : (
-          <Text size="xs" tone="muted" render={<span />}>
-            Diversified
-          </Text>
+          <span className="text-11 text-muted-foreground">Diversified</span>
         )}
       </TableCell>
       <TableCell align="right" className="py-4">

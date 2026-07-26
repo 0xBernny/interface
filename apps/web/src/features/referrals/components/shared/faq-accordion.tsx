@@ -38,9 +38,7 @@ function AccordionItem({ item }: { item: FaqItem }) {
         aria-controls={panelId}
         className="flex w-full items-center justify-between gap-3 py-3 text-left"
       >
-        <Text size="sm" weight="medium" render={<span />} className="leading-snug">
-          {item.q}
-        </Text>
+        <span className="text-xs font-medium leading-snug">{item.q}</span>
         <ChevronIcon open={open} />
       </button>
 
@@ -51,9 +49,7 @@ function AccordionItem({ item }: { item: FaqItem }) {
           open ? "max-h-96 pb-3" : "max-h-0",
         )}
       >
-        <Text size="xs" tone="muted" variant="leading">
-          {item.a}
-        </Text>
+        <p className="text-11 leading-relaxed text-muted-foreground">{item.a}</p>
       </div>
     </div>
   )
@@ -66,17 +62,15 @@ type Props = {
 
 export function FaqAccordion({ items, title = "FAQ" }: Props) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <Text size="xs" tone="muted" weight="semibold" variant="label" className="mb-1">
-          {title}
-        </Text>
-        <div>
-          {items.map((item) => (
-            <AccordionItem key={item.q} item={item} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="rounded-xl border border-border bg-card p-4">
+      <p className="mb-1 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
+        {title}
+      </p>
+      <div>
+        {items.map((item) => (
+          <AccordionItem key={item.q} item={item} />
+        ))}
+      </div>
+    </div>
   )
 }

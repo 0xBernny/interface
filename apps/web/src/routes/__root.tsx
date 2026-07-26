@@ -69,6 +69,9 @@ export const Route = createRootRoute({
       },
       { name: "author", content: "so4 labs" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
+      // ds-allow: <meta content> requires a literal color string for
+      // mobile browser chrome tinting — can't reference a CSS custom
+      // property here, so it can't be sourced from the token system.
       { name: "theme-color", content: "#0A0B0D" },
       { name: "color-scheme", content: "dark light" },
       // Prevents phone number detection on iOS / Android WebView

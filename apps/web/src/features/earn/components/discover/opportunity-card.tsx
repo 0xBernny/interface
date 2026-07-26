@@ -44,34 +44,32 @@ export function OpportunityCard({
               {name}
             </Text>
           </div>
+          <span className="text-15 font-semibold">{name}</span>
         </div>
 
-        <div className="mb-5 grid grid-cols-2 gap-4">
-          <Stat
-            label="APR"
-            value={formatPct(apy, { sign: false })}
-            role="positive"
-            size="md"
-          />
-          <Stat
-            label="TVL"
-            value={formatUsd(tvlUsd, { compact: true })}
-            role="muted"
-            size="md"
-          />
+      <div className="mb-5 grid grid-cols-2 gap-4">
+        <div>
+          <p className="mb-1 text-11 text-muted-foreground">APR</p>
+          <p className="font-mono text-sm font-semibold text-green-400">
+            {formatPct(apy, { sign: false })}
+          </p>
+        </div>
+        <div>
+          <p className="mb-1 text-11 text-muted-foreground">TVL</p>
+          <p className="font-mono text-sm text-muted-foreground">
+            {formatUsd(tvlUsd, { compact: true })}
+          </p>
         </div>
 
-        <Button
-          size="lg"
-          className="w-full"
-          disabled={!isAvailable}
-          onClick={() => {
-            if (isAvailable) onAction?.()
-          }}
-        >
-          {isAvailable ? actionLabel : "Coming Soon"}
-        </Button>
-      </CardContent>
-    </Card>
+      <Button
+        className="w-full text-13 font-medium"
+        disabled={!isAvailable}
+        onClick={() => {
+          if (isAvailable) onAction?.()
+        }}
+      >
+        {isAvailable ? actionLabel : "Coming Soon"}
+      </Button>
+    </div>
   )
 }

@@ -8,6 +8,31 @@ import { useEarnStats } from "../../hooks/use-earn-data"
 import { claimRewards } from "../../lib/earn"
 import { formatPct, formatUsd } from "@/shared/lib/format"
 
+
+
+function StatItem({
+  label,
+  value,
+  isLoading,
+  mono = true,
+}: {
+  label: string
+  value: string
+  isLoading?: boolean
+  mono?: boolean
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-11 text-muted-foreground">{label}</span>
+      {isLoading ? (
+        <Skeleton className="h-5 w-20" />
+      ) : (
+        <span className={`text-sm font-medium ${mono ? "tabular-nums" : ""}`}>{value}</span>
+      )}
+    </div>
+  )
+}
+
 function InfoIcon() {
   return (
     <svg
@@ -65,7 +90,7 @@ export function RewardsBar() {
       {bannerOpen && (
         <Alert variant="info" className="rounded-xl">
           <InfoIcon />
-          <AlertDescription className="flex-1">
+          <p className="flex-1 text-xs leading-relaxed">
             Protocol fees are accumulating in the Treasury for SO4 buybacks. Rewards will be
             distributed to stakers proportional to staking power{" "}
             <span className="font-medium">(duration × amount staked)</span> when the buyback
@@ -132,6 +157,7 @@ export function RewardsBar() {
             loadingText="Claiming…"
             disabled={!hasPendingRewards}
             onClick={() => void handleClaim()}
+            className="h-9 gap-2 text-xs"
           >
             <GiftIcon />
             Claim rewards

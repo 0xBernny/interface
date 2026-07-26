@@ -9,6 +9,37 @@ import { GLV_VAULTS, GM_POOLS } from "../../data/pools"
 import { buySO4, depositGLV, depositGM } from "../../lib/earn"
 import { formatPct } from "@/shared/lib/format"
 
+const TOKEN_COLORS: Record<string, string> = {
+  BTC: "bg-orange-500/10 text-orange-400 ring-orange-500/20",
+  ETH: "bg-indigo-500/10 text-indigo-400 ring-indigo-500/20",
+  XLM: "bg-sky-500/10 text-sky-400 ring-sky-500/20",
+  USDC: "bg-blue-500/10 text-blue-400 ring-blue-500/20",
+  GLV: "bg-teal-500/10 text-teal-400 ring-teal-500/20",
+  SO4: "bg-primary/10 text-primary ring-primary/20",
+}
+
+function TokenAvatar({
+  symbol,
+  size = "md",
+}: {
+  symbol: string
+  size?: "sm" | "md" | "lg"
+}) {
+  const color = TOKEN_COLORS[symbol] ?? "bg-muted/60 text-muted-foreground ring-border"
+  const dimensions = { sm: "h-7 w-7 text-10", md: "h-9 w-9 text-11", lg: "h-11 w-11 text-sm" }
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 items-center justify-center rounded-full font-semibold ring-1",
+        color,
+        dimensions[size],
+      )}
+    >
+      {symbol.slice(0, 2)}
+    </div>
+  )
+}
+
 function LightningIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" className="text-primary">
@@ -71,26 +102,23 @@ function SO4Card() {
   }
 
   return (
-    <Card className="flex flex-col justify-between gap-5 p-4">
-      <SectionLabel>SO4</SectionLabel>
+    <div className="flex flex-col justify-between gap-5 rounded-xl border border-border bg-card p-4">
+      <p className="text-11 font-medium uppercase tracking-wider text-muted-foreground">
+        SO4
+      </p>
       <div className="flex items-center gap-3">
         <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
           <SO4LogoIcon />
         </div>
         <div>
-          <Text size="md" weight="semibold">
-            SO4
-          </Text>
-          <Text size="xs" tone="muted">
-            Accumulating…
-          </Text>
+          <p className="text-13 font-semibold">SO4</p>
+          <p className="text-11 text-muted-foreground">Accumulating…</p>
         </div>
       </div>
-      <LoadingButton
-        size="lg"
-        className="w-full"
-        isLoading={pending}
-        loadingText="Opening"
+      <Button
+        size="sm"
+        className="h-8 w-full text-xs"
+        disabled={pending}
         onClick={handleBuy}
       >
         Buy SO4
@@ -114,31 +142,28 @@ function GlvCard() {
   }
 
   return (
-    <Card className="flex flex-col justify-between gap-4 p-4">
-      <SectionLabel>GLV vaults</SectionLabel>
+    <div className="flex flex-col justify-between gap-4 rounded-xl border border-border bg-card p-4">
+      <p className="text-11 font-medium uppercase tracking-wider text-muted-foreground">
+        GLV vaults
+      </p>
       <div className="flex items-center gap-3">
         <TokenAvatar symbol="GLV" size="md" />
         <div className="min-w-0 flex-1">
-          <Text size="md" weight="semibold">
+          <p className="text-13 font-semibold">
             {vault.name}{" "}
             <Text tone="muted" render={<span />}>
               [{vault.displayPair}]
             </Text>
           </Text>
           <div className="flex items-baseline gap-1">
-            <NumericText role="positive" size="lg" weight="bold">
-              {formatPct(vault.apy, { sign: false })}
-            </NumericText>
-            <Text size="2xs" tone="muted" render={<span />}>
-              Performance APY
-            </Text>
+            <span className="text-base font-bold text-green-400">{formatPct(vault.apy, { sign: false })}</span>
+            <span className="text-10 text-muted-foreground">Performance APY</span>
           </div>
         </div>
-        <LoadingButton
-          size="lg"
-          className="shrink-0"
-          isLoading={pending}
-          loadingText="Depositing"
+        <Button
+          size="sm"
+          className="h-8 shrink-0 text-xs"
+          disabled={pending}
           onClick={() => void handleEarn()}
         >
           Earn
@@ -165,8 +190,10 @@ function GmCard() {
   return (
     <Card className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
-        <SectionLabel>GM pools</SectionLabel>
-        <Button variant="ghost" size="xs" className="gap-1">
+        <p className="text-11 font-medium uppercase tracking-wider text-muted-foreground">
+          GM pools
+        </p>
+        <button className="flex items-center gap-1 text-11 text-muted-foreground transition-colors hover:text-foreground">
           Explore more
           <ExternalLinkIcon />
         </Button>
@@ -177,26 +204,19 @@ function GmCard() {
           <div key={pool.id} className="flex items-center gap-3">
             <TokenAvatar symbol={pool.longToken} size="sm" />
             <div className="min-w-0 flex-1">
-              <Text size="sm" weight="medium">
-                {pool.name}
-              </Text>
-              <Text size="2xs" tone="muted">
+              <p className="text-xs font-medium">{pool.name}</p>
+              <p className="text-10 text-muted-foreground">
                 [{pool.longToken}-{pool.shortToken}]
               </Text>
             </div>
             <div className="shrink-0 text-right">
-              <NumericText role="positive" size="md" weight="bold">
-                {formatPct(pool.apy, { sign: false })}
-              </NumericText>
-              <Text size="2xs" tone="muted">
-                Performance APY
-              </Text>
+              <p className="text-13 font-bold text-green-400">{formatPct(pool.apy, { sign: false })}</p>
+              <p className="text-10 text-muted-foreground">Performance APY</p>
             </div>
             <LoadingButton
               size="sm"
-              className="shrink-0 px-3"
-              isLoading={pending === pool.id}
-              loadingText="Depositing"
+              className="h-7 shrink-0 px-3 text-11"
+              disabled={pending === pool.id}
               onClick={() => void handleEarn(pool.id, pool.name)}
             >
               Earn
@@ -213,7 +233,7 @@ export function RecommendedAssets() {
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <LightningIcon />
-        <Heading level={2}>Recommended</Heading>
+        <h2 className="text-15 font-semibold">Recommended</h2>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <SO4Card />

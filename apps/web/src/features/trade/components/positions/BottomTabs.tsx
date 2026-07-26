@@ -1,6 +1,9 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Button } from "@workspace/ui/components/button"
+import { DataTable } from "@workspace/ui/components/data-table"
+import { EmptyState } from "@workspace/ui/components/empty-state"
+import { Numeric } from "@workspace/ui/components/numeric"
 import { usePositions } from "../../hooks/usePositions"
 import { hasFrozenOrders, useOrders } from "../../hooks/useOrders"
 import { claimFundingFees } from "../../lib/stellar"
@@ -9,7 +12,6 @@ import { PositionsList } from "./PositionsList"
 import { OrdersList } from "./OrdersList"
 import type { Position } from "../../hooks/usePositions"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
-import { formatUsd } from "@/shared/lib/format"
 
 // TODO: Add Trades and Claims tabs once tradeHistory + claimFundingFees are wired up
 
@@ -67,17 +69,19 @@ export function BottomTabs({ onSelectPosition }: Props) {
       </TabsContent>
 
       <TabsContent value="trades">
-        <div className="flex h-24 items-center justify-center text-xs text-muted-foreground">
-          {/* TODO: Implement TradeHistoryList using useTradeHistory (TanStack Query + Soroban events) */}
-          Trade history coming soon
-        </div>
+        <EmptyState
+          title="Trade history coming soon"
+          description="Your completed trades will appear here once the feature is enabled."
+        />
       </TabsContent>
 
       <TabsContent value="claims">
         {claimablePositions.length > 0 ? (
           <div className="space-y-2 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Total claimable: {formatUsd(totalClaimable)}</span>
+              <span className="text-xs text-muted-foreground">
+                Total claimable: <Numeric value={totalClaimable} format="usd" role="positive" />
+              </span>
               <Button
                 size="xs"
                 variant="outline"
@@ -87,19 +91,28 @@ export function BottomTabs({ onSelectPosition }: Props) {
                 {claimingAll ? "Claiming..." : "Claim All"}
               </Button>
             </div>
-            <div className="space-y-1">
-              {claimablePositions.map((p) => (
-                <div key={p.key} className="flex items-center justify-between rounded border border-border/50 px-3 py-2 text-xs">
-                  <span className="font-medium">{p.marketName}</span>
-                  <span className="text-green-500">{formatUsd(p.fundingFeeUsd)}</span>
-                </div>
-              ))}
-            </div>
+            <DataTable
+              columns={[
+                {
+                  id: "market",
+                  header: "Market",
+                  accessor: (p) => <span className="font-medium">{p.marketName}</span>,
+                },
+                {
+                  id: "fee",
+                  header: "Fee",
+                  accessor: (p) => <Numeric value={p.fundingFeeUsd} format="usd" role="positive" />,
+                },
+              ]}
+              data={claimablePositions}
+              keyExtractor={(p) => p.key}
+            />
           </div>
         ) : (
-          <div className="flex h-24 items-center justify-center text-xs text-muted-foreground">
-            No claimable funding fees
-          </div>
+          <EmptyState
+            title="No claimable funding fees"
+            description="Funding fees from your positions will appear here."
+          />
         )}
       </TabsContent>
     </Tabs>

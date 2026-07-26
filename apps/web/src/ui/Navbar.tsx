@@ -39,7 +39,7 @@ function Logo() {
           />
         </svg>
       </span>
-      <span className="font-mono-num text-[17px] font-medium tracking-[0.02em] text-foreground">
+      <span className="font-mono-num text-17 font-medium tracking-[0.02em] text-foreground">
         so4<span className="text-muted-foreground max-[380px]:hidden">.market</span>
       </span>
     </Link>
@@ -65,10 +65,10 @@ const APP_LINKS: Array<{ label: string; to: "/trade" | "/pools" | "/earn" | "/re
 ]
 
 const desktopAppLinkClass =
-  "relative inline-flex h-8 items-center rounded-md px-2 text-[13.5px] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+  "relative inline-flex h-8 items-center rounded-md px-2 text-13-5 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
 
 const desktopAppLinkActiveClass =
-  "relative inline-flex h-8 items-center rounded-md bg-primary/10 px-2 text-[13.5px] font-medium text-foreground after:absolute after:inset-x-2 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-primary"
+  "relative inline-flex h-8 items-center rounded-md bg-primary/10 px-2 text-13-5 font-medium text-foreground after:absolute after:inset-x-2 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-primary"
 
 const mobileAppLinkClass =
   "block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
@@ -110,7 +110,7 @@ export function Navbar({ variant }: Props) {
                       {label}
                     </Link>
                   ) : (
-                    <span className="cursor-default text-[13.5px] text-muted-foreground/40">
+                    <span className="cursor-default text-13-5 text-muted-foreground/40">
                       {label}
                     </span>
                   )}
@@ -120,7 +120,7 @@ export function Navbar({ variant }: Props) {
                 <li key={label}>
                   <a
                     href={href}
-                    className="text-[13.5px] font-normal text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-13-5 font-normal text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {label}
                   </a>
@@ -135,7 +135,7 @@ export function Navbar({ variant }: Props) {
           {!isApp && (
             <Button
               variant="default"
-              className="hidden h-9.5 gap-2 px-4 text-[13.5px] sm:inline-flex"
+              className="hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
             >
               Launch app
               <span className="transition-transform group-hover:translate-x-0.5">→</span>

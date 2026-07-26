@@ -48,11 +48,11 @@ type ExternalLinkProps = { href: string; children: React.ReactNode }
 
 function ExternalLink({ href, children }: ExternalLinkProps) {
   return (
-    <Text
-      size="sm"
-      tone="muted"
-      render={<a href={href} target="_blank" rel="noopener noreferrer" />}
-      className="flex items-center justify-between py-2.5 transition-colors hover:text-foreground"
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-between py-2.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
     >
       {children}
       <svg
@@ -105,49 +105,53 @@ export function ReferralsSidebar({
           />
 
           {/* Benefit badge */}
-          <Card>
-            <CardContent className="p-4">
-              {isAffiliate ? (
-                <>
-                  <div className="mb-2 flex items-center gap-2">
-                    <TierBadge tier={tier} />
-                    <Text size="xs" tone="muted" render={<span />}>
-                      Tier {tier.level}
-                    </Text>
-                  </div>
-                  <Text size="sm" weight="semibold">
-                    {tier.affiliateCommissionPct}% commission on referral fees
-                  </Text>
-                  <Text size="xs" tone="muted" className="mt-0.5">
-                    Referees receive a {tier.traderDiscountPct}% fee discount.
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text size="sm" weight="semibold" tone="success">
-                    You're receiving a {traderDiscountPct}% discount on your trades!
-                  </Text>
-                  <Text size="xs" tone="muted" className="mt-1">
-                    The reduced rate applies to every open and close fee.
-                  </Text>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          <div className="rounded-xl border border-border bg-card p-4">
+            {isAffiliate ? (
+              <>
+                <div className="mb-2 flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1",
+                      tier.colorClass,
+                      tier.ringClass,
+                    )}
+                  >
+                    {tier.label}
+                  </span>
+                  <span className="text-11 text-muted-foreground">
+                    Tier {tier.level}
+                  </span>
+                </div>
+                <p className="text-xs font-semibold text-foreground">
+                  {tier.affiliateCommissionPct}% commission on referral fees
+                </p>
+                <p className="mt-0.5 text-11 text-muted-foreground">
+                  Referees receive a {tier.traderDiscountPct}% fee discount.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-semibold text-green-400">
+                  You're receiving a {traderDiscountPct}% discount on your trades!
+                </p>
+                <p className="mt-1 text-11 text-muted-foreground">
+                  The reduced rate applies to every open and close fee.
+                </p>
+              </>
+            )}
+          </div>
         </>
       ) : (
-        <Card variant="dashed">
-          <CardContent className="p-4 text-center">
-            <Text size="sm" weight="medium" tone="muted">
-              {isAffiliate ? "No affiliate code yet" : "No referral code active"}
-            </Text>
-            <Text size="xs" tone="subtle" className="mt-1">
-              {isAffiliate
-                ? "Register a code to start earning commissions"
-                : "Enter a code to get a fee discount"}
-            </Text>
-          </CardContent>
-        </Card>
+        <div className="rounded-xl border border-dashed border-border bg-muted/10 p-4 text-center">
+          <p className="text-xs font-medium text-muted-foreground">
+            {isAffiliate ? "No affiliate code yet" : "No referral code active"}
+          </p>
+          <p className="mt-1 text-11 text-muted-foreground/60">
+            {isAffiliate
+              ? "Register a code to start earning commissions"
+              : "Enter a code to get a fee discount"}
+          </p>
+        </div>
       )}
 
       {/* Quick links */}

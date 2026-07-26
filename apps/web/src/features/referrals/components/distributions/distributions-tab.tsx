@@ -68,80 +68,81 @@ export function DistributionsTab() {
   return (
     <div className="space-y-4">
       {/* Info card */}
-      <Card>
-        <CardContent>
-          <Heading level={3} className="mb-2">
-            Commission Distributions
-          </Heading>
-          <Text size="sm" tone="muted" variant="leading">
-            Commissions from your referrals' trading fees are distributed weekly every Thursday.
-            Payments are made in USDC directly to your wallet. Unclaimed distributions accumulate
-            and can be claimed at any time.
-          </Text>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {SCHEDULE_FACTS.map(({ label, value }) => (
-              <Stat key={label} label={label} value={value} size="md" />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h3 className="mb-2 text-13 font-semibold">Commission Distributions</h3>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Commissions from your referrals' trading fees are distributed weekly every Thursday.
+          Payments are made in USDC directly to your wallet. Unclaimed distributions accumulate
+          and can be claimed at any time.
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-4">
+          {[
+            { label: "Distribution cycle", value: "Weekly (Thu)" },
+            { label: "Payment token", value: "USDC" },
+            { label: "Claim window", value: "No expiry" },
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <p className="text-10 text-muted-foreground">{label}</p>
+              <p className="mt-0.5 text-xs font-medium">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Distributions table */}
-      <Card variant="plain">
-        <CardHeader>
-          <Heading level={3}>History</Heading>
-        </CardHeader>
-        <Table>
-          <TableHeader>
-            <TableHeadRow>
-              <TableHead>Epoch</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead align="right">Amount</TableHead>
-              <TableHead>Token</TableHead>
-              <TableHead align="right">USD value</TableHead>
-              <TableHead align="right">Action</TableHead>
-            </TableHeadRow>
-          </TableHeader>
-          <TableBody>
-            {distributions.length > 0 ? (
-              distributions.map((d) => (
-                <TableRow key={d.id}>
-                  <TableCell>
-                    <NumericText role="muted">{d.epoch}</NumericText>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{d.date}</TableCell>
-                  <TableCell align="right">
-                    <NumericText>{formatToken(d.amount, d.token)}</NumericText>
-                  </TableCell>
-                  <TableCell>
-                    <NumericText>{d.token}</NumericText>
-                  </TableCell>
-                  <TableCell align="right">
-                    <NumericText role="accent">{formatUsd(d.amountUsd)}</NumericText>
-                  </TableCell>
-                  <TableCell align="right">
-                    <LoadingButton
-                      size="xs"
-                      isLoading={claiming === d.id}
-                      loadingText="Claiming"
-                      onClick={() => void handleClaim(d.id)}
-                    >
-                      Claim
-                    </LoadingButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableEmptyRow colSpan={6}>
-                <EmptyState
-                  title="No distributions yet"
-                  description="Commissions will appear here after your first weekly distribution"
-                />
-              </TableEmptyRow>
-            )}
-          </TableBody>
-        </Table>
-      </Card>
+      <div className="overflow-hidden rounded-xl border border-border">
+        <div className="border-b border-border px-5 py-3.5">
+          <h3 className="text-13 font-semibold">History</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-border bg-muted/25 text-left">
+                <th className="px-5 py-3 font-medium text-muted-foreground">Epoch</th>
+                <th className="px-5 py-3 font-medium text-muted-foreground">Date</th>
+                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Amount</th>
+                <th className="px-5 py-3 font-medium text-muted-foreground">Token</th>
+                <th className="px-5 py-3 text-right font-medium text-muted-foreground">USD value</th>
+                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {distributions.length > 0 ? (
+                distributions.map((d) => (
+                  <tr
+                    key={d.id}
+                    className="border-b border-border/40 last:border-b-0 transition-colors hover:bg-muted/20"
+                  >
+                    <td className="px-5 py-3.5 font-mono text-muted-foreground">{d.epoch}</td>
+                    <td className="px-5 py-3.5 text-muted-foreground">{d.date}</td>
+                    <td className="px-5 py-3.5 text-right font-mono">{formatToken(d.amount, d.token)}</td>
+                    <td className="px-5 py-3.5 font-mono">{d.token}</td>
+                    <td className="px-5 py-3.5 text-right font-mono">{formatUsd(d.amountUsd)}</td>
+                    <td className="px-5 py-3.5 text-right">
+                      <Button
+                        size="xs"
+                        disabled={claiming === d.id}
+                        onClick={() => void handleClaim(d.id)}
+                      >
+                        {claiming === d.id ? "…" : "Claim"}
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="px-5 py-16 text-center">
+                    <p className="text-sm text-muted-foreground">No distributions yet</p>
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      Commissions will appear here after your first weekly distribution
+                    </p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   )
 }

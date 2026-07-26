@@ -22,20 +22,39 @@ function SectionCard({
   children?: React.ReactNode
 }) {
   return (
-    <Card>
-      <CardContent>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="max-w-prose space-y-1.5">
-            <Heading level={3}>{title}</Heading>
-            <Text size="sm" tone="muted" variant="leading">
-              {description}
-            </Text>
-            {children && <div className="pt-2">{children}</div>}
-          </div>
-          <div className="shrink-0">{action}</div>
+    <div className="rounded-xl border border-border bg-card p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="max-w-prose space-y-1.5">
+          <h3 className="text-13 font-semibold">{title}</h3>
+          <p className="text-xs leading-relaxed text-muted-foreground">{description}</p>
+          {children && <div className="pt-2">{children}</div>}
         </div>
-      </CardContent>
-    </Card>
+        <div className="shrink-0">{action}</div>
+      </div>
+    </div>
+  )
+}
+
+function StatRow({
+  label,
+  value,
+  isLoading,
+}: {
+  label: string
+  value: string
+  isLoading?: boolean
+}) {
+  return (
+    <div className="flex items-center gap-6">
+      <div>
+        <p className="text-10 text-muted-foreground">{label}</p>
+        {isLoading ? (
+          <Skeleton className="mt-0.5 h-4 w-24" />
+        ) : (
+          <p className="text-xs font-medium tabular-nums">{value}</p>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -79,9 +98,8 @@ export function AdditionalOpportunitiesTab() {
           <LoadingButton
             size="lg"
             variant="outline"
-            isLoading={vestPending}
-            loadingText="Starting…"
-            disabled={!hasEsSO4}
+            className="h-8 text-xs"
+            disabled={vestPending || !hasEsSO4}
             onClick={() => void handleVest()}
           >
             Vest now
@@ -105,11 +123,10 @@ export function AdditionalOpportunitiesTab() {
         title="Multiplier Points"
         description="Stake SO4 continuously to earn Multiplier Points (MPs). MPs boost your staking power proportionally, increasing your fee-reward share without additional token exposure or sell pressure."
         action={
-          <LoadingButton
-            size="lg"
-            isLoading={compoundPending}
-            loadingText="Compounding…"
-            disabled={!hasMultiplierPoints}
+          <Button
+            size="sm"
+            className="h-8 text-xs"
+            disabled={compoundPending || !hasMultiplierPoints}
             onClick={() => void handleCompound()}
           >
             Compound
@@ -135,7 +152,7 @@ export function AdditionalOpportunitiesTab() {
         description="Share your referral code to earn fee discounts and rebates. Referrers receive a percentage of their referees' trading fees, paid in USDC every epoch."
         action={
           <Link to="/referrals">
-            <Button size="lg" variant="outline">
+            <Button size="sm" variant="outline" className="h-8 text-xs">
               Go to Referrals →
             </Button>
           </Link>

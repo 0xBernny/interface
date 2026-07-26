@@ -50,6 +50,21 @@ const STATUS_LABEL: Record<DistributionStatus, string> = {
   claimed: "Claimed",
 }
 
+// ── Sub-components ───────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: DistributionStatus }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
+        STATUS_STYLES[status],
+      )}
+    >
+      {STATUS_LABEL[status]}
+    </span>
+  )
+}
+
 // ── Main component ───────────────────────────────────────────────────────────
 
 type DistributionsTableProps = {
@@ -70,61 +85,68 @@ type DistributionsTableProps = {
  */
 export function DistributionsTable({ distributions, onClaim }: DistributionsTableProps) {
   return (
-    <Table>
-      <TableHeader>
-        <TableHeadRow>
-          <TableHead>Epoch</TableHead>
-          <TableHead>Date</TableHead>
-          <TableHead align="right">Amount</TableHead>
-          <TableHead>Token</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead align="right">Tx</TableHead>
-        </TableHeadRow>
-      </TableHeader>
-      <TableBody>
-        {distributions.length > 0 ? (
-          distributions.map((row) => (
-            <TableRow key={`${row.epoch}-${row.token}`}>
-              <TableCell>
-                <NumericText role="muted">{row.epoch}</NumericText>
-              </TableCell>
-              <TableCell className="text-muted-foreground">{row.date}</TableCell>
-              <TableCell align="right">
-                <NumericText>{formatUsd(row.amountUsd)}</NumericText>
-              </TableCell>
-              <TableCell>
-                <NumericText>{row.token}</NumericText>
-              </TableCell>
-              <TableCell>
-                {row.status === "claim" ? (
-                  <Badge
-                    variant={STATUS_VARIANT.claim}
-                    render={<button type="button" onClick={() => onClaim?.(row.epoch)} />}
-                  >
-                    Claim
-                  </Badge>
-                ) : (
-                  <Badge variant={STATUS_VARIANT[row.status]}>
-                    {STATUS_LABEL[row.status]}
-                  </Badge>
-                )}
-              </TableCell>
-              <TableCell align="right">
-                <NumericText role="muted" className={row.txHash ? undefined : "opacity-50"}>
-                  {row.txHash ? `${row.txHash.slice(0, 8)}…` : "—"}
-                </NumericText>
-              </TableCell>
-            </TableRow>
-          ))
-        ) : (
-          <TableEmptyRow colSpan={6}>
-            <EmptyState
-              title="No distributions yet"
-              description="Your distribution history will appear here once the protocol goes live"
-            />
-          </TableEmptyRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-border bg-muted/25 text-left">
+            <th className="px-5 py-3 font-medium text-muted-foreground">Epoch</th>
+            <th className="px-5 py-3 font-medium text-muted-foreground">Date</th>
+            <th className="px-5 py-3 text-right font-medium text-muted-foreground">Amount</th>
+            <th className="px-5 py-3 font-medium text-muted-foreground">Token</th>
+            <th className="px-5 py-3 font-medium text-muted-foreground">Status</th>
+            <th className="px-5 py-3 text-right font-medium text-muted-foreground">Tx</th>
+          </tr>
+        </thead>
+        <tbody>
+          {distributions.length > 0 ? (
+            distributions.map((row) => (
+              <tr
+                key={`${row.epoch}-${row.token}`}
+                className="border-b border-border/40 transition-colors last:border-b-0 hover:bg-muted/20"
+              >
+                <td className="px-5 py-3.5 font-mono text-muted-foreground">{row.epoch}</td>
+                <td className="px-5 py-3.5 text-muted-foreground">{row.date}</td>
+                <td className="px-5 py-3.5 text-right font-mono">{formatUsd(row.amountUsd)}</td>
+                <td className="px-5 py-3.5 font-mono">{row.token}</td>
+                <td className="px-5 py-3.5">
+                  {row.status === "claim" ? (
+                    <button
+                      type="button"
+                      onClick={() => onClaim?.(row.epoch)}
+                      className={cn(
+                        "inline-flex h-5 cursor-pointer items-center rounded-full border px-2 text-10 font-medium",
+                        STATUS_STYLES.claim,
+                      )}
+                    >
+                      Claim
+                    </button>
+                  ) : (
+                    <StatusBadge status={row.status} />
+                  )}
+                </td>
+                <td className="px-5 py-3.5 text-right">
+                  {row.txHash ? (
+                    <span className="font-mono text-muted-foreground">
+                      {row.txHash.slice(0, 8)}…
+                    </span>
+                  ) : (
+                    <span className="font-mono text-muted-foreground/50">—</span>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={6} className="px-5 py-16 text-center text-muted-foreground">
+                <p className="text-sm">No distributions yet</p>
+                <p className="mt-1 text-xs opacity-60">
+                  Your distribution history will appear here once the protocol goes live
+                </p>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
   )
 }

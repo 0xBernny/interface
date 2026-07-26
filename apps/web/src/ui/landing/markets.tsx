@@ -97,7 +97,7 @@ export function Markets() {
         {/* Section header */}
         <div className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="font-mono-num mb-4 flex items-center gap-2.5 text-[11.5px] uppercase tracking-[0.18em] text-primary">
+            <div className="font-mono-num mb-4 flex items-center gap-2.5 text-11-5 uppercase tracking-[0.18em] text-primary">
               <span className="inline-block h-px w-4 bg-primary" />
               Markets
             </div>
@@ -108,7 +108,7 @@ export function Markets() {
               184 perpetuals.{" "}
               <span className="italic font-normal text-primary">One book.</span>
             </h2>
-            <p className="mt-4 max-w-[520px] text-[16px] leading-[1.55] text-muted-foreground">
+            <p className="mt-4 max-w-[520px] text-base leading-[1.55] text-muted-foreground">
               Crypto, FX, rates, and commodity perps — all settled in USDC, all
               backed by the same unified liquidity layer.
             </p>
@@ -121,7 +121,7 @@ export function Markets() {
         {/* Table */}
         <div className="overflow-hidden border border-border bg-card">
           {/* Header */}
-          <div className="font-mono-num hidden grid-cols-[2fr_1.4fr_1fr_1.4fr_1.4fr_1.4fr_0.8fr] items-center gap-3 border-b border-border bg-muted/30 px-6 py-4 text-[10.5px] uppercase tracking-[0.14em] text-muted-foreground sm:grid">
+          <div className="font-mono-num hidden grid-cols-[2fr_1.4fr_1fr_1.4fr_1.4fr_1.4fr_0.8fr] items-center gap-3 border-b border-border bg-muted/30 px-6 py-4 text-10-5 uppercase tracking-[0.14em] text-muted-foreground sm:grid">
             <span>Market</span>
             <span className="text-right">Price</span>
             <span>Max lev.</span>
@@ -140,7 +140,7 @@ export function Markets() {
               <div className="flex items-center justify-between px-4 py-3.5 sm:hidden">
                 <div className="flex items-center gap-3">
                   <span
-                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono-num text-[10.5px] font-semibold ${iconBg} ${iconDark ? "text-zinc-900" : "text-white"}`}
+                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono-num text-10-5 font-semibold ${iconBg} ${iconDark ? "text-zinc-900" : "text-white"}`}
                   >
                     {icon}
                   </span>
@@ -163,41 +163,41 @@ export function Markets() {
               <div className="hidden grid-cols-[2fr_1.4fr_1fr_1.4fr_1.4fr_1.4fr_0.8fr] items-center gap-3 px-6 py-4 sm:grid">
                 <div className="flex items-center gap-3 font-medium">
                   <span
-                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono-num text-[10.5px] font-semibold ${iconBg} ${iconDark ? "text-zinc-900" : "text-white"}`}
+                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono-num text-10-5 font-semibold ${iconBg} ${iconDark ? "text-zinc-900" : "text-white"}`}
                   >
                     {icon}
                   </span>
                   <div>
-                    <div className="text-[14px] text-foreground">{sym}</div>
-                    <div className="text-[12px] font-normal text-muted-foreground">{name}</div>
+                    <div className="text-sm text-foreground">{sym}</div>
+                    <div className="text-xs font-normal text-muted-foreground">{name}</div>
                   </div>
                 </div>
 
-                <span className="font-mono-num text-right text-[13.5px] text-foreground">
+                <span className="font-mono-num text-right text-13-5 text-foreground">
                   {price}
                 </span>
 
                 <span>
-                  <span className="font-mono-num border border-border bg-muted/30 px-2 py-0.5 text-[11px] text-muted-foreground">
+                  <span className="font-mono-num border border-border bg-muted/30 px-2 py-0.5 text-11 text-muted-foreground">
                     {lev}
                   </span>
                 </span>
 
                 <span
-                  className={`font-mono-num text-right text-[13px] ${up ? "text-emerald-400" : "text-red-400"}`}
+                  className={`font-mono-num text-right text-13 ${up ? "text-emerald-400" : "text-red-400"}`}
                 >
                   {change}
                 </span>
 
-                <span className="font-mono-num text-right text-[13.5px] text-foreground">
+                <span className="font-mono-num text-right text-13-5 text-foreground">
                   {vol}
                 </span>
 
-                <span className="font-mono-num text-right text-[13.5px] text-foreground">
+                <span className="font-mono-num text-right text-13-5 text-foreground">
                   {oi}
                 </span>
 
-                <span className="font-mono-num text-right text-[11.5px] text-muted-foreground transition-colors group-hover:text-primary">
+                <span className="font-mono-num text-right text-11-5 text-muted-foreground transition-colors group-hover:text-primary">
                   Trade →
                 </span>
               </div>

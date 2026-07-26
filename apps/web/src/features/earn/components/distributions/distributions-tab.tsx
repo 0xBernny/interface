@@ -18,24 +18,28 @@ const SCHEDULE_FACTS = [
 
 function InfoCard() {
   return (
-    <Card>
-      <CardContent>
-        <Heading level={3} className="mb-2">
-          Fee Distribution Schedule
-        </Heading>
-        <Text size="sm" tone="muted" variant="leading">
-          Protocol fees are collected continuously and distributed weekly to SO4 stakers and
-          liquidity providers. Your share is proportional to your staking power (staked amount ×
-          duration multiplier). USDC fees are distributed directly; platform fees are used for
-          buybacks and distributed as esSO4.
-        </Text>
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {SCHEDULE_FACTS.map(({ label, value }) => (
-            <Stat key={label} label={label} value={value} size="md" />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="rounded-xl border border-border bg-card p-5">
+      <h3 className="mb-2 text-13 font-semibold">Fee Distribution Schedule</h3>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Protocol fees are collected continuously and distributed weekly to SO4 stakers and
+        liquidity providers. Your share is proportional to your staking power (staked amount ×
+        duration multiplier). USDC fees are distributed directly; platform fees are used for
+        buybacks and distributed as esSO4.
+      </p>
+      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {[
+          { label: "Distribution cycle", value: "Weekly" },
+          { label: "Fee allocation", value: "70% to stakers" },
+          { label: "Remaining", value: "27% Treasury" },
+          { label: "Protocol", value: "3% team" },
+        ].map(({ label, value }) => (
+          <div key={label}>
+            <p className="text-10 text-muted-foreground">{label}</p>
+            <p className="mt-0.5 text-xs font-medium">{value}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -44,10 +48,10 @@ export function DistributionsTab() {
     <div className="space-y-4">
       <InfoCard />
 
-      <Card variant="plain">
-        <CardHeader>
-          <Heading level={3}>Distribution History</Heading>
-        </CardHeader>
+      <div className="overflow-hidden rounded-xl border border-border">
+        <div className="border-b border-border px-5 py-3.5">
+          <h3 className="text-13 font-semibold">Distribution History</h3>
+        </div>
         <DistributionsTable distributions={MOCK_DISTRIBUTIONS} />
       </Card>
     </div>

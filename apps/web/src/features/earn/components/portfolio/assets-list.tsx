@@ -40,8 +40,58 @@ function WalletEmptyIcon() {
   )
 }
 
-function TypeBadge({ kind }: { kind: keyof typeof ASSET_KIND_BADGE }) {
-  return <Badge variant={ASSET_KIND_BADGE[kind]}>{kind}</Badge>
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/40">
+        <WalletEmptyIcon />
+      </div>
+      <div>
+        <p className="text-sm font-medium text-foreground/80">You have no deposits</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          Start earning by depositing into a pool
+        </p>
+        <a href="#browse-pools" className="text-xs text-primary hover:text-primary/80 font-medium mt-2 inline-block">
+          Browse pools →
+        </a>
+      </div>
+    </div>
+  )
+}
+
+function LoadingRows() {
+  return (
+    <div className="space-y-px p-1">
+      {[0, 1].map((i) => (
+        <div key={i} className="flex items-center gap-4 px-4 py-3">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="ml-auto h-4 w-16" />
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-7 w-14" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const KIND_BADGE: Record<string, string> = {
+  Staking: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+  GM: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  GLV: "bg-teal-500/10 text-teal-400 border-teal-500/20",
+}
+
+function TypeBadge({ kind }: { kind: string }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
+        KIND_BADGE[kind] ?? "bg-muted text-muted-foreground border-border",
+      )}
+    >
+      {kind}
+    </span>
+  )
 }
 
 export function AssetsList() {
@@ -64,10 +114,10 @@ export function AssetsList() {
   }
 
   return (
-    <Card variant="plain">
-      <CardHeader>
-        <Heading level={3}>My assets</Heading>
-      </CardHeader>
+    <div className="overflow-hidden rounded-xl border border-border">
+      <div className="border-b border-border px-5 py-3.5">
+        <h2 className="text-13 font-semibold">My assets</h2>
+      </div>
 
       {isLoading ? (
         <LoadingState rows={2} label="Loading your assets" />

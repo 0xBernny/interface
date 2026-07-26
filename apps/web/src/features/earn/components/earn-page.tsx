@@ -12,8 +12,8 @@ export function EarnPage() {
       <Navbar variant="app" />
       <div className="mx-auto w-full max-w-260 px-4 pb-16 pt-8 sm:px-6 lg:px-12">
         <header className="mb-7">
-          <Heading level={1}>Earn</Heading>
-          <Text size="base" tone="muted" className="mt-1">
+          <h1 className="text-22 font-semibold tracking-tight">Earn</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Stake SO4 and buy GLV or GM to earn rewards
           </Text>
         </header>

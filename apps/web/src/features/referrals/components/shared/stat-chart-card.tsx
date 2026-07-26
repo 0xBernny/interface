@@ -1,7 +1,4 @@
-import { Card } from "@workspace/ui/components/card"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Text } from "@workspace/ui/components/text"
-import type { NumericRole } from "@workspace/ui/components/numeric"
+import { cn } from "@workspace/ui/lib/utils"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -58,20 +55,18 @@ type Props = {
 
 export function StatChartCard({ title, tooltip, value, period, accent = "blue" }: Props) {
   const labels = xAxisLabels(period)
-  const { stroke, role } = ACCENTS[accent]
+  const accentStrokeClass = accent === "green" ? "stroke-green-400" : "stroke-blue-400"
 
   return (
     <Card className="overflow-hidden">
       <div className="px-5 pt-4 pb-2">
         <div className="flex items-center gap-1.5">
-          <Text size="xs" tone="muted" weight="medium" render={<span />}>
-            {title}
-          </Text>
+          <span className="text-11 font-medium text-muted-foreground">{title}</span>
           <span title={tooltip} className="cursor-help text-muted-foreground/50 hover:text-muted-foreground">
             <InfoIcon />
           </span>
         </div>
-        <NumericText role={role} size="xl" weight="semibold" className="mt-1.5 block">
+        <p className="mt-1.5 text-22 font-semibold tabular-nums tracking-tight">
           {formatUsd(value)}
         </NumericText>
       </div>
@@ -117,7 +112,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
             y1={80}
             x2={396}
             y2={80}
-            stroke={stroke}
+            className={cn(accentStrokeClass)}
             strokeOpacity={0.4}
             strokeWidth={1.5}
             strokeLinecap="round"

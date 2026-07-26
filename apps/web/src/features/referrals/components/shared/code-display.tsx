@@ -65,31 +65,44 @@ export function CodeDisplay({ code, label = "Active referral code", onEdit, clas
   const { copy, copied } = useCopy("Referral code copied!")
 
   return (
-    <Card className={className}>
-      <CardContent className="p-4">
-        <Text size="xs" tone="muted" weight="semibold" variant="label" className="mb-3">
-          {label}
-        </Text>
+    <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
+      <p className="mb-3 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
 
-        <div className="flex items-center gap-2">
-          {/* Code pill */}
-          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-muted/40 px-3 py-2">
-            <NumericText
-              size="lg"
-              weight="bold"
-              className="truncate tracking-widest"
-            >
-              {code}
-            </NumericText>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => copy(code)}
-              aria-label="Copy code"
-              className={cn(
-                "shrink-0",
-                copied ? "text-success" : "text-muted-foreground",
-              )}
+      <div className="flex items-center gap-2">
+        {/* Code pill */}
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg bg-muted/40 px-3 py-2">
+          <span className="truncate font-mono text-15 font-bold tracking-widest text-foreground">
+            {code}
+          </span>
+          <button
+            onClick={() => copy(code)}
+            aria-label="Copy code"
+            className={cn(
+              "shrink-0 rounded p-0.5 transition-colors",
+              copied
+                ? "text-green-400"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <CopyIcon copied={copied} />
+          </button>
+        </div>
+
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
+          >
+            <svg
+              width="11"
+              height="11"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
             >
               <CopyIcon copied={copied} />
             </Button>

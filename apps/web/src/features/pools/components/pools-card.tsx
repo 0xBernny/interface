@@ -21,7 +21,7 @@ export function PoolsCard({
         <div>
           <h2 className="text-sm font-semibold text-foreground">{title}</h2>
           {description ? (
-            <p className="mt-1 text-[13px] text-muted-foreground">{description}</p>
+            <p className="mt-1 text-13 text-muted-foreground">{description}</p>
           ) : null}
         </div>
         {contentHeader}
