@@ -94,7 +94,7 @@ describe("Stat", () => {
   it("swaps the value for a skeleton while loading", () => {
     const { container } = render(<Stat label="Total earned" value="$12.00" isLoading />)
     expect(screen.queryByText("$12.00")).not.toBeInTheDocument()
-    expect(container.querySelector(".animate-pulse")).toBeInTheDocument()
+    expect(container.querySelector("[data-slot='skeleton']")).toBeInTheDocument()
   })
 
   it("has no accessibility violations", async () => {
@@ -197,7 +197,7 @@ describe("state primitives", () => {
     const { container } = render(<LoadingState rows={3} label="Loading assets" />)
     expect(screen.getByRole("status")).toBeInTheDocument()
     expect(screen.getByText("Loading assets")).toBeInTheDocument()
-    expect(container.querySelectorAll(".animate-pulse")).toHaveLength(3)
+    expect(container.querySelectorAll("[data-slot='skeleton']")).toHaveLength(3)
   })
 
   it("EmptyState renders title, description and action", () => {

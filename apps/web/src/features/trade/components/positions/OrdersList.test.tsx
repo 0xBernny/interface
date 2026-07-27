@@ -76,7 +76,7 @@ describe("OrdersList", () => {
   it("renders loading skeleton when loading", () => {
     mockIsLoading = true
     const { container } = render(<OrdersList />, { wrapper: createWrapper() })
-    expect(container.querySelector(".animate-pulse")).toBeInTheDocument()
+    expect(container.querySelector("[data-slot='skeleton']")).toBeInTheDocument()
   })
 
   it("renders empty state when no orders", () => {

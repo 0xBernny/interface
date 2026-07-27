@@ -131,7 +131,7 @@ describe("PositionsList", () => {
   it("renders loading skeleton when loading", () => {
     mockIsLoading = true
     const { container } = render(<PositionsList />, { wrapper: createWrapper() })
-    expect(container.querySelector(".animate-pulse")).toBeInTheDocument()
+    expect(container.querySelector("[data-slot='skeleton']")).toBeInTheDocument()
   })
 
   it("renders empty state when no positions", () => {
