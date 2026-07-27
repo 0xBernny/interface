@@ -34,6 +34,8 @@
     --color-warning-foreground: var(--warning-foreground);
     --color-info: var(--info);
     --color-info-foreground: var(--info-foreground);
+    --color-neutral: var(--neutral);
+    --color-danger: var(--danger);
     --color-long: var(--long);
     --color-short: var(--short);
     --color-accent-foreground: var(--accent-foreground);
@@ -123,6 +125,8 @@
     --warning-foreground: oklch(0.21 0 0);
     --info: oklch(0.546 0.245 262.881);
     --info-foreground: oklch(0.985 0 0);
+    --neutral: oklch(0.556 0 0);
+    --danger: var(--destructive);
     --long: var(--success);
     --short: var(--destructive);
 
@@ -181,6 +185,8 @@
     --warning-foreground: oklch(0.145 0 0);
     --info: oklch(0.707 0.165 254.624);
     --info-foreground: oklch(0.145 0 0);
+    --neutral: oklch(0.708 0 0);
+    --danger: var(--destructive);
     --long: var(--success);
     --short: var(--destructive);
 
