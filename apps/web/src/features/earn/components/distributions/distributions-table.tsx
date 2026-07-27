@@ -1,4 +1,17 @@
-import { cn } from "@workspace/ui/lib/utils"
+import { Badge } from "@workspace/ui/components/badge"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { EmptyState } from "@workspace/ui/components/states"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableEmptyRow,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import type { BadgeVariant } from "../../lib/badges"
 import { formatUsd } from "@/shared/lib/format"
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -19,15 +32,15 @@ export type DistributionRow = {
   txHash?: string
 }
 
-// ── Styling maps ─────────────────────────────────────────────────────────────
+// ── Status mapping ───────────────────────────────────────────────────────────
 
-const STATUS_STYLES: Record<DistributionStatus, string> = {
-  distributed: "bg-green-500/10 text-green-400 border-green-500/20",
-  pending: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  upcoming: "bg-muted/60 text-muted-foreground border-border",
-  claim: "bg-violet-500/10 text-violet-400 border-violet-500/20",
-  claimed: "bg-green-500/10 text-green-400 border-green-500/20",
-}
+const STATUS_VARIANT = {
+  distributed: "success",
+  pending: "warning",
+  upcoming: "muted",
+  claim: "info",
+  claimed: "success",
+} as const satisfies Record<DistributionStatus, BadgeVariant>
 
 const STATUS_LABEL: Record<DistributionStatus, string> = {
   distributed: "Distributed",
@@ -56,7 +69,7 @@ function StatusBadge({ status }: { status: DistributionStatus }) {
 
 type DistributionsTableProps = {
   /** Rows to render. An empty array triggers the empty-state message. */
-  distributions: DistributionRow[]
+  distributions: Array<DistributionRow>
   /** Fires when the user clicks a "Claim" badge. Receives the epoch id. */
   onClaim?: (epochId: string) => void
 }

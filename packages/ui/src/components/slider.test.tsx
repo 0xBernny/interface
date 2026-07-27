@@ -15,9 +15,10 @@ describe("Slider accessibility", () => {
     const user = userEvent.setup()
     const { container } = render(<Slider defaultValue={[50]} min={0} max={100} />)
 
-    const slider = container.querySelector("[role='slider']")
-    expect(slider).toHaveAttribute("aria-valuemin", "0")
-    expect(slider).toHaveAttribute("aria-valuemax", "100")
+    // Base UI renders the accessible control as a visually hidden range input
+    const slider = container.querySelector("input[type='range']")
+    expect(slider).toHaveAttribute("min", "0")
+    expect(slider).toHaveAttribute("max", "100")
     expect(slider).toHaveAttribute("aria-valuenow")
   })
 })

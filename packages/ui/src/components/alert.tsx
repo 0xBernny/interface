@@ -5,7 +5,37 @@ import { cn } from "@workspace/ui/lib/utils"
 import type { VariantProps } from "class-variance-authority"
 
 // ---------------------------------------------------------------------------
-// ARIA live-region semantics
+// Two call styles, one component
+//
+// 1. Composition (legacy, `variant`):
+//      <Alert variant="warning"><AlertDescription>…</AlertDescription></Alert>
+//    Children are laid out as direct flex children so a caller-supplied icon
+//    sits beside the copy. No icon is injected.
+//
+// 2. Props (`severity` + title/description/icon/action/onDismiss):
+//      <Alert severity="error" title="Failed" description="…" onDismiss={fn} />
+//    Content is wrapped in a body slot and a severity icon is supplied by
+//    default.
+//
+// `variant` maps onto `severity` for colour ("danger" → "error"), so both
+// styles resolve to the same token-backed surface.
+// ---------------------------------------------------------------------------
+
+type Severity = "info" | "success" | "warning" | "error"
+
+/** Legacy colour names kept for existing `variant` callsites. */
+type AlertVariant = "info" | "success" | "warning" | "danger" | "muted"
+
+const VARIANT_SEVERITY: Record<AlertVariant, Severity | "muted"> = {
+  info: "info",
+  success: "success",
+  warning: "warning",
+  danger: "error",
+  muted: "muted",
+}
+
+// ---------------------------------------------------------------------------
+// ARIA live-region semantics (severity API)
 //
 //  severity  | role    | aria-live  | aria-atomic
 //  ----------|---------|------------|------------
@@ -13,9 +43,11 @@ import type { VariantProps } from "class-variance-authority"
 //  success   | status  | polite     | false
 //  warning   | alert   | assertive  | true    – demands attention
 //  error     | alert   | assertive  | true    – must be announced immediately
+//
+// The `variant` API predates this table and only escalates for "danger", so
+// it keeps its own mapping rather than silently making every existing
+// `variant="warning"` callsite assertive.
 // ---------------------------------------------------------------------------
-
-type Severity = "info" | "success" | "warning" | "error"
 
 const SEVERITY_ROLE: Record<Severity, "status" | "alert"> = {
   info: "status",
@@ -24,43 +56,20 @@ const SEVERITY_ROLE: Record<Severity, "status" | "alert"> = {
   error: "alert",
 }
 
-const SEVERITY_LIVE: Record<Severity, "polite" | "assertive"> = {
-  info: "polite",
-  success: "polite",
-  warning: "assertive",
-  error: "assertive",
-}
-
-// ---------------------------------------------------------------------------
-// Layout variants
-// ---------------------------------------------------------------------------
-
 const alertVariants = cva(
-  // Base – shared by both layouts
-  "relative flex w-full gap-3 border text-sm transition-colors [&_svg]:shrink-0",
+  "relative flex w-full gap-3 border transition-colors [&>svg]:mt-px [&_svg]:shrink-0",
   {
     variants: {
       severity: {
-        info: [
-          "border-primary/20 bg-primary/5 text-primary",
-          "dark:border-primary/30 dark:bg-primary/10",
-        ],
-        success: [
-          "border-emerald-500/20 bg-emerald-500/5 text-emerald-700",
-          "dark:border-emerald-400/30 dark:bg-emerald-400/10 dark:text-emerald-400",
-        ],
-        warning: [
-          "border-amber-500/20 bg-amber-500/5 text-amber-700",
-          "dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-400",
-        ],
-        error: [
-          "border-destructive/20 bg-destructive/5 text-destructive",
-          "dark:border-destructive/30 dark:bg-destructive/10",
-        ],
+        info: "border-info/20 bg-info/[0.07] text-info",
+        success: "border-success/20 bg-success/[0.07] text-success",
+        warning: "border-warning/30 bg-warning/10 text-warning",
+        error: "border-destructive/30 bg-destructive/10 text-destructive",
+        muted: "border-border bg-muted/30 text-muted-foreground",
       },
       layout: {
         /** Sits inline inside a form, card, or section. */
-        inline: "items-start rounded-md px-3.5 py-3",
+        inline: "items-start rounded-lg px-4 py-3",
         /** Stretches edge-to-edge as an application-level banner. */
         banner: "items-center rounded-none border-x-0 px-4 py-3",
       },
@@ -72,17 +81,14 @@ const alertVariants = cva(
   }
 )
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface AlertProps
-  extends
-    Omit<React.ComponentProps<"div">, "role" | "title">,
-    VariantProps<typeof alertVariants> {
+interface AlertProps
+  extends Omit<React.ComponentProps<"div">, "title">,
+    Omit<VariantProps<typeof alertVariants>, "severity"> {
   /** Severity level – controls colour, icon defaults, and ARIA semantics. */
   severity?: Severity
-  /** Leading icon. Pass any SVG or icon component. */
+  /** Legacy colour alias for `severity` ("danger" → "error"). */
+  variant?: AlertVariant
+  /** Leading icon. Pass any SVG or icon component, or `null` to suppress. */
   icon?: React.ReactNode
   /** Bold label / headline rendered before the message. */
   title?: React.ReactNode
@@ -174,11 +180,12 @@ function ErrorIcon({ className }: { className?: string }) {
   )
 }
 
-const DEFAULT_ICONS: Record<Severity, React.ReactElement> = {
+const DEFAULT_ICONS: Record<Severity | "muted", React.ReactElement | null> = {
   info: <InfoIcon />,
   success: <SuccessIcon />,
   warning: <WarningIcon />,
   error: <ErrorIcon />,
+  muted: null,
 }
 
 // Small ✕ used for the dismiss button
@@ -195,12 +202,9 @@ function CloseIcon() {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 function Alert({
-  severity = "info",
+  severity,
+  variant,
   layout = "inline",
   icon,
   title,
@@ -210,70 +214,82 @@ function Alert({
   dismissLabel = "Dismiss",
   className,
   children,
+  role,
   ...props
 }: AlertProps) {
-  const role = SEVERITY_ROLE[severity]
-  const ariaLive = SEVERITY_LIVE[severity]
-  const ariaAtomic = role === "alert"
+  const resolvedSeverity =
+    severity ?? (variant != null ? VARIANT_SEVERITY[variant] : "info")
 
-  // Resolve icon: explicit prop > severity default
-  const resolvedIcon = icon !== undefined ? icon : DEFAULT_ICONS[severity]
+  // `severity` opts into the live-region table above; the legacy `variant`
+  // path only escalates for "danger".
+  const resolvedRole =
+    role ??
+    (severity != null
+      ? SEVERITY_ROLE[severity]
+      : variant === "danger"
+        ? "alert"
+        : "status")
 
-  // Content: prefer explicit title/description props; fall back to children
+  const isAssertive = resolvedRole === "alert"
+
+  // Content: prefer explicit title/description props; fall back to children.
   const hasStructured = title != null || description != null
+
+  // Only the props API injects an icon — legacy children lay themselves out
+  // as direct flex children and supply their own.
+  const resolvedIcon =
+    icon !== undefined
+      ? icon
+      : hasStructured
+        ? DEFAULT_ICONS[resolvedSeverity]
+        : null
+
+  const usesBody = hasStructured || action != null || onDismiss != null
+
+  const body = hasStructured ? (
+    <>
+      {title != null && <AlertTitle>{title}</AlertTitle>}
+      {description != null && (
+        <AlertDescription className={cn(title != null && "mt-0.5")}>
+          {description}
+        </AlertDescription>
+      )}
+    </>
+  ) : (
+    children
+  )
 
   return (
     <div
       data-slot="alert"
-      data-severity={severity}
+      data-severity={resolvedSeverity}
       data-layout={layout}
-      role={role}
-      aria-live={ariaLive}
-      aria-atomic={ariaAtomic}
-      className={cn(alertVariants({ severity, layout }), className)}
+      role={resolvedRole}
+      aria-live={isAssertive ? "assertive" : "polite"}
+      aria-atomic={isAssertive}
+      className={cn(alertVariants({ severity: resolvedSeverity, layout }), className)}
       {...props}
     >
-      {/* Leading icon */}
       {resolvedIcon != null && (
         <span data-slot="alert-icon" className="mt-0.5 shrink-0">
           {resolvedIcon}
         </span>
       )}
 
-      {/* Body */}
-      <div data-slot="alert-body" className="min-w-0 flex-1">
-        {hasStructured ? (
-          <>
-            {title != null && (
-              <p data-slot="alert-title" className="leading-snug font-semibold">
-                {title}
-              </p>
-            )}
-            {description != null && (
-              <p
-                data-slot="alert-description"
-                className={cn(
-                  "leading-snug",
-                  title != null && "mt-0.5 opacity-90"
-                )}
-              >
-                {description}
-              </p>
-            )}
-          </>
-        ) : (
-          children
-        )}
+      {usesBody ? (
+        <div data-slot="alert-body" className="min-w-0 flex-1">
+          {body}
 
-        {/* Inline action */}
-        {action != null && (
-          <div data-slot="alert-action" className="mt-2">
-            {action}
-          </div>
-        )}
-      </div>
+          {action != null && (
+            <div data-slot="alert-action" className="mt-2">
+              {action}
+            </div>
+          )}
+        </div>
+      ) : (
+        body
+      )}
 
-      {/* Dismiss button */}
       {onDismiss != null && (
         <button
           type="button"
@@ -293,5 +309,25 @@ function Alert({
   )
 }
 
-export { Alert, alertVariants }
-export type { Severity as AlertSeverity }
+function AlertTitle({ className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p
+      data-slot="alert-title"
+      className={cn("text-13 leading-snug font-semibold", className)}
+      {...props}
+    />
+  )
+}
+
+function AlertDescription({ className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p
+      data-slot="alert-description"
+      className={cn("text-xs leading-relaxed opacity-90", className)}
+      {...props}
+    />
+  )
+}
+
+export { Alert, AlertTitle, AlertDescription, alertVariants }
+export type { AlertProps, Severity as AlertSeverity, AlertVariant }

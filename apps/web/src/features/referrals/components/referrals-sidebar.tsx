@@ -1,7 +1,9 @@
-import { cn } from "@workspace/ui/lib/utils"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { Text } from "@workspace/ui/components/text"
 import { getTierByLevel } from "../data/tiers"
 import { CodeDisplay } from "./shared/code-display"
 import { FaqAccordion  } from "./shared/faq-accordion"
+import { TierBadge } from "./shared/tier-badge"
 import type {FaqItem} from "./shared/faq-accordion";
 
 const TRADER_FAQS: Array<FaqItem> = [
@@ -67,7 +69,7 @@ function ExternalLink({ href, children }: ExternalLinkProps) {
         <polyline points="15 3 21 3 21 9" />
         <line x1="10" y1="14" x2="21" y2="3" />
       </svg>
-    </a>
+    </Text>
   )
 }
 
@@ -92,7 +94,7 @@ export function ReferralsSidebar({
   const faqs = isAffiliate ? AFFILIATE_FAQS : TRADER_FAQS
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col gap-4 self-start lg:sticky lg:top-20">
+    <aside className="flex w-full shrink-0 flex-col gap-4 self-start lg:sticky lg:top-20 lg:w-72">
       {/* Code section */}
       {activeCode ? (
         <>
@@ -153,15 +155,17 @@ export function ReferralsSidebar({
       )}
 
       {/* Quick links */}
-      <div className="rounded-xl border border-border bg-card px-4 py-2">
-        <div className="divide-y divide-border/50">
-          {/* TODO: Replace # with actual docs URLs when documentation is published */}
-          <ExternalLink href="#">How it works</ExternalLink>
-          <ExternalLink href="#">Claiming rewards</ExternalLink>
-          <ExternalLink href="#">Tiers</ExternalLink>
-          <ExternalLink href="#">Transferring a referral code</ExternalLink>
-        </div>
-      </div>
+      <Card>
+        <CardContent className="px-4 py-2">
+          <div className="divide-y divide-border/50">
+            {/* TODO: Replace # with actual docs URLs when documentation is published */}
+            <ExternalLink href="#">How it works</ExternalLink>
+            <ExternalLink href="#">Claiming rewards</ExternalLink>
+            <ExternalLink href="#">Tiers</ExternalLink>
+            <ExternalLink href="#">Transferring a referral code</ExternalLink>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* FAQ */}
       <FaqAccordion items={faqs} />

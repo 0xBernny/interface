@@ -1,5 +1,10 @@
-import { Skeleton } from "@workspace/ui/components/skeleton"
-import { Button } from "@workspace/ui/components/button"
+import { Alert, AlertDescription } from "@workspace/ui/components/alert"
+import { Badge } from "@workspace/ui/components/badge"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Stat } from "@workspace/ui/components/stat"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { FAUCET_TOKENS, type FaucetTokenConfig } from "../data/tokens" // eslint-disable-line import/consistent-type-specifier-style
 import { FAUCET_CONTRACT_ID } from "../lib/clients"
 import { useFaucetData } from "../hooks/useFaucetData"
@@ -44,12 +49,16 @@ function TokenCard({
       : "No claim recorded"
 
   return (
-    <div className="flex min-w-0 flex-col gap-4 rounded-lg border border-border bg-card p-5">
+    <Card className="flex min-w-0 flex-col gap-4 rounded-lg p-5">
       <div className="flex items-center gap-3">
         <TokenIcon symbol={token.symbol.replace(/^T/, "")} size={36} />
-        <div>
-          <p className="text-sm font-semibold text-foreground">{token.symbol}</p>
-          <p className="text-xs text-muted-foreground">{token.name}</p>
+        <div className="min-w-0">
+          <Text size="base" weight="semibold">
+            {token.symbol}
+          </Text>
+          <Text size="sm" tone="muted">
+            {token.name}
+          </Text>
         </div>
       </div>
 
@@ -85,22 +94,17 @@ function TokenCard({
         <p className="min-w-0 truncate text-xs text-muted-foreground">{cooldownText}</p>
         <Button
           variant="outline"
-          size="sm"
-          className="h-8 shrink-0"
-          disabled={isDisabled || isPending}
+          size="lg"
+          className="shrink-0"
+          isLoading={isPending}
+          loadingText="Claiming"
+          disabled={isDisabled}
           onClick={() => onClaim(token)}
         >
-          {isPending ? (
-            <span className="flex items-center gap-1.5">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Claiming
-            </span>
-          ) : (
-            "Claim"
-          )}
-        </Button>
+          Claim
+        </LoadingButton>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -129,19 +133,21 @@ export function FaucetPage() {
             <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-11 font-medium text-yellow-600 dark:text-yellow-400">
               <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
               Stellar Testnet
-            </span>
+            </Badge>
           </div>
-          <p className="mt-1.5 text-sm text-muted-foreground">
+          <Text size="base" tone="muted" className="mt-1.5">
             Claim test tokens to try trading on SO4. Tokens have no real value.
-          </p>
+          </Text>
         </header>
 
         {!isTestnet ? (
-          <div className="rounded-xl border border-border bg-card p-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              The faucet is only available on the Stellar testnet.
-            </p>
-          </div>
+          <Card>
+            <CardContent className="p-6 text-center">
+              <Text size="base" tone="muted">
+                The faucet is only available on the Stellar testnet.
+              </Text>
+            </CardContent>
+          </Card>
         ) : (
           <div className="flex flex-col gap-6">
             {/* Token cards */}
@@ -163,20 +169,22 @@ export function FaucetPage() {
             </div>
 
             {/* Claim panel */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex flex-col gap-4">
+            <Card>
+              <CardContent className="flex flex-col gap-4">
                 <div>
                   <p className="text-sm font-medium text-foreground">Claim test tokens</p>
                   <p className="mt-0.5 text-13 text-muted-foreground">
                     Receive TUSDC, TWBTC, TETH, and TXLM in a single transaction. A cooldown
                     applies between claims.
-                  </p>
+                  </Text>
                 </div>
 
                 {mismatch && (
-                  <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-600 dark:text-yellow-400">
-                    Switch your wallet to Stellar Testnet to claim.
-                  </div>
+                  <Alert variant="warning">
+                    <AlertDescription>
+                      Switch your wallet to Stellar Testnet to claim.
+                    </AlertDescription>
+                  </Alert>
                 )}
 
                 {!isConnected ? (
@@ -185,30 +193,26 @@ export function FaucetPage() {
                     <ConnectButton />
                   </div>
                 ) : (
-                  <Button
+                  <LoadingButton
                     variant="default"
+                    size="lg"
                     className="w-full"
-                    disabled={claimDisabled || isBulkPending}
+                    isLoading={isBulkPending}
+                    loadingText="Claiming…"
+                    disabled={claimDisabled}
                     onClick={() => claimAll()}
                   >
-                    {isBulkPending ? (
-                      <span className="flex items-center gap-2">
-                        <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        Claiming…
-                      </span>
-                    ) : (
-                      "Claim Test Tokens"
-                    )}
-                  </Button>
+                    Claim Test Tokens
+                  </LoadingButton>
                 )}
 
                 {data?.cooldownLedgers != null && data.cooldownLedgers > 0 && (
                   <p className="text-center text-xs text-muted-foreground">
                     Cooldown: {data.cooldownLedgers.toLocaleString()} ledgers between claims
-                  </p>
+                  </Text>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Info panel */}
             <div className="rounded-xl border border-border bg-muted/20 px-5 py-4">

@@ -1,6 +1,10 @@
 import { useState } from "react"
-import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
+import { Card } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Heading, Text } from "@workspace/ui/components/text"
+import { TokenAvatar } from "@workspace/ui/components/token-avatar"
 import { GLV_VAULTS, GM_POOLS } from "../../data/pools"
 import { buySO4, depositGLV, depositGM } from "../../lib/earn"
 import { formatPct } from "@/shared/lib/format"
@@ -80,6 +84,14 @@ function SO4LogoIcon() {
   )
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Text size="xs" tone="muted" weight="medium" variant="label" render={<span />}>
+      {children}
+    </Text>
+  )
+}
+
 function SO4Card() {
   const [pending, setPending] = useState(false)
 
@@ -95,7 +107,7 @@ function SO4Card() {
         SO4
       </p>
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
           <SO4LogoIcon />
         </div>
         <div>
@@ -110,8 +122,8 @@ function SO4Card() {
         onClick={handleBuy}
       >
         Buy SO4
-      </Button>
-    </div>
+      </LoadingButton>
+    </Card>
   )
 }
 
@@ -135,12 +147,14 @@ function GlvCard() {
         GLV vaults
       </p>
       <div className="flex items-center gap-3">
-        <TokenAvatar symbol="GLV" />
+        <TokenAvatar symbol="GLV" size="md" />
         <div className="min-w-0 flex-1">
           <p className="text-13 font-semibold">
             {vault.name}{" "}
-            <span className="font-normal text-muted-foreground">[{vault.displayPair}]</span>
-          </p>
+            <Text tone="muted" render={<span />}>
+              [{vault.displayPair}]
+            </Text>
+          </Text>
           <div className="flex items-baseline gap-1">
             <span className="text-base font-bold text-green-400">{formatPct(vault.apy, { sign: false })}</span>
             <span className="text-10 text-muted-foreground">Performance APY</span>
@@ -152,10 +166,10 @@ function GlvCard() {
           disabled={pending}
           onClick={() => void handleEarn()}
         >
-          {pending ? "…" : "Earn"}
-        </Button>
+          Earn
+        </LoadingButton>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -174,7 +188,7 @@ function GmCard() {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
+    <Card className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
         <p className="text-11 font-medium uppercase tracking-wider text-muted-foreground">
           GM pools
@@ -182,7 +196,7 @@ function GmCard() {
         <button className="flex items-center gap-1 text-11 text-muted-foreground transition-colors hover:text-foreground">
           Explore more
           <ExternalLinkIcon />
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-3">
@@ -193,24 +207,24 @@ function GmCard() {
               <p className="text-xs font-medium">{pool.name}</p>
               <p className="text-10 text-muted-foreground">
                 [{pool.longToken}-{pool.shortToken}]
-              </p>
+              </Text>
             </div>
             <div className="shrink-0 text-right">
               <p className="text-13 font-bold text-green-400">{formatPct(pool.apy, { sign: false })}</p>
               <p className="text-10 text-muted-foreground">Performance APY</p>
             </div>
-            <Button
+            <LoadingButton
               size="sm"
               className="h-7 shrink-0 px-3 text-11"
               disabled={pending === pool.id}
               onClick={() => void handleEarn(pool.id, pool.name)}
             >
-              {pending === pool.id ? "…" : "Earn"}
-            </Button>
+              Earn
+            </LoadingButton>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   )
 }
 

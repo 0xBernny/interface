@@ -1,6 +1,9 @@
 import { useState } from "react"
-import { Button } from "@workspace/ui/components/button"
-import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Alert, AlertDescription } from "@workspace/ui/components/alert"
+import { Card } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { Separator } from "@workspace/ui/components/separator"
+import { Stat } from "@workspace/ui/components/stat"
 import { useEarnStats } from "../../hooks/use-earn-data"
 import { claimRewards } from "../../lib/earn"
 import { formatPct, formatUsd } from "@/shared/lib/format"
@@ -85,18 +88,18 @@ export function RewardsBar() {
   return (
     <div className="space-y-3">
       {bannerOpen && (
-        <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/[0.07] px-4 py-3 text-blue-400">
+        <Alert variant="info" className="rounded-xl">
           <InfoIcon />
           <p className="flex-1 text-xs leading-relaxed">
             Protocol fees are accumulating in the Treasury for SO4 buybacks. Rewards will be
             distributed to stakers proportional to staking power{" "}
             <span className="font-medium">(duration × amount staked)</span> when the buyback
             threshold is reached.
-          </p>
+          </AlertDescription>
           <button
             aria-label="Dismiss"
             onClick={() => setBannerOpen(false)}
-            className="mt-0.5 shrink-0 text-blue-400/50 transition-colors hover:text-blue-400"
+            className="mt-0.5 shrink-0 opacity-50 transition-opacity hover:opacity-100"
           >
             <svg
               width="13"
@@ -110,53 +113,57 @@ export function RewardsBar() {
               <path d="M18 6 6 18M6 6l12 12" />
             </svg>
           </button>
-        </div>
+        </Alert>
       )}
 
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-xl border border-border bg-card px-6 py-4">
-        <StatItem
+      <Card className="flex flex-wrap items-center gap-x-8 gap-y-4 px-6 py-4">
+        <Stat
           label="Total investment value"
           value={formatUsd(stats.totalInvestmentUsd)}
           isLoading={isLoading}
         />
 
-        <div className="h-8 w-px shrink-0 bg-border" />
+        <Separator orientation="vertical" className="h-8" />
 
-        <StatItem
+        <Stat
           label="Total earned"
           value={formatUsd(stats.totalEarnedUsd)}
+          role={stats.totalEarnedUsd > 0 ? "positive" : "neutral"}
           isLoading={isLoading}
         />
 
-        <div className="h-8 w-px shrink-0 bg-border" />
+        <Separator orientation="vertical" className="h-8" />
 
-        <StatItem
+        <Stat
           label="Total pending rewards"
           value={formatUsd(stats.totalPendingRewardsUsd)}
+          role={hasPendingRewards ? "positive" : "neutral"}
           isLoading={isLoading}
         />
 
-        <div className="h-8 w-px shrink-0 bg-border" />
+        <Separator orientation="vertical" className="h-8" />
 
-        <StatItem
+        <Stat
           label="Staking Power Share"
           value={formatPct(stats.stakingPowerSharePct, { sign: false })}
           isLoading={isLoading}
         />
 
         <div className="ml-auto">
-          <Button
+          <LoadingButton
             variant="outline"
-            size="sm"
-            disabled={claiming || !hasPendingRewards}
+            size="lg"
+            isLoading={claiming}
+            loadingText="Claiming…"
+            disabled={!hasPendingRewards}
             onClick={() => void handleClaim()}
             className="h-9 gap-2 text-xs"
           >
             <GiftIcon />
-            {claiming ? "Claiming…" : "Claim rewards"}
-          </Button>
+            Claim rewards
+          </LoadingButton>
         </div>
-      </div>
+      </Card>
     </div>
   )
 }

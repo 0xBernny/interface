@@ -1,3 +1,7 @@
+import { Button } from "@workspace/ui/components/button"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 import { useCopy } from "../../hooks/use-copy"
 
@@ -12,7 +16,6 @@ function CopyIcon({ copied }: { copied: boolean }) {
         stroke="currentColor"
         strokeWidth="2.5"
         strokeLinecap="round"
-        className="text-green-400"
       >
         <path d="M20 6 9 17l-5-5" />
       </svg>
@@ -30,6 +33,23 @@ function CopyIcon({ copied }: { copied: boolean }) {
     >
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
       <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  )
+}
+
+function EditIcon() {
+  return (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    >
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
     </svg>
   )
 }
@@ -84,13 +104,18 @@ export function CodeDisplay({ code, label = "Active referral code", onEdit, clas
               strokeWidth="2"
               strokeLinecap="round"
             >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Edit
-          </button>
-        )}
-      </div>
-    </div>
+              <CopyIcon copied={copied} />
+            </Button>
+          </div>
+
+          {onEdit && (
+            <Button variant="outline" size="lg" className="shrink-0" onClick={onEdit}>
+              <EditIcon />
+              Edit
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

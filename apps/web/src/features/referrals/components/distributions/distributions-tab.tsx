@@ -1,12 +1,39 @@
 import { useState } from "react"
-import { Button } from "@workspace/ui/components/button"
-
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Stat } from "@workspace/ui/components/stat"
+import { EmptyState } from "@workspace/ui/components/states"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableEmptyRow,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useAffiliateStats, useDistributions } from "../../hooks/use-referrals-data"
 import { claimDistribution } from "../../lib/referrals"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { formatToken, formatUsd } from "@/shared/lib/format"
 
+const SCHEDULE_FACTS = [
+  { label: "Distribution cycle", value: "Weekly (Thu)" },
+  { label: "Payment token", value: "USDC" },
+  { label: "Claim window", value: "No expiry" },
+]
 
+function LockIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
 
 export function DistributionsTab() {
   const account = useWalletStore((state) => state.address)
@@ -28,20 +55,13 @@ export function DistributionsTab() {
 
   if (!hasAffiliateCode && !isLoading) {
     return (
-      <div className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border text-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted/40">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" className="text-muted-foreground/50">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-        </div>
-        <div>
-          <p className="text-sm font-medium text-foreground/70">Register an affiliate code to access distributions</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Switch to the Affiliates tab and create your code to unlock this section.
-          </p>
-        </div>
-      </div>
+      <Card variant="dashed" className="flex min-h-64 items-center justify-center">
+        <EmptyState
+          icon={<LockIcon />}
+          title="Register an affiliate code to access distributions"
+          description="Switch to the Affiliates tab and create your code to unlock this section."
+        />
+      </Card>
     )
   }
 

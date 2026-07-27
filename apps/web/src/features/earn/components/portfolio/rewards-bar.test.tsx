@@ -72,7 +72,7 @@ describe("RewardsBar — portfolio rewards (#235)", () => {
     const { RewardsBar } = await import("./rewards-bar")
     const { container } = render(<RewardsBar />)
 
-    const skeletons = container.querySelectorAll(".animate-pulse")
+    const skeletons = container.querySelectorAll("[data-slot='skeleton']")
     expect(skeletons.length).toBeGreaterThan(0)
   })
 

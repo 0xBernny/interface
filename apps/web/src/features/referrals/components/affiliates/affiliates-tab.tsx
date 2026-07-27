@@ -1,22 +1,37 @@
 import { useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import { Button } from "@workspace/ui/components/button"
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert"
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { Input } from "@workspace/ui/components/input"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
 import { Skeleton } from "@workspace/ui/components/skeleton"
-import { cn } from "@workspace/ui/lib/utils"
+import { Stat } from "@workspace/ui/components/stat"
+import { EmptyState, LoadingState } from "@workspace/ui/components/states"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useAffiliateReferrals } from "../../hooks/use-referrals-data"
 import { useReferralCode } from "../../queries/useReferralCode"
 import { useReferralStats } from "../../queries/useReferralStats"
 import { useReferralTier } from "../../queries/useReferralTier"
 import { createAffiliateCode, validateReferralCode } from "../../lib/referrals"
-import { TIERS, getNextTier, getTierByLevel } from "../../data/tiers"
+import { TIERS } from "../../data/tiers"
 import { TimePeriodFilter } from "../shared/time-period-filter"
 import { StatChartCard } from "../shared/stat-chart-card"
+import { TierBadge } from "../shared/tier-badge"
+import { TierProgress } from "../shared/tier-progress"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatAddress, formatUsd } from "@/shared/lib/format"
 import { queryKeys } from "@/shared/lib/query-keys"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
-
-
 
 // ── Create code wizard ──────────────────────────────────────────────────────
 
@@ -89,8 +104,9 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
             <Button
               type="submit"
               size="sm"
-              disabled={pending || !code.trim()}
-              className="h-9 shrink-0 px-5"
+              tone="muted"
+              weight="medium"
+              render={<label htmlFor="affiliate-code" />}
             >
               {pending ? "Creating…" : "Create"}
             </Button>
@@ -102,8 +118,7 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
             }
             <span className="text-11 tabular-nums text-muted-foreground/50">{code.length}/16</span>
           </div>
-        </div>
-      </form>
+        </form>
 
       {/* Tier table */}
       <div className="mt-6 border-t border-border pt-5">
@@ -142,8 +157,8 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -202,42 +217,43 @@ function ReferralsTable() {
         <h3 className="text-13 font-semibold">Referrals</h3>
       </div>
       {isLoading ? (
-        <div className="space-y-2 p-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
-        </div>
+        <LoadingState rows={2} label="Loading referrals" />
       ) : referrals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
-          <p className="text-sm text-muted-foreground">No referrals yet</p>
-          <p className="text-xs text-muted-foreground/60">
-            Share your code to start earning commissions
-          </p>
-        </div>
+        <EmptyState
+          title="No referrals yet"
+          description="Share your code to start earning commissions"
+        />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border bg-muted/25 text-left">
-                <th className="px-5 py-3 font-medium text-muted-foreground">Account</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Volume</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Commission</th>
-                <th className="px-5 py-3 font-medium text-muted-foreground">Since</th>
-              </tr>
-            </thead>
-            <tbody>
-              {referrals.map((r) => (
-                <tr key={r.account} className="border-b border-border/40 last:border-b-0 hover:bg-muted/20">
-                  <td className="px-5 py-3 font-mono">{formatAddress(r.account)}</td>
-                  <td className="px-5 py-3 text-right font-mono">{formatUsd(r.volumeUsd, { compact: true })}</td>
-                  <td className="px-5 py-3 text-right font-mono text-violet-400">{formatUsd(r.commissionUsd, { compact: true })}</td>
-                  <td className="px-5 py-3 text-muted-foreground">{r.registeredAt}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableHeadRow>
+              <TableHead>Account</TableHead>
+              <TableHead align="right">Volume</TableHead>
+              <TableHead align="right">Commission</TableHead>
+              <TableHead>Since</TableHead>
+            </TableHeadRow>
+          </TableHeader>
+          <TableBody>
+            {referrals.map((r) => (
+              <TableRow key={r.account}>
+                <TableCell className="py-3">
+                  <NumericText>{formatAddress(r.account)}</NumericText>
+                </TableCell>
+                <TableCell align="right" className="py-3">
+                  <NumericText>{formatUsd(r.volumeUsd, { compact: true })}</NumericText>
+                </TableCell>
+                <TableCell align="right" className="py-3">
+                  <NumericText role="accent">
+                    {formatUsd(r.commissionUsd, { compact: true })}
+                  </NumericText>
+                </TableCell>
+                <TableCell className="py-3 text-muted-foreground">{r.registeredAt}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
-    </div>
+    </Card>
   )
 }
 
@@ -272,7 +288,7 @@ export function AffiliatesTab() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Skeleton className="h-36 rounded-xl" />
             <Skeleton className="h-36 rounded-xl" />
             <Skeleton className="h-36 rounded-xl" />

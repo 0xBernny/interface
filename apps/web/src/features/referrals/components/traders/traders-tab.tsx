@@ -1,6 +1,21 @@
 import { useState } from "react"
-import { Button } from "@workspace/ui/components/button"
+import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert"
+import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { Input } from "@workspace/ui/components/input"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
 import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Stat } from "@workspace/ui/components/stat"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useDistributions, useTraderStats } from "../../hooks/use-referrals-data"
 import { useReferralStats } from "../../queries/useReferralStats"
 import {
@@ -10,10 +25,11 @@ import {
 } from "../../lib/referrals"
 import { TimePeriodFilter } from "../shared/time-period-filter"
 import { StatChartCard } from "../shared/stat-chart-card"
+import { TierBadge } from "../shared/tier-badge"
+import { TIERS } from "../../data/tiers"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { formatUsd } from "@/shared/lib/format"
-
 
 function fmtDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -25,6 +41,12 @@ function fmtDate(iso: string) {
     timeZone: "UTC",
     timeZoneName: "short",
   }).format(new Date(iso))
+}
+
+const DISCOUNT_TIER_VOLUME: Record<string, string> = {
+  Bronze: "Any volume",
+  Silver: "$2.5K+ / mo",
+  Gold: "$25K+ / mo",
 }
 
 type JoinCodeFormProps = {
@@ -99,11 +121,42 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
             <Button
               type="submit"
               size="sm"
-              disabled={pending || !code.trim() || !account}
-              className="h-9 shrink-0 px-5"
+              tone="muted"
+              weight="medium"
+              render={<label htmlFor="referral-code" />}
             >
-              {pending ? "Applying…" : "Apply"}
-            </Button>
+              Referral code
+            </Text>
+            <div className="flex gap-2">
+              <Input
+                id="referral-code"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value.toUpperCase())
+                  setError(null)
+                }}
+                placeholder="e.g. MYCODE123"
+                autoComplete="off"
+                spellCheck={false}
+                aria-invalid={error ? true : undefined}
+                className="h-9 font-mono tracking-widest placeholder:font-sans placeholder:tracking-normal"
+              />
+              <LoadingButton
+                type="submit"
+                size="lg"
+                className="h-9 shrink-0 px-5"
+                isLoading={pending}
+                loadingText="Applying…"
+                disabled={!code.trim() || !account}
+              >
+                Apply
+              </LoadingButton>
+            </div>
+            {error && (
+              <Text size="xs" tone="danger">
+                {error}
+              </Text>
+            )}
           </div>
           {error && <p className="text-11 text-destructive">{error}</p>}
         </div>
@@ -128,8 +181,8 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
             </div>
           ))}
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -162,7 +215,7 @@ function Overview({
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Skeleton className="h-36 rounded-xl" />
           <Skeleton className="h-36 rounded-xl" />
         </div>
@@ -200,8 +253,10 @@ function Overview({
       {stats?.lastUpdated && (
         <p className="text-11 text-muted-foreground">
           Last updated:{" "}
-          <span className="font-mono text-foreground/60">{fmtDate(stats.lastUpdated)}</span>
-        </p>
+          <NumericText role="muted" size="xs">
+            {fmtDate(stats.lastUpdated)}
+          </NumericText>
+        </Text>
       )}
     </div>
   )

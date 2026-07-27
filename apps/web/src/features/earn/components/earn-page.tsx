@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { Navbar } from "../../../ui/Navbar"
 import { PortfolioTab } from "./portfolio/portfolio-tab"
 import { DiscoverTab } from "./discover/discover-tab"
@@ -14,7 +15,7 @@ export function EarnPage() {
           <h1 className="text-22 font-semibold tracking-tight">Earn</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Stake SO4 and buy GLV or GM to earn rewards
-          </p>
+          </Text>
         </header>
 
         <Tabs defaultValue="portfolio" className="gap-6">

@@ -1,5 +1,9 @@
-import { cn } from "@workspace/ui/lib/utils"
-import { getTierByLevel, getNextTier } from "../../data/tiers"
+import { Alert } from "@workspace/ui/components/alert"
+import { Card } from "@workspace/ui/components/card"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Text } from "@workspace/ui/components/text"
+import { getNextTier, getTierByLevel } from "../../data/tiers"
+import { TierBadge } from "./tier-badge"
 import { formatUsd } from "@/shared/lib/format"
 
 type Props = {
@@ -36,12 +40,12 @@ export function TierProgress({ tier, volumeUsd }: Props) {
   const remaining = Math.max(next.minVolumeUsd - volumeUsd, 0)
 
   return (
-    <div
+    <Card
       role="status"
       aria-label="tier progress"
-      className="rounded-lg border border-border bg-card px-4 py-3"
+      className="rounded-lg px-4 py-3"
     >
-      <div className="mb-2 flex items-center justify-between">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span
             className={cn(
@@ -65,7 +69,7 @@ export function TierProgress({ tier, volumeUsd }: Props) {
         </div>
         <span className="text-11 text-muted-foreground" aria-label="remaining volume">
           {formatUsd(remaining, { compact: true })} more needed
-        </span>
+        </NumericText>
       </div>
       <div
         role="progressbar"
@@ -76,10 +80,10 @@ export function TierProgress({ tier, volumeUsd }: Props) {
         className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
       >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-blue-400 transition-all"
+          className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
-    </div>
+    </Card>
   )
 }

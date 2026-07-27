@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
-import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { Stat } from "@workspace/ui/components/stat"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useUserSO4Stats } from "../../hooks/use-earn-data"
 import { compoundRewards, vestEsSO4 } from "../../lib/earn"
 import { formatToken } from "@/shared/lib/format"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
-
-
 
 function SectionCard({
   title,
@@ -94,25 +95,26 @@ export function AdditionalOpportunitiesTab() {
         title="esSO4 Vesting"
         description="Convert esSO4 (escrowed SO4) into SO4 tokens over a 12-month linear vesting period. Tokens unlock gradually — claim anytime."
         action={
-          <Button
-            size="sm"
+          <LoadingButton
+            size="lg"
             variant="outline"
             className="h-8 text-xs"
             disabled={vestPending || !hasEsSO4}
             onClick={() => void handleVest()}
           >
-            {vestPending ? "Starting…" : "Vest now"}
-          </Button>
+            Vest now
+          </LoadingButton>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow
+          <Stat
             label="esSO4 balance"
             value={formatToken(so4Stats.esSO4Balance, "esSO4", { minDecimals: 2 })}
+            size="md"
             isLoading={isLoading}
           />
-          <StatRow label="Vesting duration" value="12 months" />
-          <StatRow label="Conversion rate" value="1 esSO4 → 1 SO4" />
+          <Stat label="Vesting duration" value="12 months" size="md" />
+          <Stat label="Conversion rate" value="1 esSO4 → 1 SO4" size="md" />
         </div>
       </SectionCard>
 
@@ -127,18 +129,20 @@ export function AdditionalOpportunitiesTab() {
             disabled={compoundPending || !hasMultiplierPoints}
             onClick={() => void handleCompound()}
           >
-            {compoundPending ? "Compounding…" : "Compound"}
-          </Button>
+            Compound
+          </LoadingButton>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow
+          <Stat
             label="Multiplier Points"
             value={formatToken(so4Stats.multiplierPoints, "MP", { minDecimals: 2 })}
+            role="accent"
+            size="md"
             isLoading={isLoading}
           />
-          <StatRow label="Boost cap" value="100% of base APR" />
-          <StatRow label="Accrual rate" value="100% APR on staked SO4" />
+          <Stat label="Boost cap" value="100% of base APR" size="md" />
+          <Stat label="Accrual rate" value="100% APR on staked SO4" size="md" />
         </div>
       </SectionCard>
 
@@ -155,9 +159,9 @@ export function AdditionalOpportunitiesTab() {
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow label="Referrer rebate" value="5% of referee fees" />
-          <StatRow label="Referee discount" value="5% fee reduction" />
-          <StatRow label="Paid in" value="USDC weekly" />
+          <Stat label="Referrer rebate" value="5% of referee fees" size="md" />
+          <Stat label="Referee discount" value="5% fee reduction" size="md" />
+          <Stat label="Paid in" value="USDC weekly" size="md" />
         </div>
       </SectionCard>
     </div>

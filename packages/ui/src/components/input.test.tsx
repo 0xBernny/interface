@@ -35,7 +35,7 @@ describe("Input accessibility", () => {
   })
 
   it("supports invalid state", async () => {
-    const { container } = render(<Input aria-invalid="true" />)
+    const { container } = render(<Input aria-invalid="true" aria-label="Amount" />)
     const input = screen.getByRole("textbox")
 
     expect(input).toHaveAttribute("aria-invalid", "true")

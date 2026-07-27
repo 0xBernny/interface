@@ -2,8 +2,6 @@ import { cn } from "@workspace/ui/lib/utils"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
 
-
-
 function xAxisLabels(period: TimePeriod): Array<string> {
   const now = new Date()
   const fmt = (d: Date) =>
@@ -39,12 +37,20 @@ function InfoIcon({ className }: InfoIconProps) {
   )
 }
 
+type Accent = "green" | "blue"
+
+/** Accent → semantic token + matching numeric role. */
+const ACCENTS: Record<Accent, { stroke: string; role: NumericRole }> = {
+  green: { stroke: "var(--success)", role: "positive" },
+  blue: { stroke: "var(--info)", role: "neutral" },
+}
+
 type Props = {
   title: string
   tooltip: string
   value: number
   period: TimePeriod
-  accent?: "green" | "blue"
+  accent?: Accent
 }
 
 export function StatChartCard({ title, tooltip, value, period, accent = "blue" }: Props) {
@@ -52,7 +58,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
   const accentStrokeClass = accent === "green" ? "stroke-green-400" : "stroke-blue-400"
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card">
+    <Card className="overflow-hidden">
       <div className="px-5 pt-4 pb-2">
         <div className="flex items-center gap-1.5">
           <span className="text-11 font-medium text-muted-foreground">{title}</span>
@@ -62,7 +68,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
         </div>
         <p className="mt-1.5 text-22 font-semibold tabular-nums tracking-tight">
           {formatUsd(value)}
-        </p>
+        </NumericText>
       </div>
 
       {/* Chart area */}
@@ -131,6 +137,6 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
           })}
         </svg>
       </div>
-    </div>
+    </Card>
   )
 }

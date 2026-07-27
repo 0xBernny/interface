@@ -5,8 +5,9 @@ export default mergeConfig(
   reactConfig,
   defineConfig({
     test: {
+      // setupFiles comes from reactConfig (./vitest.setup.ts) — mergeConfig
+      // concatenates arrays, so overriding it here would add a second entry.
       include: ["src/**/*.{test,spec}.{ts,tsx}"],
-      setupFiles: ["./setup-tests.ts"],
       deps: {
         inline: [
           "react",

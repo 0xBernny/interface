@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react"
 import { cn } from "@workspace/ui/lib/utils"
+import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Card, CardContent } from "@workspace/ui/components/card"
 import {
   Dialog,
   DialogContent,
@@ -9,10 +11,24 @@ import {
   DialogTitle,
 } from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { NumericText } from "@workspace/ui/components/numeric"
+import { Stat } from "@workspace/ui/components/stat"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
+} from "@workspace/ui/components/table"
+import { Text } from "@workspace/ui/components/text"
 import { usePoolsApy } from "../../hooks/use-earn-data"
 import { depositGLV, depositGM } from "../../lib/earn"
 import { useMarketPoolAmounts } from "../../hooks/useMarketPoolAmounts"
 import { useGLVVaultData, useGMPoolData, useStakingInfo } from "../../queries"
+import { POOL_KIND_BADGE } from "../../lib/badges"
 import { formatPct, formatToken, formatUsd } from "@/shared/lib/format"
 import { fromSorobanAmount } from "@/shared/lib/bignum"
 import { TokenIcon } from "@/shared/components/TokenIcon"
@@ -25,25 +41,27 @@ function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: 
   return (
     <div className="space-y-1">
       <div className="flex h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-        <div className="h-full bg-blue-400/70" style={{ width: `${longPct}%` }} />
-        <div className="h-full bg-amber-400/70" style={{ width: `${shortPct}%` }} />
+        <div className="h-full bg-long/70" style={{ width: `${longPct}%` }} />
+        <div className="h-full bg-warning/70" style={{ width: `${shortPct}%` }} />
       </div>
       <p className="text-10 text-muted-foreground">
         {longPct}% / {shortPct}%
-      </p>
+      </Text>
     </div>
   )
 }
 
-type FilterButtonProps = {
+type ToggleButtonProps = {
   active: boolean
   onClick: () => void
   children: React.ReactNode
 }
 
-function FilterButton({ active, onClick, children }: FilterButtonProps) {
+function FilterButton({ active, onClick, children }: ToggleButtonProps) {
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="lg"
       onClick={onClick}
       className={cn(
         "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
@@ -53,19 +71,15 @@ function FilterButton({ active, onClick, children }: FilterButtonProps) {
       )}
     >
       {children}
-    </button>
+    </Button>
   )
 }
 
-type SortButtonProps = {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}
-
-function SortButton({ active, onClick, children }: SortButtonProps) {
+function SortButton({ active, onClick, children }: ToggleButtonProps) {
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={onClick}
       className={cn(
         "rounded px-1.5 py-0.5 text-xs transition-colors",
@@ -73,7 +87,7 @@ function SortButton({ active, onClick, children }: SortButtonProps) {
       )}
     >
       {children}
-    </button>
+    </Button>
   )
 }
 
@@ -162,7 +176,9 @@ export function DiscoverTab() {
           <SortButton active={sort === "apy"} onClick={() => setSort("apy")}>
             APY {sort === "apy" && "↓"}
           </SortButton>
-          <span className="text-border">·</span>
+          <Text size="sm" tone="subtle" render={<span />}>
+            ·
+          </Text>
           <SortButton active={sort === "tvl"} onClick={() => setSort("tvl")}>
             TVL {sort === "tvl" && "↓"}
           </SortButton>
@@ -190,39 +206,36 @@ export function DiscoverTab() {
               <p className="text-10 text-muted-foreground">Pending Rewards</p>
               <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Pool table */}
-      <div className="overflow-hidden rounded-xl border border-border">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border bg-muted/25 text-left">
-                <th className="px-5 py-3 font-medium text-muted-foreground">Pool</th>
-                <th className="px-5 py-3 font-medium text-muted-foreground">Type</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">APY</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">TVL</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Position</th>
-                <th className="px-5 py-3 font-medium text-muted-foreground">Composition</th>
-                <th className="px-5 py-3 text-right font-medium text-muted-foreground">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <DiscoverRow
-                  key={row.id}
-                  row={row}
-                  isLast={i === rows.length - 1}
-                  pending={pending}
-                  onEarn={handleEarn}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <Card variant="plain">
+        <Table>
+          <TableHeader>
+            <TableHeadRow>
+              <TableHead>Pool</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead align="right">APY</TableHead>
+              <TableHead align="right">TVL</TableHead>
+              <TableHead align="right">Position</TableHead>
+              <TableHead>Composition</TableHead>
+              <TableHead align="right">Action</TableHead>
+            </TableHeadRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <DiscoverRow
+                key={row.id}
+                row={row}
+                pending={pending}
+                onEarn={handleEarn}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </Card>
 
       {/* Legend */}
       <div className="flex items-center gap-5 px-1">
@@ -236,7 +249,7 @@ export function DiscoverTab() {
         </div>
         <p className="ml-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
-        </p>
+        </Text>
       </div>
 
       {/* Deposit modal */}
@@ -252,15 +265,16 @@ export function DiscoverTab() {
           </DialogHeader>
 
           {!account ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">
+            <Text size="base" tone="muted" className="py-4 text-center">
               Connect your wallet to deposit.
-            </p>
+            </Text>
           ) : (
             <div className="space-y-3 py-2">
-              <label className="block text-xs text-muted-foreground">
+              <Text size="sm" tone="muted" render={<label htmlFor="deposit-amount" />}>
                 Amount (USD)
-              </label>
+              </Text>
               <Input
+                id="deposit-amount"
                 type="number"
                 min="0"
                 step="any"
@@ -299,7 +313,6 @@ export function DiscoverTab() {
 
 function DiscoverRow({
   row,
-  isLast,
   pending,
   onEarn,
 }: {
@@ -315,9 +328,8 @@ function DiscoverRow({
     longPct: number | undefined
     shortPct: number | undefined
   }
-  isLast: boolean
   pending: string | null
-  onEarn: (id: string, kind: "gm" | "glv", name: string) => Promise<void>
+  onEarn: (id: string, kind: "gm" | "glv", name: string) => void
 }) {
   const { data: poolAmounts } = useMarketPoolAmounts(row.marketAddress)
   const { data: gmPoolData } = useGMPoolData(row.marketAddress)
@@ -332,8 +344,8 @@ function DiscoverRow({
     : fromSorobanAmount(glvVaultData?.userGlvBalance ?? 0n, 7)
 
   return (
-    <tr className={cn("transition-colors hover:bg-muted/20", !isLast && "border-b border-border/40")}>
-      <td className="px-5 py-4">
+    <TableRow>
+      <TableCell className="py-4">
         <div className="flex items-center gap-3">
           <TokenIcon symbol={row.longToken} size={32} />
           <span className="font-medium">{row.name}</span>
@@ -366,12 +378,17 @@ function DiscoverRow({
         ) : (
           <span className="text-11 text-muted-foreground">Diversified</span>
         )}
-      </td>
-      <td className="px-5 py-4 text-right">
-        <Button size="xs" disabled={pending === row.id} onClick={() => void onEarn(row.id, row.kind, row.name)}>
-          {pending === row.id ? "…" : "Earn"}
-        </Button>
-      </td>
-    </tr>
+      </TableCell>
+      <TableCell align="right" className="py-4">
+        <LoadingButton
+          size="xs"
+          isLoading={pending === row.id}
+          loadingText="Depositing"
+          onClick={() => onEarn(row.id, row.kind, row.name)}
+        >
+          Earn
+        </LoadingButton>
+      </TableCell>
+    </TableRow>
   )
 }
