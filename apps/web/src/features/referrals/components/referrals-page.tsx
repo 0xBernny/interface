@@ -1,11 +1,16 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import { Heading, Text } from "@workspace/ui/components/text"
+import { useQueryClient } from "@tanstack/react-query"
 import { Navbar } from "../../../ui/Navbar"
-import { useAffiliateStats, useTraderStats } from "../hooks/use-referrals-data"
+import { useTraderStats } from "../hooks/use-referrals-data"
+import { useReferralCode } from "../queries/useReferralCode"
+import { useReferralTier } from "../queries/useReferralTier"
 import { TradersTab } from "./traders/traders-tab"
 import { AffiliatesTab } from "./affiliates/affiliates-tab"
 import { DistributionsTab } from "./distributions/distributions-tab"
 import { ReferralsSidebar } from "./referrals-sidebar"
+import { queryKeys } from "@/shared/lib/query-keys"
 
 type ReferralsTab = "traders" | "affiliates" | "distributions"
 
@@ -29,13 +34,15 @@ function LockIcon() {
 }
 
 export function ReferralsPage() {
+  const queryClient = useQueryClient()
   const [tab, setTab] = useState<ReferralsTab>("traders")
 
   const { data: traderStats } = useTraderStats()
-  const { data: affiliateStats } = useAffiliateStats()
+  const { data: affiliateCodeData } = useReferralCode()
+  const { data: affiliateTier } = useReferralTier()
 
   const traderCode = traderStats?.referralCode ?? null
-  const affiliateCode = affiliateStats?.code ?? null
+  const affiliateCode = affiliateCodeData ?? null
   const hasAffiliateCode = Boolean(affiliateCode)
 
   return (
@@ -43,10 +50,10 @@ export function ReferralsPage() {
       <Navbar variant="app" />
       <div className="mx-auto w-full max-w-260 px-4 pb-16 pt-8 sm:px-6 lg:px-12">
         <header className="mb-8">
-          <h1 className="text-[22px] font-semibold tracking-tight">Referrals</h1>
+          <h1 className="text-22 font-semibold tracking-tight">Referrals</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Get fee discounts and earn up to 15% commission through the SO4 referral program
-          </p>
+          </Text>
         </header>
 
         <Tabs
@@ -54,7 +61,7 @@ export function ReferralsPage() {
           onValueChange={(v) => setTab(v as ReferralsTab)}
           className="gap-6"
         >
-          <TabsList className="h-9">
+          <TabsList className="h-9 w-full overflow-x-auto sm:w-fit">
             <TabsTrigger value="traders">Traders</TabsTrigger>
             <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
             <TabsTrigger
@@ -67,13 +74,14 @@ export function ReferralsPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* 2-column: tab content (flex-1) + sticky sidebar (w-72) */}
-          <div className="flex gap-5">
+          {/* Stacks on mobile; 2-column (content + sticky sidebar) from lg up */}
+          <div className="flex flex-col gap-5 lg:flex-row">
             <div className="min-w-0 flex-1">
               <TabsContent value="traders">
                 <TradersTab
                   onCodeApplied={() => {
-                    // TODO: invalidate trader stats query after code applied
+                    void queryClient.invalidateQueries({ queryKey: ["referrals", "trader-stats"] })
+                    void queryClient.invalidateQueries({ queryKey: queryKeys.referrals.tier(null) })
                   }}
                 />
               </TabsContent>
@@ -90,7 +98,7 @@ export function ReferralsPage() {
               traderCode={traderCode}
               affiliateCode={affiliateCode}
               traderDiscountPct={traderStats?.discountPct ?? 5}
-              affiliateTier={affiliateStats?.tier ?? 1}
+              affiliateTier={affiliateTier ?? 1}
             />
           </div>
         </Tabs>

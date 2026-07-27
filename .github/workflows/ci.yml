@@ -42,5 +42,15 @@ jobs:
       - name: Typecheck
         run: bun typecheck
 
+      - name: Design token check
+        run: bun run check:tokens
+
+      - name: Test
+        run: bun run test
+
+      - name: Coverage
+        if: ${{ !cancelled() }}
+        run: bun run test:coverage
+
       - name: Build
         run: bun run build

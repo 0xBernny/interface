@@ -1,75 +1,17 @@
-import {
-  
-  CandlestickSeries,
-  ColorType,
-  CrosshairMode,
-  
-  
-  
-  LineStyle,
-  
-  createChart
-} from "lightweight-charts"
-import { useEffect, useRef } from "react"
+import { CandlestickSeries, LineStyle, createChart } from "lightweight-charts"
+import { useEffect, useRef, useState } from "react"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { useOracleCandles } from "../../hooks/useOracleCandles"
 import { useLiveBar } from "../../hooks/useLiveBar"
 import { usePositions } from "../../hooks/usePositions"
+import {
+  buildCandleOptions,
+  buildChartOptions,
+  getChartPalette,
+  positionLineColor,
+} from "../../lib/chart-theme"
 import type {CandlestickData, IChartApi, IPriceLine, ISeriesApi, UTCTimestamp} from "lightweight-charts";
 import type { OhlcBar } from "../../lib/oracle"
-
-const CHART_COLORS = {
-  dark: {
-    background: "#0d0e1a",
-    text: "#9598a1",
-    grid: "#1e2035",
-    crosshair: "#444860",
-    crosshairLabel: "#2a2e3e",
-    border: "#1e2035",
-  },
-  light: {
-    background: "#ffffff",
-    text: "#4b5563",
-    grid: "#e5e7eb",
-    crosshair: "#9ca3af",
-    crosshairLabel: "#f3f4f6",
-    border: "#e5e7eb",
-  },
-}
-
-function isDarkMode() {
-  return document.documentElement.classList.contains("dark")
-}
-
-function buildChartOptions(isDark: boolean) {
-  const c = isDark ? CHART_COLORS.dark : CHART_COLORS.light
-  return {
-    layout: {
-      background: { type: ColorType.Solid, color: c.background },
-      textColor: c.text,
-      fontSize: 11,
-    },
-    grid: {
-      vertLines: { color: c.grid, style: LineStyle.Solid },
-      horzLines: { color: c.grid, style: LineStyle.Solid },
-    },
-    crosshair: {
-      mode: CrosshairMode.Normal,
-      vertLine: { color: c.crosshair, labelBackgroundColor: c.crosshairLabel },
-      horzLine: { color: c.crosshair, labelBackgroundColor: c.crosshairLabel },
-    },
-    rightPriceScale: {
-      borderColor: c.border,
-      scaleMargins: { top: 0.1, bottom: 0.1 },
-    },
-    timeScale: {
-      borderColor: c.border,
-      timeVisible: true,
-      secondsVisible: false,
-      rightOffset: 5,
-    },
-  }
-}
 
 type ChartLine = {
   id: string
@@ -107,23 +49,22 @@ export function TVChartContainer({ symbol, period }: Props) {
   const liveBar = useLiveBar(symbol, period)
   const { data: positions = [] } = usePositions()
 
+  // Bumped by the theme observer below so colour-dependent effects re-run.
+  const [themeVersion, setThemeVersion] = useState(0)
+
   // ── Mount chart once ───────────────────────────────────────────────────────
   useEffect(() => {
     if (!containerRef.current) return
 
+    const palette = getChartPalette()
+
     const chart = createChart(containerRef.current, {
-      ...buildChartOptions(isDarkMode()),
+      ...buildChartOptions(palette),
       handleScroll: { mouseWheel: true, pressedMouseMove: true },
       handleScale: { mouseWheel: true, pinch: true },
     })
 
-    const series = chart.addSeries(CandlestickSeries, {
-      upColor: "#26a69a",
-      downColor: "#ef5350",
-      borderVisible: false,
-      wickUpColor: "#26a69a",
-      wickDownColor: "#ef5350",
-    })
+    const series = chart.addSeries(CandlestickSeries, buildCandleOptions(palette))
 
     chartRef.current = chart
     seriesRef.current = series
@@ -139,9 +80,14 @@ export function TVChartContainer({ symbol, period }: Props) {
     })
     resizeObserver.observe(containerRef.current)
 
-    // Watch <html class="dark|light"> and re-theme the chart immediately
+    // Watch <html class="dark|light"> and re-theme the chart immediately —
+    // no reload needed. Bumping themeVersion re-colours the series and the
+    // position lines through the effects below.
     const themeObserver = new MutationObserver(() => {
-      chart.applyOptions(buildChartOptions(isDarkMode()))
+      const next = getChartPalette()
+      chart.applyOptions(buildChartOptions(next))
+      series.applyOptions(buildCandleOptions(next))
+      setThemeVersion((v) => v + 1)
     })
     themeObserver.observe(document.documentElement, {
       attributes: true,
@@ -194,6 +140,8 @@ export function TVChartContainer({ symbol, period }: Props) {
   useEffect(() => {
     if (!seriesRef.current) return
 
+    const palette = getChartPalette()
+
     // Build the desired set of lines from open positions
     const desiredLines: Array<ChartLine> = positions
       .filter((p) => p.indexToken === symbol)
@@ -203,7 +151,7 @@ export function TVChartContainer({ symbol, period }: Props) {
             id: `${p.key}-entry`,
             title: `${p.isLong ? "Long" : "Short"} Entry`,
             price: p.entryPrice,
-            color: p.isLong ? "#26a69a" : "#ef5350",
+            color: positionLineColor(palette, p.isLong),
             lineStyle: LineStyle.Dashed,
           },
         ]
@@ -212,7 +160,7 @@ export function TVChartContainer({ symbol, period }: Props) {
             id: `${p.key}-liq`,
             title: `${p.isLong ? "Long" : "Short"} Liq.`,
             price: p.liquidationPrice,
-            color: "#f59e0b",
+            color: palette.liquidation,
             lineStyle: LineStyle.LargeDashed,
           })
         }
@@ -229,21 +177,25 @@ export function TVChartContainer({ symbol, period }: Props) {
       }
     })
 
-    // Add new lines (skip duplicates)
+    // Add new lines, and re-colour the ones already drawn so a theme switch
+    // repaints them in place.
     desiredLines.forEach((line) => {
-      if (!priceLineRefs.current.has(line.id)) {
-        const priceLine = seriesRef.current!.createPriceLine({
-          price: line.price,
-          color: line.color,
-          lineWidth: 1,
-          lineStyle: line.lineStyle ?? LineStyle.Dashed,
-          axisLabelVisible: true,
-          title: line.title,
-        })
-        priceLineRefs.current.set(line.id, priceLine)
+      const existing = priceLineRefs.current.get(line.id)
+      if (existing) {
+        existing.applyOptions({ color: line.color })
+        return
       }
+      const priceLine = seriesRef.current!.createPriceLine({
+        price: line.price,
+        color: line.color,
+        lineWidth: 1,
+        lineStyle: line.lineStyle ?? LineStyle.Dashed,
+        axisLabelVisible: true,
+        title: line.title,
+      })
+      priceLineRefs.current.set(line.id, priceLine)
     })
-  }, [positions, symbol])
+  }, [positions, symbol, themeVersion])
 
   return (
     <div className="relative h-full w-full">

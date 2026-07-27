@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useId, useState } from "react"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 
 export type FaqItem = {
@@ -25,24 +27,29 @@ function ChevronIcon({ open }: { open: boolean }) {
 
 function AccordionItem({ item }: { item: FaqItem }) {
   const [open, setOpen] = useState(false)
+  const panelId = useId()
 
   return (
     <div className="border-b border-border/60 last:border-b-0">
       <button
+        type="button"
         onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={panelId}
         className="flex w-full items-center justify-between gap-3 py-3 text-left"
       >
-        <span className="text-[12px] font-medium leading-snug">{item.q}</span>
+        <span className="text-xs font-medium leading-snug">{item.q}</span>
         <ChevronIcon open={open} />
       </button>
 
       <div
+        id={panelId}
         className={cn(
           "overflow-hidden transition-all duration-200",
           open ? "max-h-96 pb-3" : "max-h-0",
         )}
       >
-        <p className="text-[11px] leading-relaxed text-muted-foreground">{item.a}</p>
+        <p className="text-11 leading-relaxed text-muted-foreground">{item.a}</p>
       </div>
     </div>
   )
@@ -56,7 +63,7 @@ type Props = {
 export function FaqAccordion({ items, title = "FAQ" }: Props) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-1 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
         {title}
       </p>
       <div>

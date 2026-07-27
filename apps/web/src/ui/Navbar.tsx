@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
 import { ThemeToggle } from "./theme-toggle"
-import { ConnectButton } from "./connect-button"
+import { ConnectButton } from "@/features/wallet/components/ConnectButton"
 
 function Logo() {
   return (
@@ -39,8 +39,8 @@ function Logo() {
           />
         </svg>
       </span>
-      <span className="font-mono-num text-[17px] font-medium tracking-[0.02em] text-foreground">
-        so4<span className="text-muted-foreground">.market</span>
+      <span className="font-mono-num text-17 font-medium tracking-[0.02em] text-foreground">
+        so4<span className="text-muted-foreground max-[380px]:hidden">.market</span>
       </span>
     </Link>
   )
@@ -54,13 +54,27 @@ const LANDING_LINKS = [
   { label: "Governance", href: "#" },
 ]
 
-const APP_LINKS: Array<{ label: string; to: "/trade" | "/earn" | "/referrals" | null }> = [
+const APP_LINKS: Array<{ label: string; to: "/trade" | "/pools" | "/earn" | "/referrals" | "/faucet" | null }> = [
   { label: "Trade", to: "/trade" },
+  { label: "Pools", to: "/pools" },
   { label: "Earn", to: "/earn" },
   { label: "Referrals", to: "/referrals" },
+  { label: "Faucet", to: "/faucet" },
   { label: "Stats", to: null },
   { label: "Docs", to: null },
 ]
+
+const desktopAppLinkClass =
+  "relative inline-flex h-8 items-center rounded-md px-2 text-13-5 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+
+const desktopAppLinkActiveClass =
+  "relative inline-flex h-8 items-center rounded-md bg-primary/10 px-2 text-13-5 font-medium text-foreground after:absolute after:inset-x-2 after:-bottom-[13px] after:h-0.5 after:rounded-full after:bg-primary"
+
+const mobileAppLinkClass =
+  "block rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+
+const mobileAppLinkActiveClass =
+  "block rounded-md bg-primary/10 px-3 py-2 text-sm font-medium text-foreground ring-1 ring-primary/20"
 
 type Props = {
   variant: "landing" | "app"
@@ -89,13 +103,14 @@ export function Navbar({ variant }: Props) {
                   {to ? (
                     <Link
                       to={to}
-                      className="text-[13.5px] text-muted-foreground transition-colors hover:text-foreground"
-                      activeProps={{ className: "text-[13.5px] text-foreground" }}
+                      className={desktopAppLinkClass}
+                      activeOptions={{ exact: true }}
+                      activeProps={{ className: desktopAppLinkActiveClass }}
                     >
                       {label}
                     </Link>
                   ) : (
-                    <span className="cursor-default text-[13.5px] text-muted-foreground/40">
+                    <span className="cursor-default text-13-5 text-muted-foreground/40">
                       {label}
                     </span>
                   )}
@@ -105,7 +120,7 @@ export function Navbar({ variant }: Props) {
                 <li key={label}>
                   <a
                     href={href}
-                    className="text-[13.5px] font-normal text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-13-5 font-normal text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {label}
                   </a>
@@ -116,11 +131,11 @@ export function Navbar({ variant }: Props) {
         {/* Actions */}
         <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
-          <ConnectButton compactMobile />
+          <ConnectButton />
           {!isApp && (
             <Button
               variant="default"
-              className="hidden h-9.5 gap-2 px-4 text-[13.5px] sm:inline-flex"
+              className="hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
             >
               Launch app
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -174,7 +189,9 @@ export function Navbar({ variant }: Props) {
                     {to ? (
                       <Link
                         to={to}
-                        className="block rounded py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                        className={mobileAppLinkClass}
+                        activeOptions={{ exact: true }}
+                        activeProps={{ className: mobileAppLinkActiveClass }}
                         onClick={() => setMobileOpen(false)}
                       >
                         {label}

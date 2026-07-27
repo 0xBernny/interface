@@ -108,11 +108,11 @@ export function Footer() {
                   />
                 </svg>
               </span>
-              <span className="font-mono-num text-[14px] font-medium tracking-[0.02em] text-foreground">
+              <span className="font-mono-num text-sm font-medium tracking-[0.02em] text-foreground">
                 so4<span className="text-muted-foreground">.market</span>
               </span>
             </div>
-            <p className="mt-5 max-w-[260px] text-[12.5px] leading-[1.55] text-muted-foreground">
+            <p className="mt-5 max-w-[260px] text-12-5 leading-[1.55] text-muted-foreground">
               24/7 decentralized perpetuals layer for global markets.
             </p>
             <SocialLinks />
@@ -121,7 +121,7 @@ export function Footer() {
           {/* Link columns */}
           {FOOTER_COLS.map(({ heading, links }) => (
             <div key={heading}>
-              <h5 className="font-mono-num mb-4 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground">
+              <h5 className="font-mono-num mb-4 text-10 font-medium uppercase tracking-[0.14em] text-foreground">
                 {heading}
               </h5>
               <ul className="space-y-0.5">
@@ -129,7 +129,7 @@ export function Footer() {
                   <li key={link}>
                     <a
                       href="#"
-                      className="block py-1 text-[12.5px] text-muted-foreground transition-colors hover:text-primary"
+                      className="block py-1 text-12-5 text-muted-foreground transition-colors hover:text-primary"
                     >
                       {link}
                     </a>
@@ -141,9 +141,16 @@ export function Footer() {
         </div>
 
         {/* Big wordmark */}
+        {/* ds-allow: text-[16.4vw] is fluid viewport-relative display type
+            (scales the whole wordmark with page width) — not a fixed size
+            a px-based token scale can represent. */}
         <div className="font-trading relative select-none overflow-hidden border-t border-border py-7 text-[16.4vw] font-semibold leading-[0.82] tracking-[-0.06em] text-foreground">
           <div className="flex items-start gap-[0.06em] whitespace-nowrap">
             <span>so4.market</span>
+            {/* ds-allow: text-[0.18em] is intentionally relative to the
+                wordmark's own (fluid, vw-based) font-size above, so it
+                scales proportionally with it — a fixed token would break
+                that relationship. */}
             <span className="mt-[0.04em] inline-flex h-[0.32em] w-[0.32em] shrink-0 items-center justify-center rounded-full border-[0.025em] border-current text-[0.18em] font-normal">
               C
             </span>
@@ -151,7 +158,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="font-mono-num flex flex-col gap-2 border-t border-border py-5 text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="font-mono-num flex flex-col gap-2 border-t border-border py-5 text-10-5 uppercase tracking-[0.12em] text-muted-foreground/60 sm:flex-row sm:items-center sm:justify-between">
           <span className="flex items-center gap-2">
             <span
               className="inline-block h-[5px] w-[5px] rounded-full bg-emerald-400"

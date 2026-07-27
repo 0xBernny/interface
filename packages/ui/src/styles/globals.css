@@ -27,11 +27,17 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
     --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
     --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
     --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
     --color-neutral: var(--neutral);
     --color-danger: var(--danger);
+    --color-long: var(--long);
+    --color-short: var(--short);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -54,6 +60,35 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
     --font-sans: 'Geist Variable', sans-serif;
+
+    /*
+     * Micro-typography scale (DS-050).
+     *
+     * The default Tailwind scale (xs=12px, sm=14px, base=16px, lg=18px) has
+     * no steps for the dense, data-table-heavy UI in this app (order books,
+     * position tables, referral stats), which had accumulated 250+ ad hoc
+     * `text-[Npx]` arbitrary values across the codebase instead. These are
+     * the exact values that usage actually converged on, promoted to named
+     * tokens so they're an intentional, documented scale instead of
+     * per-callsite magic numbers. Named by pixel value (at the default
+     * 16px root) rather than a semantic step name (2xs/3xs/...) since a
+     * dozen-plus half-pixel steps don't fit a small semantic vocabulary
+     * without the names becoming arbitrary themselves.
+     */
+    --text-9-5: 0.59375rem;   /* 9.5px */
+    --text-10: 0.625rem;      /* 10px */
+    --text-10-5: 0.65625rem;  /* 10.5px */
+    --text-11: 0.6875rem;     /* 11px */
+    --text-11-5: 0.71875rem;  /* 11.5px */
+    --text-12-5: 0.78125rem;  /* 12.5px */
+    --text-13: 0.8125rem;     /* 13px */
+    --text-13-5: 0.84375rem;  /* 13.5px */
+    --text-14-5: 0.90625rem;  /* 14.5px */
+    --text-15: 0.9375rem;     /* 15px */
+    --text-17: 1.0625rem;     /* 17px */
+    --text-22: 1.375rem;      /* 22px */
+    --text-26: 1.625rem;      /* 26px */
+    --text-40: 2.5rem;        /* 40px */
 }
 
 :root {
@@ -72,11 +107,7 @@
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
-    --success: oklch(0.527 0.154 150.069);
-    --warning: oklch(0.681 0.162 75.834);
-    --info: oklch(0.585 0.134 242.749);
-    --neutral: oklch(0.556 0 0);
-    --danger: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
@@ -85,6 +116,32 @@
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
+
+    /* Semantic status roles — shared by badges, alerts, numeric text and the
+       trading chart so a "long" candle is the same green as a positive PnL. */
+    --success: oklch(0.596 0.145 163.225);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.681 0.162 75.834);
+    --warning-foreground: oklch(0.21 0 0);
+    --info: oklch(0.546 0.245 262.881);
+    --info-foreground: oklch(0.985 0 0);
+    --neutral: oklch(0.556 0 0);
+    --danger: var(--destructive);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    /* Trading chart surface roles. The chart renders to canvas and cannot use
+       Tailwind classes, so it reads these through the typed chart adapter. */
+    --chart-surface: var(--background);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: var(--border);
+    --chart-crosshair: oklch(0.708 0 0);
+    --chart-crosshair-label: oklch(0.955 0 0);
+    --chart-border: var(--border);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --radius: 0;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -112,11 +169,7 @@
     --accent: oklch(0.269 0 0);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
-    --success: oklch(0.627 0.154 150.069);
-    --warning: oklch(0.781 0.162 75.834);
-    --info: oklch(0.685 0.134 242.749);
-    --neutral: oklch(0.708 0 0);
-    --danger: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.145 0 0);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
@@ -125,6 +178,28 @@
     --chart-3: oklch(0.546 0.245 262.881);
     --chart-4: oklch(0.488 0.243 264.376);
     --chart-5: oklch(0.424 0.199 265.638);
+
+    --success: oklch(0.792 0.184 158.6);
+    --success-foreground: oklch(0.145 0 0);
+    --warning: oklch(0.828 0.159 82.5);
+    --warning-foreground: oklch(0.145 0 0);
+    --info: oklch(0.707 0.165 254.624);
+    --info-foreground: oklch(0.145 0 0);
+    --neutral: oklch(0.708 0 0);
+    --danger: var(--destructive);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    --chart-surface: oklch(0.145 0 0);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: oklch(0.269 0 0);
+    --chart-crosshair: oklch(0.44 0 0);
+    --chart-crosshair-label: oklch(0.269 0 0);
+    --chart-border: oklch(0.269 0 0);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.685 0.169 237.323);

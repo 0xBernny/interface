@@ -14,7 +14,7 @@ export function FinalCTA() {
           You're a wallet away.
         </h2>
 
-        <p className="mx-auto mt-5 max-w-[540px] text-[17px] leading-[1.55] text-muted-foreground">
+        <p className="mx-auto mt-5 max-w-[540px] text-17 leading-[1.55] text-muted-foreground">
           No signup. No email. No deposit minimum. Connect and trade — or fork the
           contracts and run your own venue.
         </p>

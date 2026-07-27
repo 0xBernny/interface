@@ -1,8 +1,8 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router"
+import { HeadContent, Scripts, createRootRoute, Link } from "@tanstack/react-router"
 import { Toaster } from "sonner"
 import appCss from "@workspace/ui/globals.css?url"
 import { AppProviders } from "../app/providers"
-
+import { useTheme } from "../ui/theme-provider"
 
 // Update this to your production domain before going live.
 const SITE_URL = "https://so4.market"
@@ -69,6 +69,9 @@ export const Route = createRootRoute({
       },
       { name: "author", content: "so4 labs" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
+      // ds-allow: <meta content> requires a literal color string for
+      // mobile browser chrome tinting — can't reference a CSS custom
+      // property here, so it can't be sourced from the token system.
       { name: "theme-color", content: "#0A0B0D" },
       { name: "color-scheme", content: "dark light" },
       // Prevents phone number detection on iOS / Android WebView
@@ -87,7 +90,8 @@ export const Route = createRootRoute({
       { property: "og:image:type", content: "image/svg+xml" },
       {
         property: "og:image:alt",
-        content: "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
+        content:
+          "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
       },
 
       // ── Twitter / X Card ────────────────────────────────────────
@@ -99,7 +103,8 @@ export const Route = createRootRoute({
       { name: "twitter:image", content: OG_IMAGE },
       {
         name: "twitter:image:alt",
-        content: "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
+        content:
+          "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
       },
     ],
     links: [
@@ -114,7 +119,11 @@ export const Route = createRootRoute({
 
       // ── Fonts ───────────────────────────────────────────────────
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "anonymous",
+      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap",
@@ -127,7 +136,14 @@ export const Route = createRootRoute({
   notFoundComponent: () => (
     <main className="mx-auto max-w-330 p-4 pt-16">
       <h1 className="text-2xl font-medium text-foreground">404</h1>
-      <p className="mt-2 text-muted-foreground">The requested page could not be found.</p>
+      <p className="mt-2 text-muted-foreground">
+        The requested page could not be found.
+      </p>
+      <div className="mt-4">
+        <Link to="/" className="text-primary hover:underline">
+          Go back home
+        </Link>
+      </div>
     </main>
   ),
   shellComponent: RootDocument,
@@ -138,6 +154,11 @@ export const Route = createRootRoute({
 // resolve correctly before React hydrates. Prevents the flash of wrong theme.
 const THEME_SCRIPT =
   `(function(){try{var t=localStorage.getItem('so4-theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.classList.add(d?'dark':'light')}catch(e){}})()` as const
+
+function ThemedToaster() {
+  const { theme } = useTheme()
+  return <Toaster richColors position="bottom-right" theme={theme} />
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -158,7 +179,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         <AppProviders>
           {children}
-          <Toaster richColors position="bottom-right" />
+          <ThemedToaster />
         </AppProviders>
         <Scripts />
       </body>
