@@ -43,7 +43,7 @@ type TermLine = {
 
 function Terminal({ lines }: { lines: Array<TermLine> }) {
   return (
-    <div className="font-mono-num mt-6 h-[90px] overflow-hidden border border-border bg-muted/20 p-3.5 text-[11px] text-muted-foreground">
+    <div className="font-mono-num mt-6 h-[90px] overflow-hidden border border-border bg-muted/20 p-3.5 text-11 text-muted-foreground">
       {lines.map((line, i) => (
         <div key={i} className="leading-[1.7]">
           {line.text}
@@ -61,7 +61,7 @@ export function HowItWorks() {
     <section className="px-4 pb-24 pt-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1320px]">
         <div className="mb-12">
-          <div className="font-mono-num mb-4 flex items-center gap-2.5 text-[11.5px] uppercase tracking-[0.18em] text-primary">
+          <div className="font-mono-num mb-4 flex items-center gap-2.5 text-11-5 uppercase tracking-[0.18em] text-primary">
             <span className="inline-block h-px w-4 bg-primary" />
             Flow
           </div>
@@ -72,7 +72,7 @@ export function HowItWorks() {
             From wallet to fill in{" "}
             <span className="italic font-normal text-primary">three steps.</span>
           </h2>
-          <p className="mt-4 max-w-[560px] text-[16px] leading-[1.55] text-muted-foreground">
+          <p className="mt-4 max-w-[560px] text-base leading-[1.55] text-muted-foreground">
             No KYC, no email, no signup form. Connect a wallet and the orderbook is
             open — your collateral never leaves your control.
           </p>
@@ -81,13 +81,13 @@ export function HowItWorks() {
         <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
           {STEPS.map(({ num, title, body, lines }) => (
             <div key={num} className="relative border border-border bg-card p-8">
-              <div className="font-mono-num text-[11px] uppercase tracking-[0.18em] text-primary">
+              <div className="font-mono-num text-11 uppercase tracking-[0.18em] text-primary">
                 {num}
               </div>
-              <h3 className="mt-7 text-[22px] font-medium tracking-[-0.02em] text-foreground">
+              <h3 className="mt-7 text-22 font-medium tracking-[-0.02em] text-foreground">
                 {title}
               </h3>
-              <p className="mt-3 text-[14px] leading-[1.55] text-muted-foreground">{body}</p>
+              <p className="mt-3 text-sm leading-[1.55] text-muted-foreground">{body}</p>
               <Terminal lines={lines} />
             </div>
           ))}

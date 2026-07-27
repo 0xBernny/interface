@@ -1,13 +1,21 @@
 import { useQuery } from "@tanstack/react-query"
 import { queryKeys } from "../lib/query-keys"
+import { MARKETS } from "../data/markets"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
+import { syntheticsReaderClient } from "@/lib/contracts"
+import { fromSorobanAmount } from "@/shared/lib/bignum"
+
+const USD_DECIMALS = 30
+const CHAIN_ID = "stellar-mainnet"
 
 export type OrderType =
   | "MarketIncrease"
   | "LimitIncrease"
   | "MarketDecrease"
   | "LimitDecrease"
-  | "StopLoss"
-  | "Swap"
+  | "StopLossDecrease"
+  | "MarketSwap"
+  | "LimitSwap"
 
 export type OrderStatus = "active" | "frozen"
 
@@ -16,7 +24,6 @@ export type Order = {
   account: string
   marketAddress: string
   marketName: string
-  indexToken: string
   collateralToken: string
   sizeUsd: number
   triggerPrice: number
@@ -24,43 +31,45 @@ export type Order = {
   orderType: OrderType
   isLong: boolean
   status: OrderStatus
-  createdAt: number            // unix timestamp ms
-  // TODO: Add executionFee, swapPath, decreaseSwapType when live
+  updatedAt: number
 }
 
-// TODO: Replace with Soroban RPC call: reader.getOrders(account)
 async function fetchOrders(account: string): Promise<Array<Order>> {
-  if (!account) return []
+  const reader = syntheticsReaderClient
+  const [raw, keys] = await Promise.all([
+    reader.getAccountOrders(account),
+    reader.getAccountOrderKeys(account),
+  ])
 
-  return [
-    {
-      key: `${account}-btc-limit-long`,
-      account,
-      marketAddress: "BTC-BTC-USDC",
-      marketName: "BTC/USD",
-      indexToken: "BTC",
-      collateralToken: "USDC",
-      sizeUsd: 5_000,
-      triggerPrice: 65_000,
-      acceptablePrice: 65_100,
-      orderType: "LimitIncrease",
-      isLong: true,
+  return raw.map((o, index): Order => {
+    const market = MARKETS.find((m) => m.address === o.market)
+    return {
+      key: keys[index] ?? "",
+      account: o.account,
+      marketAddress: o.market,
+      marketName: market?.name ?? o.market,
+      collateralToken: o.initialCollateralToken,
+      sizeUsd: fromSorobanAmount(o.sizeDeltaUsd, USD_DECIMALS),
+      triggerPrice: fromSorobanAmount(o.triggerPrice, USD_DECIMALS),
+      acceptablePrice: fromSorobanAmount(o.acceptablePrice, USD_DECIMALS),
+      orderType: o.orderType as OrderType,
+      isLong: o.isLong,
       status: "active",
-      createdAt: Date.now() - 1000 * 60 * 30,
-    },
-  ]
+      updatedAt: Number(o.updatedAtTime) * 1000,
+    }
+  })
 }
 
 export function hasFrozenOrders(orders: Array<Order>): boolean {
   return orders.some((order) => order.status === "frozen")
 }
 
-const DUMMY_ACCOUNT = "GDUMMY...STELLAR"
+export function useOrders() {
+  const account = useWalletStore((state) => state.address)
 
-export function useOrders(account = DUMMY_ACCOUNT) {
   return useQuery<Array<Order>>({
-    queryKey: queryKeys.orders("stellar-mainnet", account),
-    queryFn: () => fetchOrders(account),
+    queryKey: queryKeys.trade.orders(CHAIN_ID, account ?? ""),
+    queryFn: () => fetchOrders(account!),
     enabled: !!account,
     staleTime: 10_000,
     refetchInterval: 15_000,

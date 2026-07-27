@@ -11,6 +11,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMarkets } from "./useMarkets"
 import { useTokenList } from "./useTokenList"
+import { CONTRACTS } from "@/app/config/contracts"
+import { POOL_MARKETS } from "@/features/pools/data/markets"
 
 export type TradeType = "Long" | "Short" | "Swap"
 export type TradeMode = "Market" | "Limit" | "Trigger"
@@ -30,6 +32,7 @@ type CollateralsByMarket = Record<string, { long?: string; short?: string }>
 type AdvancedOptions = {
   advancedDisplay: boolean    // show extra fields (slippage, execution fee, etc.)
   limitOrTPSL: boolean        // show TP/SL as part of the order form
+  slippagePct: number         // configured slippage tolerance in percent
 }
 
 export type TradeState = {
@@ -56,32 +59,60 @@ export type TradeState = {
 }
 
 const STORAGE_KEY = "so4-trade-state-v2"   // bumped from v1 (collateral shape changed)
+const DEFAULT_MARKET = POOL_MARKETS[0]
+const DEFAULT_COLLATERALS = POOL_MARKETS.reduce<CollateralsByMarket>((acc, market) => {
+  acc[market.marketToken] = { long: market.longToken, short: market.shortToken }
+  return acc
+}, {})
 
 const DEFAULT_STATE: TradeState = {
   tradeType: "Long",
   tradeMode: "Market",
-  fromTokenAddress: "USDC",
-  toTokenAddress: "BTC",
-  marketAddress: "BTC-BTC-USDC",
-  collaterals: {
-    "BTC-BTC-USDC": { long: "BTC", short: "USDC" },
-    "ETH-ETH-USDC": { long: "ETH", short: "USDC" },
-    "XLM-XLM-USDC": { long: "XLM", short: "USDC" },
-  },
+  fromTokenAddress: CONTRACTS.tokens.tusdc,
+  toTokenAddress: DEFAULT_MARKET.indexToken,
+  marketAddress: DEFAULT_MARKET.marketToken,
+  collaterals: DEFAULT_COLLATERALS,
   fromAmount: "",
   toAmount: "",
   leverage: 10,
   triggerPrice: "",
   sidecarOrders: [],
-  advanced: { advancedDisplay: false, limitOrTPSL: false },
+  advanced: { advancedDisplay: false, limitOrTPSL: false, slippagePct: 0.3 },
 }
 
 function loadFromStorage(): TradeState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as TradeState) : DEFAULT_STATE
+    if (!raw) return DEFAULT_STATE
+
+    const parsed = JSON.parse(raw) as Partial<TradeState>
+    return normalizeTradeState({
+      ...DEFAULT_STATE,
+      ...parsed,
+      collaterals: {
+        ...DEFAULT_COLLATERALS,
+        ...(parsed.collaterals ?? {}),
+      },
+      advanced: {
+        ...DEFAULT_STATE.advanced,
+        ...(parsed.advanced ?? {}),
+      },
+    })
   } catch {
     return DEFAULT_STATE
+  }
+}
+
+function normalizeTradeState(state: TradeState): TradeState {
+  const market = POOL_MARKETS.find((entry) => entry.marketToken === state.marketAddress)
+  if (market) return state
+
+  return {
+    ...state,
+    fromTokenAddress: CONTRACTS.tokens.tusdc,
+    toTokenAddress: DEFAULT_MARKET.indexToken,
+    marketAddress: DEFAULT_MARKET.marketToken,
+    collaterals: DEFAULT_COLLATERALS,
   }
 }
 
@@ -151,8 +182,8 @@ export function useTradeState() {
   const collateralAddress = useMemo(() => {
     const marketCollaterals = state.collaterals[state.marketAddress]
     return tradeFlags.isLong
-      ? (marketCollaterals.long ?? "USDC")
-      : (marketCollaterals.short ?? "USDC")
+      ? marketCollaterals.long
+      : marketCollaterals.short
   }, [state.collaterals, state.marketAddress, tradeFlags.isLong])
 
   // When index token changes, pick first available market and set default collaterals
@@ -160,14 +191,12 @@ export function useTradeState() {
     (address: string) => {
       const marketsList = getMarketsForIndexToken(address)
       const market = marketsList[0]
-      const marketAddress = market?.address ?? state.marketAddress
+      const marketAddress = market.address
 
       const collaterals = { ...state.collaterals }
-      if (market) {
-        collaterals[market.address] = {
-          long: market.longTokenAddress,
-          short: market.shortTokenAddress,
-        }
+      collaterals[market.address] = {
+        long: market.longTokenAddress,
+        short: market.shortTokenAddress,
       }
 
       update({ toTokenAddress: address, marketAddress, collaterals })
@@ -252,6 +281,8 @@ export function useTradeState() {
     setTriggerPrice: (triggerPrice: string) => update({ triggerPrice }),
     setAdvanced: (advanced: Partial<AdvancedOptions>) =>
       update({ advanced: { ...state.advanced, ...advanced } }),
+    setSlippagePct: (slippagePct: number) =>
+      update({ advanced: { ...state.advanced, slippagePct } }),
     switchTokens,
     setActivePosition,
     // Sidecar TP/SL

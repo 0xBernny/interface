@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { GM_POOLS } from "../data/pools"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
+import { queryKeys } from "@/shared/lib/query-keys"
+import { syntheticsReaderClient } from "@/lib/contracts"
+import { fromSorobanAmount } from "@/shared/lib/bignum"
+
+const syntheticsReader = syntheticsReaderClient
 
 export type GMPoolData = {
   apr: number
@@ -38,25 +43,36 @@ export function useGMPoolData(poolAddress: string) {
   const { address, status } = useWalletStore()
 
   return useQuery<GMPoolData>({
-    queryKey: ["earn", "gmPoolData", poolAddress, address],
+    queryKey: queryKeys.earn.gmPoolData(poolAddress, address ?? null),
     queryFn: async (): Promise<GMPoolData> => {
       const pool = GM_POOLS.find((entry) => entry.marketAddress === poolAddress)
 
       if (!pool) {
-        return {
-          apr: 0,
-          tvlUsd: 0,
-          longPct: 0,
-          shortPct: 0,
-          userGmBalance: 0n,
+        return { apr: 0, tvlUsd: 0, longPct: 0, shortPct: 0, userGmBalance: 0n }
+      }
+
+      let tvlUsd = pool.tvlUsd
+      let longPct = pool.longPct
+      let shortPct = pool.shortPct
+
+      try {
+        const poolAmounts = await syntheticsReader.getMarketPoolAmounts(poolAddress)
+        const longVal = fromSorobanAmount(poolAmounts.longTokenAmount, 7)
+        const shortVal = fromSorobanAmount(poolAmounts.shortTokenAmount, 7)
+        if (longVal + shortVal > 0) {
+          tvlUsd = longVal + shortVal
+          longPct = (longVal / tvlUsd) * 100
+          shortPct = (shortVal / tvlUsd) * 100
         }
+      } catch {
+        // fall back to static pool defaults
       }
 
       return {
-        apr: estimateSevenDayFeeApr(pool.tvlUsd, pool.id),
-        tvlUsd: pool.tvlUsd,
-        longPct: pool.longPct,
-        shortPct: pool.shortPct,
+        apr: estimateSevenDayFeeApr(tvlUsd, pool.id),
+        tvlUsd,
+        longPct,
+        shortPct,
         userGmBalance: estimateWalletBalance(
           status === "connected" ? address : null,
           pool.marketAddress,

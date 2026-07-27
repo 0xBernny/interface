@@ -1,8 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { StellarWalletsKit } from "@creit.tech/stellar-wallets-kit/sdk"
-import { FREIGHTER_ID } from "@creit.tech/stellar-wallets-kit/modules/freighter"
-import { HANA_ID } from "@creit.tech/stellar-wallets-kit/modules/hana"
-import { XBULL_ID } from "@creit.tech/stellar-wallets-kit/modules/xbull"
 
 import { QRCodeSVG } from "qrcode.react"
 
@@ -17,11 +13,12 @@ import {
 import { cn } from "@workspace/ui/lib/utils"
 
 import { createSep7ConnectUri, createSep7TransactionUri } from "../lib/sep7"
-import { useWalletStore } from "../store/wallet-store"
 import { useBalance } from "../hooks/useBalance"
+import { useWalletStore } from "../store/wallet-store"
+import type { ComponentProps } from "react"
+import { useKeyboardShortcut } from "@/shared/hooks/useKeyboardShortcut"
 import { useWallet } from "@/app/providers"
 import { NETWORK } from "@/app/config/network"
-import type { ComponentProps } from "react"
 
 type ConnectButtonProps = Omit<
   ComponentProps<typeof Button>,
@@ -33,6 +30,10 @@ type WalletOption = {
   name: string
   installUrl: string
 }
+
+const FREIGHTER_ID = "freighter"
+const HANA_ID = "hana"
+const XBULL_ID = "xbull"
 
 const WALLET_OPTIONS: Array<WalletOption> = [
   {
@@ -53,11 +54,23 @@ const WALLET_OPTIONS: Array<WalletOption> = [
   },
 ]
 
+async function getWalletsKit() {
+  const { StellarWalletsKit } = await import("@creit.tech/stellar-wallets-kit/sdk")
+  return StellarWalletsKit
+}
+
 export function ConnectButton({ className, ...props }: ConnectButtonProps) {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false)
   const address = useWalletStore((state) => state.address)
   const status = useWalletStore((state) => state.status)
   const isConnecting = status === "connecting"
+
+  // Must be called unconditionally — before any early return
+  useKeyboardShortcut({
+    key: "k",
+    onKeyPress: () => setIsWalletModalOpen(true),
+    enabled: !isConnecting && status !== "connected",
+  })
 
   if (status === "connected" && address) {
     return <AccountBadge address={address} className={className as string | undefined} {...props} />
@@ -200,7 +213,8 @@ function WalletModal({
 
     let cancelled = false
 
-    StellarWalletsKit.refreshSupportedWallets()
+    getWalletsKit()
+      .then((kit) => kit.refreshSupportedWallets())
       .then((wallets) => {
         if (cancelled) return
 
@@ -240,8 +254,9 @@ function WalletModal({
     setStatus("connecting")
 
     try {
-      StellarWalletsKit.setWallet(wallet.id)
-      const { address } = await StellarWalletsKit.fetchAddress()
+      const kit = await getWalletsKit()
+      kit.setWallet(wallet.id)
+      const { address } = await kit.fetchAddress()
       setConnected(address, wallet.id)
       onOpenChange(false)
     } catch {
@@ -352,7 +367,7 @@ function WalletModal({
             </a>
           </div>
 
-          <div className="flex justify-center rounded-md bg-white p-4">
+          <div className="flex justify-center rounded-md bg-popover p-4">
             <QRCodeSVG value={sep7Uri} size={168} level="M" />
           </div>
         </div>

@@ -32,7 +32,7 @@ function AccordionItem({ item }: { item: FaqItem }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center justify-between gap-3 py-3 text-left"
       >
-        <span className="text-[12px] font-medium leading-snug">{item.q}</span>
+        <span className="text-xs font-medium leading-snug">{item.q}</span>
         <ChevronIcon open={open} />
       </button>
 
@@ -42,7 +42,7 @@ function AccordionItem({ item }: { item: FaqItem }) {
           open ? "max-h-96 pb-3" : "max-h-0",
         )}
       >
-        <p className="text-[11px] leading-relaxed text-muted-foreground">{item.a}</p>
+        <p className="text-11 leading-relaxed text-muted-foreground">{item.a}</p>
       </div>
     </div>
   )
@@ -56,7 +56,7 @@ type Props = {
 export function FaqAccordion({ items, title = "FAQ" }: Props) {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-1 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
         {title}
       </p>
       <div>

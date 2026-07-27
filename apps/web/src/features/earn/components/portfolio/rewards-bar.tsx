@@ -20,7 +20,7 @@ function StatItem({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <span className="text-11 text-muted-foreground">{label}</span>
       {isLoading ? (
         <Skeleton className="h-5 w-20" />
       ) : (
@@ -80,14 +80,14 @@ export function RewardsBar() {
     }
   }
 
-  const hasPendingRewards = (stats?.totalPendingRewardsUsd ?? 0) > 0
+  const hasPendingRewards = stats.totalPendingRewardsUsd > 0
 
   return (
     <div className="space-y-3">
       {bannerOpen && (
         <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/[0.07] px-4 py-3 text-blue-400">
           <InfoIcon />
-          <p className="flex-1 text-[12px] leading-relaxed">
+          <p className="flex-1 text-xs leading-relaxed">
             Protocol fees are accumulating in the Treasury for SO4 buybacks. Rewards will be
             distributed to stakers proportional to staking power{" "}
             <span className="font-medium">(duration × amount staked)</span> when the buyback
@@ -116,7 +116,7 @@ export function RewardsBar() {
       <div className="flex flex-wrap items-center gap-x-8 gap-y-4 rounded-xl border border-border bg-card px-6 py-4">
         <StatItem
           label="Total investment value"
-          value={formatUsd(stats?.totalInvestmentUsd ?? 0)}
+          value={formatUsd(stats.totalInvestmentUsd)}
           isLoading={isLoading}
         />
 
@@ -124,7 +124,7 @@ export function RewardsBar() {
 
         <StatItem
           label="Total earned"
-          value={formatUsd(stats?.totalEarnedUsd ?? 0)}
+          value={formatUsd(stats.totalEarnedUsd)}
           isLoading={isLoading}
         />
 
@@ -132,7 +132,7 @@ export function RewardsBar() {
 
         <StatItem
           label="Total pending rewards"
-          value={formatUsd(stats?.totalPendingRewardsUsd ?? 0)}
+          value={formatUsd(stats.totalPendingRewardsUsd)}
           isLoading={isLoading}
         />
 
@@ -140,7 +140,7 @@ export function RewardsBar() {
 
         <StatItem
           label="Staking Power Share"
-          value={formatPct(stats?.stakingPowerSharePct ?? 0, { sign: false })}
+          value={formatPct(stats.stakingPowerSharePct, { sign: false })}
           isLoading={isLoading}
         />
 
@@ -150,7 +150,7 @@ export function RewardsBar() {
             size="sm"
             disabled={claiming || !hasPendingRewards}
             onClick={() => void handleClaim()}
-            className="h-9 gap-2 text-[12px]"
+            className="h-9 gap-2 text-xs"
           >
             <GiftIcon />
             {claiming ? "Claiming…" : "Claim rewards"}

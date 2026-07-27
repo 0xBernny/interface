@@ -37,10 +37,13 @@ function EmptyState() {
         <WalletEmptyIcon />
       </div>
       <div>
-        <p className="text-sm font-medium text-foreground/80">No assets yet</p>
+        <p className="text-sm font-medium text-foreground/80">You have no deposits</p>
         <p className="mt-0.5 text-xs text-muted-foreground">
-          See recommended section above to start
+          Start earning by depositing into a pool
         </p>
+        <a href="#browse-pools" className="text-xs text-primary hover:text-primary/80 font-medium mt-2 inline-block">
+          Browse pools →
+        </a>
       </div>
     </div>
   )
@@ -72,7 +75,7 @@ function TypeBadge({ kind }: { kind: string }) {
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded-full border px-2 text-[10px] font-medium",
+        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
         KIND_BADGE[kind] ?? "bg-muted text-muted-foreground border-border",
       )}
     >
@@ -88,7 +91,7 @@ export function AssetsList() {
   const [pending, setPending] = useState<string | null>(null)
 
   const isLoading = gmLoading || glvLoading || so4Loading
-  const hasSO4 = (so4Stats?.stakedAmount ?? 0) > 0
+  const hasSO4 = so4Stats.stakedAmount > 0
   const hasAny = hasSO4 || gmPositions.length > 0 || glvPositions.length > 0
 
   async function runAction(key: string, fn: () => Promise<unknown>) {
@@ -103,7 +106,7 @@ export function AssetsList() {
   return (
     <div className="overflow-hidden rounded-xl border border-border">
       <div className="border-b border-border px-5 py-3.5">
-        <h2 className="text-[13px] font-semibold">My assets</h2>
+        <h2 className="text-13 font-semibold">My assets</h2>
       </div>
 
       {isLoading ? (
@@ -131,7 +134,7 @@ export function AssetsList() {
                   </td>
                   <td className="px-5 py-3.5 text-right font-mono text-muted-foreground">—</td>
                   <td className="px-5 py-3.5 text-right font-mono">
-                    {formatUsd(so4Stats?.stakedValueUsd ?? 0)}
+                    {formatUsd(so4Stats.stakedValueUsd)}
                   </td>
                   <td className="px-5 py-3.5 text-right">
                     <Button
@@ -140,7 +143,7 @@ export function AssetsList() {
                       disabled={pending === "so4"}
                       onClick={() =>
                         void runAction("so4", () =>
-                          unstakeSO4("DUMMY_ACCOUNT", so4Stats?.stakedAmount ?? 0),
+                          unstakeSO4("DUMMY_ACCOUNT", so4Stats.stakedAmount),
                         )
                       }
                     >

@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
+import type { VestingSchedule } from "@/lib/contracts"
+import { getVestingRouterClient } from "@/lib/contracts"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
-import { VestingRouterClient, type VestingSchedule } from "@/lib/contracts/vesting-router"
+import { queryKeys } from "@/shared/lib/query-keys"
 
 /**
  * Reads the connected wallet's esSO4 vesting state from VestingRouter (#55):
@@ -11,9 +13,9 @@ export function useVestingSchedule() {
   const address = useWalletStore((state) => state.address)
 
   return useQuery<VestingSchedule>({
-    queryKey: ["earn", "vesting-schedule", address],
+    queryKey: queryKeys.earn.vestingSchedule(address ?? ""),
     queryFn: async (): Promise<VestingSchedule> => {
-      const client = new VestingRouterClient()
+      const client = getVestingRouterClient()
       return client.getVestingSchedule(address as string)
     },
     enabled: !!address,

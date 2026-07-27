@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState, type ComponentProps } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { toast } from "sonner"
 
-import { explorerAccountUrl } from "@/app/config/network"
+import { cn } from "@workspace/ui/lib/utils"
 import { useBalance } from "../hooks/useBalance"
 import { useNetwork } from "../hooks/useNetwork"
 import { useWallet } from "../hooks/useWallet"
+import type { ComponentProps } from "react"
+import { explorerAccountUrl } from "@/app/config/network"
 import { formatAddress } from "@/shared/lib/format"
-import { cn } from "@workspace/ui/lib/utils"
 
 type AccountBadgeProps = {
   address: string
@@ -18,8 +19,10 @@ export function AccountBadge({ address, className, ...props }: AccountBadgeProps
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const { disconnect } = useWallet()
-  const { balance, isLoading } = useBalance()
-  const { isMainnet } = useNetwork()
+  const balanceData = useBalance()
+  const balance = balanceData?.xlm
+  const isLoading = balanceData?.isLoading ?? false
+  const { displayLabel } = useNetwork()
 
   useEffect(() => {
     if (!open) return
@@ -100,7 +103,7 @@ export function AccountBadge({ address, className, ...props }: AccountBadgeProps
           <div className="space-y-2 text-sm">
             <div className="flex items-center justify-between rounded-xl border border-border/70 bg-muted p-3">
               <span className="text-muted-foreground">Network</span>
-              <span>{isMainnet ? "Mainnet" : "Testnet"}</span>
+              <span>{displayLabel}</span>
             </div>
 
             <div className="flex items-center justify-between rounded-xl border border-border/70 bg-muted p-3">

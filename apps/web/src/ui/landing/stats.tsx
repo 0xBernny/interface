@@ -47,17 +47,17 @@ export function Stats() {
                   : ""
               } ${i % 2 === 0 && i < 2 ? "max-lg:border-r" : ""}`}
             >
-              <div className="font-mono-num flex items-center gap-2 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              <div className="font-mono-num flex items-center gap-2 text-11 uppercase tracking-[0.14em] text-muted-foreground">
                 <span className="inline-block h-1 w-1 rounded-full bg-primary" />
                 {label}
               </div>
-              <div className="font-mono-num mt-3.5 text-[40px] leading-none tracking-[-0.02em] text-foreground">
+              <div className="font-mono-num mt-3.5 text-40 leading-none tracking-[-0.02em] text-foreground">
                 {pre && <span className="text-muted-foreground">{pre}</span>}
                 {value}
                 {suf && <span className="text-muted-foreground">{suf}</span>}
               </div>
               <div
-                className={`font-mono-num mt-2 text-[12px] ${
+                className={`font-mono-num mt-2 text-xs ${
                   down ? "text-red-400" : "text-emerald-400"
                 }`}
               >

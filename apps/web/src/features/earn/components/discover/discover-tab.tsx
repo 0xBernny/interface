@@ -1,38 +1,25 @@
 import { useMemo, useState } from "react"
 import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@workspace/ui/components/dialog"
+import { Input } from "@workspace/ui/components/input"
 import { usePoolsApy } from "../../hooks/use-earn-data"
 import { depositGLV, depositGM } from "../../lib/earn"
-import { formatPct, formatUsd } from "@/shared/lib/format"
 import { useMarketPoolAmounts } from "../../hooks/useMarketPoolAmounts"
-import { useGLVVaultData, useGMPoolData } from "../../queries"
+import { useGLVVaultData, useGMPoolData, useStakingInfo } from "../../queries"
+import { formatPct, formatToken, formatUsd } from "@/shared/lib/format"
 import { fromSorobanAmount } from "@/shared/lib/bignum"
+import { TokenIcon } from "@/shared/components/TokenIcon"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
 
 type Filter = "all" | "glv" | "gm"
 type SortKey = "apy" | "tvl"
-
-
-
-const TOKEN_COLORS: Record<string, string> = {
-  BTC: "bg-orange-500/10 text-orange-400 ring-orange-500/20",
-  ETH: "bg-indigo-500/10 text-indigo-400 ring-indigo-500/20",
-  XLM: "bg-sky-500/10 text-sky-400 ring-sky-500/20",
-  GLV: "bg-teal-500/10 text-teal-400 ring-teal-500/20",
-}
-
-function TokenAvatar({ symbol }: { symbol: string }) {
-  const color = TOKEN_COLORS[symbol] ?? "bg-muted/60 text-muted-foreground ring-border"
-  return (
-    <div
-      className={cn(
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ring-1",
-        color,
-      )}
-    >
-      {symbol.slice(0, 2)}
-    </div>
-  )
-}
 
 function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: number }) {
   return (
@@ -41,7 +28,7 @@ function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: 
         <div className="h-full bg-blue-400/70" style={{ width: `${longPct}%` }} />
         <div className="h-full bg-amber-400/70" style={{ width: `${shortPct}%` }} />
       </div>
-      <p className="text-[10px] text-muted-foreground">
+      <p className="text-10 text-muted-foreground">
         {longPct}% / {shortPct}%
       </p>
     </div>
@@ -59,7 +46,7 @@ function FilterButton({ active, onClick, children }: FilterButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "rounded-md px-3 py-1.5 text-[12px] font-medium transition-colors",
+        "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
         active
           ? "bg-background text-foreground shadow-sm"
           : "text-muted-foreground hover:text-foreground",
@@ -81,7 +68,7 @@ function SortButton({ active, onClick, children }: SortButtonProps) {
     <button
       onClick={onClick}
       className={cn(
-        "rounded px-1.5 py-0.5 text-[12px] transition-colors",
+        "rounded px-1.5 py-0.5 text-xs transition-colors",
         active ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground",
       )}
     >
@@ -90,11 +77,17 @@ function SortButton({ active, onClick, children }: SortButtonProps) {
   )
 }
 
+type DepositTarget = { id: string; kind: "gm" | "glv"; name: string }
+
 export function DiscoverTab() {
   const { gmPools, glvVaults } = usePoolsApy()
+  const { data: stakingInfo } = useStakingInfo()
+  const account = useWalletStore((state) => state.address)
   const [filter, setFilter] = useState<Filter>("all")
   const [sort, setSort] = useState<SortKey>("apy")
   const [pending, setPending] = useState<string | null>(null)
+  const [depositTarget, setDepositTarget] = useState<DepositTarget | null>(null)
+  const [depositAmount, setDepositAmount] = useState("")
 
   const rows = useMemo(() => {
     const combined = [
@@ -129,12 +122,20 @@ export function DiscoverTab() {
       .sort((a, b) => (sort === "apy" ? b.apy - a.apy : b.tvlUsd - a.tvlUsd))
   }, [gmPools, glvVaults, filter, sort])
 
-  async function handleEarn(id: string, kind: "gm" | "glv", name: string) {
-    setPending(id)
+  function handleEarn(id: string, kind: "gm" | "glv", name: string) {
+    setDepositTarget({ id, kind, name })
+    setDepositAmount("")
+  }
+
+  async function handleConfirmDeposit() {
+    if (!depositTarget || !account) return
+    const amount = parseFloat(depositAmount)
+    if (!isFinite(amount) || amount <= 0) return
+    setPending(depositTarget.id)
+    setDepositTarget(null)
     try {
-      // TODO: open deposit modal with amount input instead of calling directly
-      if (kind === "gm") await depositGM("DUMMY_ACCOUNT", name, 0)
-      else await depositGLV("DUMMY_ACCOUNT", name, 0)
+      if (depositTarget.kind === "gm") await depositGM(account, depositTarget.name, amount)
+      else await depositGLV(account, depositTarget.name, amount)
     } finally {
       setPending(null)
     }
@@ -156,7 +157,7 @@ export function DiscoverTab() {
           </FilterButton>
         </div>
 
-        <div className="ml-auto flex items-center gap-1 text-[12px] text-muted-foreground">
+        <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
           <span>Sort</span>
           <SortButton active={sort === "apy"} onClick={() => setSort("apy")}>
             APY {sort === "apy" && "↓"}
@@ -167,6 +168,31 @@ export function DiscoverTab() {
           </SortButton>
         </div>
       </div>
+
+      {/* Your deposit summary */}
+      {stakingInfo && (stakingInfo.stakedSO4 > 0n || stakingInfo.stakedEsSO4 > 0n || stakingInfo.stakedMultiplierPoints > 0n) && (
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">Your Deposit</p>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <div>
+              <p className="text-10 text-muted-foreground">Staked SO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedSO4, 7), "SO4")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Staked esSO4</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedEsSO4, 7), "esSO4")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Multiplier Points</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.stakedMultiplierPoints, 7), "MP")}</p>
+            </div>
+            <div>
+              <p className="text-10 text-muted-foreground">Pending Rewards</p>
+              <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pool table */}
       <div className="overflow-hidden rounded-xl border border-border">
@@ -200,18 +226,73 @@ export function DiscoverTab() {
 
       {/* Legend */}
       <div className="flex items-center gap-5 px-1">
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-full bg-blue-400/70" />
           Long token
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-11 text-muted-foreground">
           <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
           Short token
         </div>
-        <p className="ml-auto text-[11px] text-muted-foreground">
+        <p className="ml-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
         </p>
       </div>
+
+      {/* Deposit modal */}
+      <Dialog
+        open={depositTarget !== null}
+        onOpenChange={(open) => { if (!open) setDepositTarget(null) }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>
+              Deposit into {depositTarget?.name ?? ""}
+            </DialogTitle>
+          </DialogHeader>
+
+          {!account ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">
+              Connect your wallet to deposit.
+            </p>
+          ) : (
+            <div className="space-y-3 py-2">
+              <label className="block text-xs text-muted-foreground">
+                Amount (USD)
+              </label>
+              <Input
+                type="number"
+                min="0"
+                step="any"
+                placeholder="0.00"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                className="tabular-nums"
+                autoFocus
+              />
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDepositTarget(null)}
+            >
+              Cancel
+            </Button>
+            {account && (
+              <Button
+                size="sm"
+                disabled={!depositAmount || parseFloat(depositAmount) <= 0}
+                onClick={() => void handleConfirmDeposit()}
+              >
+                Deposit
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
@@ -254,14 +335,14 @@ function DiscoverRow({
     <tr className={cn("transition-colors hover:bg-muted/20", !isLast && "border-b border-border/40")}>
       <td className="px-5 py-4">
         <div className="flex items-center gap-3">
-          <TokenAvatar symbol={row.longToken} />
+          <TokenIcon symbol={row.longToken} size={32} />
           <span className="font-medium">{row.name}</span>
         </div>
       </td>
       <td className="px-5 py-4">
         <span
           className={cn(
-            "inline-flex h-5 items-center rounded-full border px-2 text-[10px] font-medium",
+            "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
             row.kind === "glv"
               ? "border-teal-500/20 bg-teal-500/10 text-teal-400"
               : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400",
@@ -283,7 +364,7 @@ function DiscoverRow({
         {longPct !== undefined ? (
           <PoolCompositionBar longPct={longPct} shortPct={shortPct ?? 0} />
         ) : (
-          <span className="text-[11px] text-muted-foreground">Diversified</span>
+          <span className="text-11 text-muted-foreground">Diversified</span>
         )}
       </td>
       <td className="px-5 py-4 text-right">

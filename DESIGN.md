@@ -1,0 +1,79 @@
+# Design System
+
+This document is the source of truth for SO4's design tokens: what they are, why they exist, and how to keep new code from drifting away from them. It exists because 250+ ad hoc arbitrary values (`text-[13px]`, raw hex colors, etc.) had already accumulated across the app before this pass — see the [DS-050 audit](#audit-history) below for how that happened and what was done about it.
+
+## Where the tokens live
+
+All tokens are defined in [`packages/ui/src/styles/globals.css`](./packages/ui/src/styles/globals.css), a Tailwind v4 CSS-first `@theme` block. There is no `tailwind.config.js` — everything is a CSS custom property, consumed via Tailwind utility classes.
+
+### Color
+
+Colors are defined as `oklch()` values in `:root` (light theme) and `.dark` (dark theme), then exposed to Tailwind via `@theme inline` (`--color-background`, `--color-primary`, etc.). Always reach for a semantic name (`bg-background`, `text-muted-foreground`, `border-border`) over a raw palette color (`bg-zinc-900`) — semantic names are what make the light/dark split work automatically.
+
+### Radius
+
+`--radius` is `0` at the root — this app's default visual language is sharp corners everywhere. The `--radius-sm/md/lg/xl/2xl/3xl/4xl` scale is derived from it via `calc()`, so as long as new UI uses `rounded-sm`/`rounded-lg`/etc. instead of an arbitrary value, changing `--radius` in one place re-skins the whole app's corner treatment.
+
+### Micro-typography scale
+
+The default Tailwind font-size scale (`text-xs`=12px, `text-sm`=14px, `text-base`=16px, `text-lg`=18px, `text-2xl`=24px, ...) has no steps between `xs` and `sm`, or below `xs` — but this app's dense, data-table-heavy UI (order books, position tables, referral stats) genuinely needs several. Rather than reach for `text-[13px]` per callsite, use the named scale defined alongside the default one:
+
+| Token | Value | Token | Value |
+|---|---|---|---|
+| `text-9-5` | 9.5px | `text-12-5` | 12.5px |
+| `text-10` | 10px | `text-13` | 13px |
+| `text-10-5` | 10.5px | `text-13-5` | 13.5px |
+| `text-11` | 11px | `text-14-5` | 14.5px |
+| `text-11-5` | 11.5px | `text-15` | 15px |
+| `text-17` | 17px | `text-22` | 22px |
+| `text-26` | 26px | `text-40` | 40px |
+
+These are named by their pixel value (at the default 16px root) rather than a semantic step name (`2xs`/`3xs`/...) — a dozen-plus half-pixel steps don't fit a small semantic vocabulary without the names becoming arbitrary themselves. If you need a size not in this list, check whether it's really necessary before adding a new one; if it is, add it here and to `globals.css` in the same PR so the two never drift apart.
+
+## Enforcement: the token-usage check
+
+[`scripts/check-design-tokens.ts`](./scripts/check-design-tokens.ts) (run via `bun run check:tokens`, also wired into CI) scans `apps/web/src` and `packages/ui/src` for:
+
+- raw hex colors (`#RGB`, `#RRGGBB`, etc.) outside a small file-level allowlist
+- arbitrary Tailwind font-size classes (`text-[...]`)
+- arbitrary Tailwind radius classes (`rounded-[...]`)
+
+Not everything a scanner flags is actually wrong — some values are genuinely structural (a third-party charting library's imperative color config, an HTML `<meta>` tag's `content` attribute, viewport-relative fluid type) and can't be expressed as a Tailwind token at all. For those, either:
+
+- add a `// ds-allow: <short reason>` comment on the flagged line (or the few lines above it, if the comment reads better wrapping a long `className`), or
+- add the whole file to `ALLOWLIST` in the script, with a reason, if the exception applies file-wide.
+
+Both are meant to be read, not grown by reflex — a `ds-allow` comment should explain *why*, not just suppress the check.
+
+## Visual regression
+
+[`e2e/design-system-visual.spec.ts`](./e2e/design-system-visual.spec.ts) (Playwright) takes screenshots of `/gallery` and every main route (`/`, `/trade`, `/pools`, `/earn`, `/referrals`, `/faucet`) at desktop and mobile widths, in both themes. Run it locally with:
+
+```bash
+bun run test:e2e -- design-system-visual
+```
+
+**Updating baselines:** when a change *intentionally* alters visual output, regenerate the reference screenshots with:
+
+```bash
+bun run test:e2e -- design-system-visual --update-snapshots
+```
+
+then review the diffs in `e2e/design-system-visual.spec.ts-snapshots/` in your PR — a baseline update should always be reviewable in the diff, not just silently regenerated. If a screenshot changed and you *didn't* expect it to, that's the suite doing its job — figure out why before updating the baseline.
+
+## The component gallery (`/gallery`)
+
+[`apps/web/src/features/gallery/components/gallery-page.tsx`](./apps/web/src/features/gallery/components/gallery-page.tsx) renders every `packages/ui` primitive across all its variants on one page. It's not linked from the app's main navigation (it's an internal dev/design tool, not a trader-facing page) — visit `http://localhost:3000/gallery` directly in a local dev server. It exists to:
+
+- give reviewers one place to see every variant of a component at once instead of hunting through feature pages for one that happens to use the state you changed
+- act as the fixed, deterministic target for the visual regression suite above
+
+When you add a new component to `packages/ui`, add it to the gallery in the same PR — see [`packages/ui/CONTRIBUTING.md`](./packages/ui/CONTRIBUTING.md) for the full checklist.
+
+## Audit history
+
+- **DS-050** (this pass): found and fixed 268 arbitrary-value violations (229 arbitrary font sizes, 38 raw hex colors, 1 arbitrary radius) across ~40 files. Of these:
+  - 225 font-size instances were mechanically migrated to either an existing Tailwind default (`text-xs`/`sm`/`base`/`lg`, for values that turned out to already match) or the new micro-typography scale above — a pure rename with the exact same numeric value, so zero visual change.
+  - 16 raw hex colors in an SVG chart illustration turned out to be exact Tailwind palette values (`emerald-400`, `red-400`) hardcoded as hex instead of using `fill-emerald-400`/`stroke-emerald-400` — converted, also zero visual change.
+  - 2 raw hex colors driving a dynamic SVG `stroke` prop were converted to a conditional Tailwind class instead of a JS color variable.
+  - The remainder (a third-party charting library's config object, an HTML meta tag, fluid viewport-relative display type, and one isolated decorative radius) are structurally unable to use a Tailwind token and are documented via `ds-allow` comments or the script's file-level allowlist instead of being forced into the scale.

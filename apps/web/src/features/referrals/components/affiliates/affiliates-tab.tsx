@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Button } from "@workspace/ui/components/button"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { cn } from "@workspace/ui/lib/utils"
@@ -10,28 +11,36 @@ import { createAffiliateCode, validateReferralCode } from "../../lib/referrals"
 import { TIERS, getNextTier, getTierByLevel } from "../../data/tiers"
 import { TimePeriodFilter } from "../shared/time-period-filter"
 import { StatChartCard } from "../shared/stat-chart-card"
-import type {TimePeriod} from "../../hooks/use-referrals-data";
+import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatAddress, formatUsd } from "@/shared/lib/format"
+import { queryKeys } from "@/shared/lib/query-keys"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
 
 
 
 // ── Create code wizard ──────────────────────────────────────────────────────
 
 function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
+  const account = useWalletStore((state) => state.address)
   const [code, setCode] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!account) {
+      setError("Connect your wallet first")
+      return
+    }
     const err = validateReferralCode(code)
     if (err) { setError(err); return }
     setError(null)
     setPending(true)
     try {
-      // TODO: pass real wallet account from wallet context
-      await createAffiliateCode("DUMMY_ACCOUNT", code.toUpperCase().trim())
+      await createAffiliateCode(account, code.toUpperCase().trim())
       onSuccess()
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "Failed to create code")
     } finally {
       setPending(false)
     }
@@ -50,8 +59,8 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
           </svg>
         </div>
         <div>
-          <p className="text-[13px] font-semibold">Create a code and start earning commissions</p>
-          <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
+          <p className="text-13 font-semibold">Create a code and start earning commissions</p>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
             Earn up to <span className="font-semibold text-violet-400">15%</span> of trading fees
             from every user who joins with your code. Tier up as your referrals grow.
           </p>
@@ -60,7 +69,7 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="space-y-1.5">
-          <label htmlFor="affiliate-code" className="text-[12px] font-medium text-muted-foreground">
+          <label htmlFor="affiliate-code" className="text-xs font-medium text-muted-foreground">
             Choose your referral code
           </label>
           <div className="flex gap-2">
@@ -75,7 +84,7 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
               maxLength={16}
               autoComplete="off"
               spellCheck={false}
-              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-[13px] tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-13 tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
             />
             <Button
               type="submit"
@@ -88,21 +97,21 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
           </div>
           <div className="flex items-center justify-between">
             {error
-              ? <p className="text-[11px] text-destructive">{error}</p>
-              : <p className="text-[11px] text-muted-foreground">Letters, numbers, and underscores only. Max 16 chars.</p>
+              ? <p className="text-11 text-destructive">{error}</p>
+              : <p className="text-11 text-muted-foreground">Letters, numbers, and underscores only. Max 16 chars.</p>
             }
-            <span className="text-[11px] tabular-nums text-muted-foreground/50">{code.length}/16</span>
+            <span className="text-11 tabular-nums text-muted-foreground/50">{code.length}/16</span>
           </div>
         </div>
       </form>
 
       {/* Tier table */}
       <div className="mt-6 border-t border-border pt-5">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="mb-3 text-11 font-semibold uppercase tracking-wider text-muted-foreground">
           Commission tiers
         </p>
         <div className="overflow-hidden rounded-lg border border-border">
-          <table className="w-full text-[12px]">
+          <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-muted/25 text-left">
                 <th className="px-4 py-2.5 font-medium text-muted-foreground">Tier</th>
@@ -115,7 +124,7 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
               {TIERS.map((tier, i) => (
                 <tr key={tier.level} className={cn("border-b border-border/40 last:border-b-0", i % 2 === 0 ? "" : "bg-muted/10")}>
                   <td className="px-4 py-3">
-                    <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1", tier.colorClass, tier.ringClass)}>
+                    <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", tier.colorClass, tier.ringClass)}>
                       {tier.label}
                     </span>
                   </td>
@@ -147,10 +156,10 @@ function TierProgress({ tier, volumeUsd }: { tier: 1 | 2 | 3; volumeUsd: number 
   if (!next) {
     return (
       <div className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/[0.06] px-4 py-2.5">
-        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1", current.colorClass, current.ringClass)}>
+        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", current.colorClass, current.ringClass)}>
           {current.label}
         </span>
-        <span className="text-[12px] font-medium text-yellow-400">Maximum tier reached!</span>
+        <span className="text-xs font-medium text-yellow-400">Maximum tier reached!</span>
       </div>
     )
   }
@@ -162,15 +171,15 @@ function TierProgress({ tier, volumeUsd }: { tier: 1 | 2 | 3; volumeUsd: number 
     <div className="rounded-lg border border-border bg-card px-4 py-3">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1", current.colorClass, current.ringClass)}>
+          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", current.colorClass, current.ringClass)}>
             {current.label}
           </span>
-          <span className="text-[11px] text-muted-foreground">→</span>
-          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1", next.colorClass, next.ringClass)}>
+          <span className="text-11 text-muted-foreground">→</span>
+          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", next.colorClass, next.ringClass)}>
             {next.label}
           </span>
         </div>
-        <span className="text-[11px] text-muted-foreground">
+        <span className="text-11 text-muted-foreground">
           {formatUsd(remaining, { compact: true })} more needed
         </span>
       </div>
@@ -190,7 +199,7 @@ function ReferralsTable() {
   return (
     <div className="overflow-hidden rounded-xl border border-border">
       <div className="border-b border-border px-5 py-3.5">
-        <h3 className="text-[13px] font-semibold">Referrals</h3>
+        <h3 className="text-13 font-semibold">Referrals</h3>
       </div>
       {isLoading ? (
         <div className="space-y-2 p-4">
@@ -233,6 +242,7 @@ function ReferralsTable() {
 }
 
 export function AffiliatesTab() {
+  const queryClient = useQueryClient()
   const [period, setPeriod] = useState<TimePeriod>("total")
   const { data: code, isLoading: codeLoading } = useReferralCode()
   const { data: tier } = useReferralTier()
@@ -240,8 +250,13 @@ export function AffiliatesTab() {
   const hasCode = Boolean(code)
   const isLoading = codeLoading || statsLoading
 
+  function handleCodeCreated() {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.referrals.code(null) })
+    void queryClient.invalidateQueries({ queryKey: queryKeys.referrals.stats(code ?? null, period) })
+  }
+
   if (!hasCode && !codeLoading) {
-    return <CreateCodeForm onSuccess={() => {}} />
+    return <CreateCodeForm onSuccess={handleCodeCreated} />
   }
 
   return (
@@ -252,7 +267,7 @@ export function AffiliatesTab() {
       {/* Overview */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold">Overview</h2>
+          <h2 className="text-13 font-semibold">Overview</h2>
           <TimePeriodFilter value={period} onChange={setPeriod} />
         </div>
 
@@ -265,8 +280,8 @@ export function AffiliatesTab() {
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="flex flex-col justify-center gap-1 rounded-xl border border-border bg-card px-5 py-4">
-              <span className="text-[11px] text-muted-foreground">Total referrals</span>
-              <span className="text-[22px] font-semibold tabular-nums">{stats?.totalTraders ?? 0}</span>
+              <span className="text-11 text-muted-foreground">Total referrals</span>
+              <span className="text-22 font-semibold tabular-nums">{stats?.totalTraders ?? 0}</span>
             </div>
             <StatChartCard
               title="Referred volume"
