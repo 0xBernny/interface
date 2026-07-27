@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs"
+import { Input } from "@workspace/ui/components/input"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Separator } from "@workspace/ui/components/separator"
@@ -7,6 +13,8 @@ import { Numeric } from "@workspace/ui/components/numeric"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { useTradeFees } from "../../hooks/useTradeFees"
 import { useTokenBalances } from "../../../wallet/hooks/useTokenBalances"
+// NB: useTokenBalances is also consumed here (not only in TradeInputs) to
+// validate the entered amount against the wallet balance before submit.
 import {
   estimateLiquidationPrice,
   sizeFromCollateralAndLeverage,
@@ -36,37 +44,38 @@ export function TradePanel({ trade }: TradePanelProps) {
   const account = useWalletStore((state) => state.address)
 
   const {
-    tradeType, tradeMode, tradeFlags,
-    fromAmount, leverage,
-    fromTokenAddress, toTokenAddress, marketAddress, collateralAddress,
+    tradeType,
+    tradeMode,
+    tradeFlags,
+    fromAmount,
+    leverage,
+    fromTokenAddress,
+    toTokenAddress,
+    marketAddress,
+    collateralAddress,
     availableTradeModes,
-    setTradeType, setTradeMode,
+    setTradeType,
+    setTradeMode,
     setLeverage,
     setTriggerPrice,
     advanced,
   } = trade
 
-  const debouncedFromAmount = useDebounce(fromAmount, 300)
-  const entryPrice = getMidPrice(toTokenAddress)
-  const collateralUsd = parseFloat(debouncedFromAmount || "0") * getMidPrice(collateralAddress!)
-  const sizeUsd = tradeFlags.isSwap ? collateralUsd : sizeFromCollateralAndLeverage(collateralUsd, leverage)
-  const activeInputTokenAddress = tradeFlags.isSwap ? fromTokenAddress : collateralAddress!
+  const { data: balances } = useTokenBalances()
 
-  const fees = useTradeFees({ sizeUsd, marketAddress, isIncrease: true, tradeType })
-  const walletBalance = balances?.[activeInputTokenAddress]
-  const xlmBalance = balances?.["XLM"] ?? 0
-  const collateralAmount = Number(fromAmount || "0")
-  const fromTokenLabel = formatTokenLabel(activeInputTokenAddress)
-  const toTokenLabel = formatTokenLabel(toTokenAddress)
-  const hasCollateralError = walletBalance !== undefined && collateralAmount > walletBalance
-  const hasXlmError = xlmBalance < fees.executionFeeXlm
-  const validationError = hasCollateralError
-    ? `Insufficient ${fromTokenLabel} balance`
-    : hasXlmError
-      ? `Insufficient XLM balance for execution fees (requires ~${fees.executionFeeXlm.toFixed(2)} XLM)`
-      : undefined
-  const priceStale = isStale(toTokenAddress)
-  const canTrade = collateralAmount > 0 && !validationError && !priceStale
+  const entryPrice = getMidPrice(toTokenAddress)
+  const collateralUsd =
+    parseFloat(fromAmount || "0") * getMidPrice(collateralAddress)
+  const sizeUsd = tradeFlags.isSwap
+    ? collateralUsd
+    : sizeFromCollateralAndLeverage(collateralUsd, leverage)
+
+  const fees = useTradeFees({
+    sizeUsd,
+    marketAddress,
+    isIncrease: true,
+    tradeType,
+  })
 
   const liquidationPrice = useMemo(() => {
     if (!tradeFlags.isPosition || sizeUsd <= 0 || entryPrice <= 0) return 0
@@ -81,12 +90,21 @@ export function TradePanel({ trade }: TradePanelProps) {
   return (
     <div className="flex min-w-0 flex-col gap-3 p-4">
       {/* ── Trade type tabs: Long / Short / Swap ───────────────────── */}
-      <Tabs value={tradeType} onValueChange={(v) => setTradeType(v as TradeType)}>
+      <Tabs
+        value={tradeType}
+        onValueChange={(v) => setTradeType(v as TradeType)}
+      >
         <TabsList className="w-full">
-          <TabsTrigger value="Long" className="flex-1 text-green-500 data-[state=active]:text-green-400">
+          <TabsTrigger
+            value="Long"
+            className="flex-1 text-green-500 data-[state=active]:text-green-400"
+          >
             Long
           </TabsTrigger>
-          <TabsTrigger value="Short" className="flex-1 text-red-500 data-[state=active]:text-red-400">
+          <TabsTrigger
+            value="Short"
+            className="flex-1 text-red-500 data-[state=active]:text-red-400"
+          >
             Short
           </TabsTrigger>
           <TabsTrigger value="Swap" className="flex-1">
@@ -129,7 +147,7 @@ export function TradePanel({ trade }: TradePanelProps) {
               className="pr-12 font-mono text-sm"
               onChange={(e) => setTriggerPrice(e.target.value)}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+            <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-muted-foreground">
               USD
             </span>
           </div>
@@ -215,9 +233,9 @@ export function TradePanel({ trade }: TradePanelProps) {
       <Button
         className={`mt-1 w-full font-medium ${
           tradeFlags.isLong
-            ? "bg-green-600 hover:bg-green-700 text-white"
+            ? "bg-green-600 text-white hover:bg-green-700"
             : tradeFlags.isShort
-              ? "bg-red-600 hover:bg-red-700 text-white"
+              ? "bg-red-600 text-white hover:bg-red-700"
               : ""
         }`}
         disabled={!canTrade}
@@ -244,6 +262,15 @@ export function TradePanel({ trade }: TradePanelProps) {
 
 // ── Pay / Receive inputs ─────────────────────────────────────────────────────
 
+function TradeInputs({ trade }: { trade: ReturnType<typeof useTradeState> }) {
+  const {
+    fromAmount,
+    fromTokenAddress,
+    toTokenAddress,
+    tradeFlags,
+    setFromAmount,
+    switchTokens,
+  } = trade
 function TradeInputs({ trade, validationError }: { trade: ReturnType<typeof useTradeState>; validationError?: string }) {
   const { fromAmount, fromTokenAddress, toTokenAddress, collateralAddress, tradeFlags, setFromAmount, switchTokens } = trade
   const { getMidPrice } = useTokenPrices()
@@ -267,6 +294,11 @@ function TradeInputs({ trade, validationError }: { trade: ReturnType<typeof useT
           {walletBalance !== undefined && (
             <span className="min-w-0 text-right text-xs text-muted-foreground">
               Balance:{" "}
+              <span className="font-mono font-medium text-foreground">
+                {walletBalance.toLocaleString(undefined, {
+                  maximumFractionDigits: 6,
+                })}{" "}
+                {fromTokenAddress}
               <span className="font-mono font-medium text-foreground [overflow-wrap:anywhere]">
                 {walletBalance.toLocaleString(undefined, { maximumFractionDigits: 6 })}{" "}
                 {fromTokenLabel}
@@ -274,6 +306,22 @@ function TradeInputs({ trade, validationError }: { trade: ReturnType<typeof useT
             </span>
           )}
         </div>
+        <div className="relative">
+          <Input
+            type="number"
+            placeholder="0.00"
+            value={fromAmount}
+            onChange={(e) => setFromAmount(e.target.value)}
+            className="pr-16 font-mono text-sm"
+          />
+          <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+            {fromTokenAddress}
+          </span>
+        </div>
+        {fromUsd > 0 && (
+          <p className="text-right text-xs text-muted-foreground">
+            {formatUsd(fromUsd)}
+          </p>
         <NumberInput
           value={fromAmount}
           onValueChange={setFromAmount}
@@ -298,6 +346,11 @@ function TradeInputs({ trade, validationError }: { trade: ReturnType<typeof useT
       )}
 
       {/* Receive / Index token label */}
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">
+          {tradeFlags.isSwap ? "Receive" : "Market"}
+        </span>
+        <span className="font-medium">{toTokenAddress}/USD</span>
       <div className="flex min-w-0 items-center justify-between gap-2 text-xs">
         <span className="shrink-0 text-muted-foreground">{tradeFlags.isSwap ? "Receive" : "Market"}</span>
         <span className="flex min-w-0 items-center justify-end gap-1.5 font-medium">

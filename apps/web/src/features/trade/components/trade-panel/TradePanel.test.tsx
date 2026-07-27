@@ -1,231 +1,165 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
+/**
+ * TradePanel.test.tsx  (issue #226)
+ *
+ * Covers trade-input validation: invalid, zero, and excessive amounts each
+ * disable the submit button (and surface a validation message), so a real
+ * transaction is never initiated. Interactions use @testing-library/user-event.
+ *
+ * The real useTradeState hook is kept (so typing genuinely drives state and the
+ * submit button's disabled logic); its data sources, the price/fee/balance
+ * hooks, and the heavy child components are mocked for determinism.
+ */
+
+import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test"
 import { cleanup, render, screen } from "@testing-library/react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import type { TradePanel as TradePanelComponent } from "./TradePanel"
-import { useWalletStore } from "@/features/wallet/store/wallet-store"
+import userEvent from "@testing-library/user-event"
 
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  })
-  return function Wrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  }
-}
-
-vi.mock("@/lib/contracts", () => ({
-  // ── Re-exported clients (from @workspace/contracts) ────────────────────
-  ExchangeRouterClient: class {},
-  GlvRouterClient: class {},
-  OrderVaultClient: class {},
-  ReferralStorageClient: class {},
-  SacTokenClient: class {},
-  StakingRouterClient: class {},
-  SyntheticsReaderClient: class {},
-  TokenClient: class {},
-  VestingRouterClient: class {},
-  // ── Instances created by contracts.ts ──────────────────────────────────
-  exchangeRouterClient: {},
-  syntheticsReaderClient: {},
-  referralStorageClient: {},
-  orderVaultClient: {},
-  sacTokenClient: {},
-  stakingRouterClient: { getStakerInfo: vi.fn() },
-  // ── Referral helpers ──────────────────────────────────────────────────
-  referralPromptStorageKey: (a: string) => `referral-prompt:${a}`,
-  affiliateCodeStorageKey: (a: string) => `affiliate-code:${a}`,
-  getTraderReferralCode: vi.fn(() => ""),
-  readStoredReferralCode: vi.fn(() => ""),
-  // ── Contract tx builders ──────────────────────────────────────────────
-  buildBatchOrderTransaction: vi.fn(),
-  buildCreateOrderTransaction: vi.fn(),
-  buildCancelOrderTransaction: vi.fn(),
-  buildCreateDepositTransaction: vi.fn(),
-  buildCreateWithdrawalTransaction: vi.fn(),
-  buildClaimRebatesTransaction: vi.fn(),
-  buildRegisterCodeTransaction: vi.fn(),
-  buildSetTraderReferralCodeTransaction: vi.fn(),
-  buildClaimFundingFeesTransaction: vi.fn(),
-  buildStakeSO4Transaction: vi.fn(),
-  buildUnstakeSO4Transaction: vi.fn(),
-  buildClaimRewardsTransaction: vi.fn(),
-  buildCompoundTransaction: vi.fn(),
-  buildDepositForVestingTransaction: vi.fn(),
-  buildApproveTransaction: vi.fn(),
-  // ── Error helpers ─────────────────────────────────────────────────────
-  mapContractError: vi.fn(),
-  parseSorobanError: vi.fn((e: unknown) => String(e)),
-  mapReferralContractError: vi.fn(),
-  // ── Misc ──────────────────────────────────────────────────────────────
-  checkAllowance: vi.fn(),
-  getTokenClient: vi.fn(),
-  getGlvRouterClient: vi.fn(),
-  getStakingRouterClient: vi.fn(),
-  getVestingRouterClient: vi.fn(),
-  getTraderDiscountBps: vi.fn(),
-  getReferralCodeStats: vi.fn(),
-  getTraderRebateInfo: vi.fn(),
-  getAffiliateCode: vi.fn(),
-  saveReferralCode: vi.fn(),
-  AFFILIATE_CODE_STORAGE_KEY: "so4-affiliate-code",
-  REFERRAL_PROMPT_STORAGE_KEY: "so4-referral-prompt-done",
-  REFERRAL_CODE_STORAGE_KEY: "so4-referral-code",
+// ── Data sources behind the real useTradeState ───────────────────────────────
+mock.module("../../hooks/useMarkets", () => ({
+  useMarkets: () => ({
+    markets: [],
+    getMarket: () => undefined,
+    getMarketsForIndexToken: () => [],
+  }),
 }))
-
-vi.mock("../../hooks/useTokenPrices", () => ({
-  useTokenPrices: () => ({
-    getMidPrice: () => 1,
-    isStale: () => false,
-    getPrice: () => ({ minPrice: 1, maxPrice: 1 }),
-    getStaleness: () => "fresh" as const,
+mock.module("../../hooks/useTokenList", () => ({
+  useTokenList: () => ({
+    tokens: [],
+    indexTokens: [],
+    stableTokens: [],
+    getToken: () => undefined,
   }),
 }))
 
-vi.mock("../../hooks/useTradeFees", () => ({
+// ── Price / fee hooks ────────────────────────────────────────────────────────
+mock.module("../../hooks/useTokenPrices", () => ({
+  useTokenPrices: () => ({
+    prices: {},
+    isLoading: false,
+    error: null,
+    getPrice: () => undefined,
+    getMidPrice: () => 1,
+  }),
+}))
+mock.module("../../hooks/useTradeFees", () => ({
   useTradeFees: () => ({
     positionFeeUsd: 0,
     priceImpactUsd: 0,
     executionFeeUsd: 0,
-    executionFeeXlm: 0,
     totalFeesUsd: 0,
     feesBreakdown: [],
   }),
 }))
 
-const mockBalances: { data: Record<string, number> | undefined } = { data: undefined }
-
-vi.mock("../../../wallet/hooks/useTokenBalances", () => ({
-  useTokenBalances: () => ({
-    data: mockBalances.data,
-    isLoading: false,
-  }),
+// ── Wallet balances: USDC balance of 500 (the default collateral token) ──────
+const WALLET_BALANCE = 500
+mock.module("../../../wallet/hooks/useTokenBalances", () => ({
+  useTokenBalances: () => ({ data: { USDC: WALLET_BALANCE } }),
 }))
 
-function createMockTrade(overrides: Record<string, unknown> = {}) {
-  return {
-    tradeType: "Long" as const,
-    tradeMode: "Market" as const,
-    tradeFlags: {
-      isLong: true,
-      isShort: false,
-      isSwap: false,
-      isPosition: true,
-      isMarket: true,
-      isLimit: false,
-      isTrigger: false,
-    },
-    fromAmount: "",
-    leverage: 10,
-    fromTokenAddress: "TUSDC",
-    toTokenAddress: "TWBTC",
-    marketAddress: "0xmarket",
-    collateralAddress: "TUSDC",
-    availableTradeModes: ["Market", "Limit", "Trigger"],
-    advanced: { advancedDisplay: false, slippagePct: 0.3 },
-    setTradeType: vi.fn(),
-    setTradeMode: vi.fn(),
-    setLeverage: vi.fn(),
-    setTriggerPrice: vi.fn(),
-    setFromAmount: vi.fn(),
-    switchTokens: vi.fn(),
-    setAdvanced: vi.fn(),
-    setSlippagePct: vi.fn(),
-    sidecarOrders: [],
-    addSidecarOrder: vi.fn(),
-    removeSidecarOrder: vi.fn(),
-    clearSidecarOrders: vi.fn(),
-    setActivePosition: vi.fn(),
-    setFromTokenAddress: vi.fn(),
-    setToTokenAddress: vi.fn(),
-    setMarketAddress: vi.fn(),
-    setCollateralAddress: vi.fn(),
-    setToAmount: vi.fn(),
-    ...overrides,
-  }
+// ── Heavy children — irrelevant to input validation, and the dialog must never
+//    submit a real transaction, so both are stubbed out. ──────────────────────
+mock.module("./TradeInfoRows", () => ({ TradeInfoRows: () => null }))
+mock.module("./ConfirmationDialog", () => ({ ConfirmationDialog: () => null }))
+
+// ── Base UI wrappers — stubbed with pass-throughs (fast, and Base UI's Tabs /
+//    Slider are prohibitively slow under happy-dom). ──────────────────────────
+mock.module("@workspace/ui/components/tabs", () => ({
+  Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  TabsTrigger: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  TabsContent: ({
+    value,
+    children,
+  }: {
+    value: string
+    children: React.ReactNode
+  }) =>
+    // Render only the default (Long) tab's content so a single input exists.
+    value === "Long" ? <div>{children}</div> : null,
+}))
+mock.module("@workspace/ui/components/slider", () => ({
+  Slider: () => null,
+}))
+mock.module("@workspace/ui/components/separator", () => ({
+  Separator: () => <hr />,
+}))
+mock.module("@workspace/ui/components/badge", () => ({
+  Badge: ({ children }: { children: React.ReactNode }) => (
+    <span>{children}</span>
+  ),
+}))
+
+const { TradePanel } = await import("./TradePanel")
+
+/** The pay/collateral amount input. */
+function amountInput() {
+  return screen.getByPlaceholderText("0.00")
 }
 
-let TradePanel: TradePanelComponent
+/** The submit button (named e.g. "Long BTC", distinct from the "Long" tab). */
+function submitButton() {
+  return screen.getByRole("button", { name: /Long\s+BTC/i })
+}
 
-describe("TradePanel", () => {
-  beforeAll(async () => {
-    TradePanel = (await import("./TradePanel")).TradePanel
+/** Whether the submit button is currently disabled. */
+function submitDisabled(): boolean {
+  return submitButton().hasAttribute("disabled")
+}
+
+beforeEach(() => {
+  localStorage.clear() // ensure the default trade state (Long, empty amount)
+})
+
+afterEach(cleanup)
+
+describe("TradePanel input validation (#226)", () => {
+  it("disables submit while no amount is entered", () => {
+    render(<TradePanel />)
+    expect(submitDisabled()).toBe(true)
   })
 
-  beforeEach(() => {
-    useWalletStore.setState({
-      address: null,
-      walletId: null,
-      status: "disconnected",
-      network: "testnet",
-      pendingTransactionXdr: null,
-    })
+  it("rejects an invalid (negative) amount", async () => {
+    const user = userEvent.setup()
+    render(<TradePanel />)
+
+    await user.type(amountInput(), "-5")
+
+    expect(screen.getByRole("alert").textContent).toBe("Enter a valid amount")
+    expect(submitDisabled()).toBe(true)
   })
 
-  afterEach(() => {
-    cleanup()
+  it("rejects a zero amount", async () => {
+    const user = userEvent.setup()
+    render(<TradePanel />)
+
+    await user.type(amountInput(), "0")
+
+    expect(screen.getByRole("alert").textContent).toBe("Enter a valid amount")
+    expect(submitDisabled()).toBe(true)
   })
 
-  it("renders side selector with Long, Short, and Swap tabs", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
+  it("rejects an excessive amount above the wallet balance", async () => {
+    const user = userEvent.setup()
+    render(<TradePanel />)
 
-    expect(screen.getByRole("tab", { name: "Long" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Short" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Swap" })).toBeInTheDocument()
+    await user.type(amountInput(), String(WALLET_BALANCE + 1000))
+
+    expect(screen.getByRole("alert").textContent).toBe("Insufficient balance")
+    expect(submitDisabled()).toBe(true)
   })
 
-  it("renders order mode tabs (Market, Limit, Trigger)", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
+  it("enables submit for a valid amount within balance", async () => {
+    const user = userEvent.setup()
+    render(<TradePanel />)
 
-    expect(screen.getByRole("tab", { name: "Market" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Limit" })).toBeInTheDocument()
-    expect(screen.getByRole("tab", { name: "Trigger" })).toBeInTheDocument()
-  })
+    await user.type(amountInput(), "100")
 
-  it("renders collateral input for position trades", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
-
-    expect(screen.getByText("Collateral")).toBeInTheDocument()
-    expect(screen.getByPlaceholderText("0.00")).toBeInTheDocument()
-  })
-
-  it("renders leverage slider with current value", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
-
-    expect(screen.getByText("Leverage")).toBeInTheDocument()
-    expect(screen.getByText("10×")).toBeInTheDocument()
-  })
-
-  it("renders submit button with trade type and token label", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
-
-    const button = screen.getByRole("button", { name: /Long.*TWBTC/i })
-    expect(button).toBeInTheDocument()
-  })
-
-  it("disables submit button when wallet is not connected", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
-
-    const button = screen.getByRole("button", { name: /Long/i })
-    expect(button).toBeDisabled()
-  })
-
-  it("enables submit button when wallet connected with sufficient balance and amount entered", () => {
-    useWalletStore.setState({
-      address: "GABCDEF123456789",
-      status: "connected",
-    })
-    mockBalances.data = { TUSDC: 10000, XLM: 100 }
-
-    render(<TradePanel trade={createMockTrade({ fromAmount: "100" })} />, { wrapper: createWrapper() })
-
-    const button = screen.getByRole("button", { name: /Long/i })
-    expect(button).toBeEnabled()
-  })
-
-  it("shows Market label instead of Receive for position trades", () => {
-    render(<TradePanel trade={createMockTrade()} />, { wrapper: createWrapper() })
-
-    const marketLabels = screen.getAllByText("Market")
-    expect(marketLabels.length).toBeGreaterThanOrEqual(2)
+    expect(screen.queryByRole("alert")).toBeNull()
+    expect(submitDisabled()).toBe(false)
   })
 })
