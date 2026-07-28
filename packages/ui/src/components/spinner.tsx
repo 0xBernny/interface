@@ -17,7 +17,7 @@ function Spinner({ className, label, ...props }: SpinnerProps) {
         ? { role: "status", "aria-label": label }
         : { "aria-hidden": true })}
       className={cn(
-        "inline-block size-3 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent",
+        "inline-block size-3 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent motion-reduce:animate-none motion-reduce:opacity-60",
         className
       )}
       {...props}

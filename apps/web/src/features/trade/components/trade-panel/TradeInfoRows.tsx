@@ -62,7 +62,7 @@ export function TradeInfoRows({
     <div className="min-w-0 space-y-1 overflow-x-hidden text-xs">
       <Row label="Entry price" value={estimatedEntryPrice > 0 ? <Numeric value={estimatedEntryPrice} format="usd" role="neutral" /> : "-"} />
       {tradeMode === "Limit" && <Row label="Limit price" value="-" />}
-      <Row label="Liq. price" value={liquidationPrice > 0 ? <Numeric value={liquidationPrice} format="usd" role="warning" /> : "-"} />
+      <Row label="Liq. price" value={liquidationPrice > 0 ? <Numeric value={liquidationPrice} format="usd" role="danger" /> : "-"} />
       <Row
         label="Funding"
         value={
@@ -72,7 +72,7 @@ export function TradeInfoRows({
         }
       />
       <Row label="Position fee" value={<Numeric value={fees.positionFeeUsd} format="usd" role="neutral" />} />
-      <Row label="Price impact" value={<Numeric value={priceImpactPct} format="pct" role={Math.abs(priceImpactPct) > 0.5 ? "warning" : "neutral"} />} />
+      <Row label="Price impact" value={<Numeric value={priceImpactPct} format="pct" role={Math.abs(priceImpactPct) > 0.5 ? "danger" : "neutral"} />} />
       <ExecutionFeeRow value={executionFeeDisplay} />
       <div className="border-t border-border pt-1">
         <Row label="Total fees" value={<Numeric value={fees.totalFeesUsd} format="usd" role="neutral" />} bold />

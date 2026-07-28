@@ -153,7 +153,7 @@ export function PositionsList({ onSelectPosition }: Props) {
       header: "Liq.",
       accessor: (p) => {
         const closeToLiq = Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice <= 0.1
-        return <Numeric value={p.liquidationPrice} format="usd" role={closeToLiq ? "warning" : "neutral"} />
+        return <Numeric value={p.liquidationPrice} format="usd" role={closeToLiq ? "danger" : "neutral"} />
       },
     },
     {
