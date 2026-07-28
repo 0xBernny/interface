@@ -1,29 +1,80 @@
-import { cva } from 'class-variance-authority'
-import type { VariantProps } from 'class-variance-authority'
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva } from "class-variance-authority"
 
-import { cn } from '@workspace/ui/lib/utils'
+import { cn } from "@workspace/ui/lib/utils"
+import type { VariantProps } from "class-variance-authority"
 
-const numericVariants = cva('font-mono tabular-nums', {
+/**
+ * Semantic roles for financial figures.
+ *
+ * - `neutral`   — a plain amount (balance, TVL, volume)
+ * - `muted`     — a de-emphasised amount (secondary column, placeholder)
+ * - `positive`  — yield, APR, rewards, gains, long side
+ * - `negative`  — losses, short side
+ * - `warning`   — at-risk values (liquidation price, cooldown)
+ * - `accent`    — brand-highlighted figures (commissions, tier rates)
+ */
+export type NumericRole = "neutral" | "muted" | "positive" | "negative" | "warning" | "accent"
+
+const numericVariants = cva("font-mono tabular-nums", {
   variants: {
     role: {
-      positive: 'text-green-500',
-      negative: 'text-red-500',
-      neutral: 'text-muted-foreground',
-      danger: 'text-red-500 font-bold',
-      'brand-long': 'text-green-500',
-      'brand-short': 'text-red-500',
+      neutral: "text-foreground",
+      muted: "text-muted-foreground",
+      positive: "text-success",
+      negative: "text-destructive",
+      warning: "text-warning",
+      accent: "text-primary",
+    },
+    size: {
+      "2xs": "text-[0.625rem] leading-4",
+      xs: "text-[0.6875rem] leading-4",
+      sm: "text-xs leading-5",
+      md: "text-[0.8125rem] leading-5",
+      base: "text-sm leading-5",
+      lg: "text-base leading-6",
+      xl: "text-[1.375rem] leading-7 tracking-tight",
+    },
+    weight: {
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
     },
   },
-  defaultVariants: {
-    role: 'neutral',
-  },
+  defaultVariants: { role: "neutral", size: "sm", weight: "normal" },
 })
 
-type NumericRole = VariantProps<typeof numericVariants>['role']
+function NumericText({
+  className,
+  role,
+  size,
+  weight,
+  render,
+  ...props
+}: useRender.ComponentProps<"span"> & VariantProps<typeof numericVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(
+      { className: cn(numericVariants({ role, size, weight }), className) },
+      props
+    ),
+    render,
+    state: { slot: "numeric", role },
+  })
+}
+
+/** Maps a signed value onto the matching numeric role. */
+function numericRoleForValue(value: number): NumericRole {
+  if (value > 0) return "positive"
+  if (value < 0) return "negative"
+  return "neutral"
+}
 
 interface NumericProps {
   value: number | null | undefined
-  format?: 'usd' | 'token' | 'pct' | 'number'
+  format?: "usd" | "token" | "pct" | "number"
   role?: NumericRole
   decimals?: number
   compact?: boolean
@@ -43,33 +94,34 @@ function formatUsd(value: number, compact?: boolean): string {
       return `$${(value / 1_000).toFixed(1)}K`
     }
   }
-  return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
 function formatToken(value: number, decimals?: number): string {
   const maxDecimals = decimals ?? 4
-  return value.toLocaleString('en-US', {
+  return value.toLocaleString("en-US", {
     minimumFractionDigits: 0,
     maximumFractionDigits: maxDecimals,
   })
 }
 
 function formatPct(value: number): string {
-  const sign = value > 0 ? '+' : ''
+  const sign = value > 0 ? "+" : ""
   return `${sign}${value.toFixed(2)}%`
 }
 
 function formatNumber(value: number): string {
-  return value.toLocaleString('en-US')
+  return value.toLocaleString("en-US")
 }
 
+/** Formats a raw numeric value (USD, token, percent) using the same semantic roles as `NumericText`. */
 function Numeric({
   value,
-  format = 'number',
-  role = 'neutral',
+  format = "number",
+  role = "neutral",
   decimals,
   compact = false,
-  fallback = '\u2014',
+  fallback = "—",
   className,
 }: NumericProps) {
   const display = (() => {
@@ -77,26 +129,23 @@ function Numeric({
       return fallback
     }
     switch (format) {
-      case 'usd':
+      case "usd":
         return formatUsd(value, compact)
-      case 'token':
+      case "token":
         return formatToken(value, decimals)
-      case 'pct':
+      case "pct":
         return formatPct(value)
-      case 'number':
+      case "number":
         return formatNumber(value)
     }
   })()
 
   return (
-    <span
-      data-slot="numeric"
-      className={cn(numericVariants({ role }), className)}
-    >
+    <span data-slot="numeric" className={cn(numericVariants({ role }), className)}>
       {display}
     </span>
   )
 }
 
-export { Numeric, numericVariants }
-export type { NumericRole, NumericProps }
+export { Numeric, NumericText, numericRoleForValue, numericVariants }
+export type { NumericProps }

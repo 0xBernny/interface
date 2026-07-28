@@ -5,12 +5,12 @@ import { Button } from "@workspace/ui/components/button"
 import { DataTable } from "@workspace/ui/components/data-table"
 import { StatusBadge } from "@workspace/ui/components/status-badge"
 import { Numeric } from "@workspace/ui/components/numeric"
-import type { Column } from "@workspace/ui/components/data-table"
 import { usePositionsWithIndexer } from "../../hooks/usePositionsWithIndexer"
 import { useFundingRate } from "../../hooks/useFundingRate"
 import { claimFundingFees, createDecreaseOrder } from "../../lib/stellar"
 import { queryKeys } from "../../lib/query-keys"
 import { CollateralDialog } from "./CollateralDialog"
+import type { Column } from "@workspace/ui/components/data-table"
 import type { Position } from "../../hooks/usePositions"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { TokenIcon } from "@/shared/components/TokenIcon"
@@ -153,7 +153,7 @@ export function PositionsList({ onSelectPosition }: Props) {
       header: "Liq.",
       accessor: (p) => {
         const closeToLiq = Math.abs(p.markPrice - p.liquidationPrice) / p.markPrice <= 0.1
-        return <Numeric value={p.liquidationPrice} format="usd" role={closeToLiq ? "danger" : "neutral"} />
+        return <Numeric value={p.liquidationPrice} format="usd" role={closeToLiq ? "warning" : "neutral"} />
       },
     },
     {
