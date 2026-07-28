@@ -53,7 +53,7 @@ function Stat({
       {isLoading ? (
         <Skeleton className="h-5 w-20" />
       ) : (
-        <NumericText role={role} size={size} weight={weight}>
+        <NumericText role={role ?? undefined} size={size} weight={weight}>
           {value}
         </NumericText>
       )}
