@@ -1,4 +1,6 @@
+import { Card } from "@workspace/ui/components/card"
 import { cn } from "@workspace/ui/lib/utils"
+import type { NumericRole } from "@workspace/ui/components/numeric"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -68,7 +70,7 @@ export function StatChartCard({ title, tooltip, value, period, accent = "blue" }
         </div>
         <p className="mt-1.5 text-22 font-semibold tabular-nums tracking-tight">
           {formatUsd(value)}
-        </NumericText>
+        </p>
       </div>
 
       {/* Chart area */}

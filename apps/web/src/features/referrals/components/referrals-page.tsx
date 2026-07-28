@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
-import { Heading, Text } from "@workspace/ui/components/text"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navbar } from "../../../ui/Navbar"
 import { useTraderStats } from "../hooks/use-referrals-data"
@@ -53,7 +52,7 @@ export function ReferralsPage() {
           <h1 className="text-22 font-semibold tracking-tight">Referrals</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Get fee discounts and earn up to 15% commission through the SO4 referral program
-          </Text>
+          </p>
         </header>
 
         <Tabs

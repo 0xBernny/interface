@@ -1,10 +1,7 @@
 import { Alert, AlertDescription } from "@workspace/ui/components/alert"
-import { Badge } from "@workspace/ui/components/badge"
 import { Card, CardContent } from "@workspace/ui/components/card"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Stat } from "@workspace/ui/components/stat"
-import { Heading, Text } from "@workspace/ui/components/text"
+import { Text } from "@workspace/ui/components/text"
 import { FAUCET_TOKENS, type FaucetTokenConfig } from "../data/tokens" // eslint-disable-line import/consistent-type-specifier-style
 import { FAUCET_CONTRACT_ID } from "../lib/clients"
 import { useFaucetData } from "../hooks/useFaucetData"
@@ -92,7 +89,7 @@ function TokenCard({
 
       <div className="flex items-center justify-between gap-3">
         <p className="min-w-0 truncate text-xs text-muted-foreground">{cooldownText}</p>
-        <Button
+        <LoadingButton
           variant="outline"
           size="lg"
           className="shrink-0"
@@ -133,7 +130,7 @@ export function FaucetPage() {
             <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2.5 py-0.5 text-11 font-medium text-yellow-600 dark:text-yellow-400">
               <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
               Stellar Testnet
-            </Badge>
+            </span>
           </div>
           <Text size="base" tone="muted" className="mt-1.5">
             Claim test tokens to try trading on SO4. Tokens have no real value.
@@ -176,7 +173,7 @@ export function FaucetPage() {
                   <p className="mt-0.5 text-13 text-muted-foreground">
                     Receive TUSDC, TWBTC, TETH, and TXLM in a single transaction. A cooldown
                     applies between claims.
-                  </Text>
+                  </p>
                 </div>
 
                 {mismatch && (
@@ -209,7 +206,7 @@ export function FaucetPage() {
                 {data?.cooldownLedgers != null && data.cooldownLedgers > 0 && (
                   <p className="text-center text-xs text-muted-foreground">
                     Cooldown: {data.cooldownLedgers.toLocaleString()} ledgers between claims
-                  </Text>
+                  </p>
                 )}
               </CardContent>
             </Card>

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Alert, AlertDescription } from "@workspace/ui/components/alert"
+import { Alert } from "@workspace/ui/components/alert"
 import { Card } from "@workspace/ui/components/card"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
 import { Separator } from "@workspace/ui/components/separator"
@@ -95,7 +95,7 @@ export function RewardsBar() {
             distributed to stakers proportional to staking power{" "}
             <span className="font-medium">(duration × amount staked)</span> when the buyback
             threshold is reached.
-          </AlertDescription>
+          </p>
           <button
             aria-label="Dismiss"
             onClick={() => setBannerOpen(false)}
