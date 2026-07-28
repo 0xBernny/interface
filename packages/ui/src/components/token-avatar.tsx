@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority"
+import { useState } from "react"
 import { cn } from "@workspace/ui/lib/utils"
 import type { VariantProps } from "class-variance-authority"
-import { useState } from "react"
 
 const tokenAvatarVariants = cva(
   "inline-flex shrink-0 items-center justify-center rounded-full overflow-hidden ring-1 ring-border",
