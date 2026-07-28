@@ -10,7 +10,6 @@
     "test:coverage": "bun test --preload ./setup-tests.ts src/shared/lib src/features/trade/lib src/features/pools/lib --coverage",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "bun test",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
