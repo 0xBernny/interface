@@ -57,6 +57,12 @@
     --color-surface-raised: var(--surface-raised);
     --color-surface-overlay: var(--surface-overlay);
     --color-surface-interactive: var(--surface-interactive);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-tertiary: var(--text-tertiary);
+    --color-text-disabled: var(--text-disabled);
+    --color-text-inverse: var(--text-inverse);
+    --color-text-link: var(--text-link);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -157,6 +163,18 @@
     --surface-overlay: oklch(1 0 0);
     --surface-interactive: oklch(0.96 0 0);
 
+    /* Semantic text and icon roles — explicit hierarchy instead of
+       scattered opacity modifiers. Primary is default body text;
+       secondary is supporting labels; tertiary is placeholders/hints;
+       disabled is inactive UI; inverse is text on solid color fills;
+       link is interactive/navigation text. */
+    --text-primary: oklch(0.145 0 0);
+    --text-secondary: oklch(0.45 0 0);
+    --text-tertiary: oklch(0.6 0 0);
+    --text-disabled: oklch(0.75 0 0);
+    --text-inverse: oklch(0.985 0 0);
+    --text-link: oklch(0.45 0.134 242.749);
+
     --radius: 0;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -210,6 +228,13 @@
     --surface-raised: oklch(0.205 0 0);
     --surface-overlay: oklch(0.22 0 0);
     --surface-interactive: oklch(0.25 0 0);
+
+    --text-primary: oklch(0.985 0 0);
+    --text-secondary: oklch(0.7 0 0);
+    --text-tertiary: oklch(0.55 0 0);
+    --text-disabled: oklch(0.4 0 0);
+    --text-inverse: oklch(0.145 0 0);
+    --text-link: oklch(0.68 0.134 242.749);
 
     --chart-surface: oklch(0.145 0 0);
     --chart-text: var(--muted-foreground);
