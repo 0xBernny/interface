@@ -19,12 +19,12 @@ const numericVariants = cva('font-mono tabular-nums', {
   },
 })
 
-type NumericRole = VariantProps<typeof numericVariants>['role']
+type LegacyNumericRole = VariantProps<typeof numericVariants>['role']
 
 interface NumericProps {
   value: number | null | undefined
   format?: 'usd' | 'token' | 'pct' | 'number'
-  role?: NumericRole
+  role?: LegacyNumericRole
   decimals?: number
   compact?: boolean
   fallback?: string
@@ -63,6 +63,69 @@ function formatNumber(value: number): string {
   return value.toLocaleString('en-US')
 }
 
+/**
+ * Semantic tone for a numeric value already formatted by the caller.
+ *
+ * Unlike `Numeric` below, this primitive does not format or round its
+ * children — it only supplies the tabular-figure font treatment and the
+ * approved positive/negative/warning/accent/muted tones (DS-012).
+ */
+const numericTextVariants = cva("font-mono tabular-nums slashed-zero", {
+  variants: {
+    role: {
+      neutral: "text-foreground",
+      positive: "text-success",
+      negative: "text-destructive",
+      warning: "text-warning",
+      accent: "text-primary",
+      muted: "text-muted-foreground",
+    },
+    size: {
+      "2xs": "text-[0.625rem] leading-4",
+      xs: "text-[0.6875rem] leading-4",
+      sm: "text-xs leading-5",
+      md: "text-[0.8125rem] leading-5",
+      base: "text-sm leading-5",
+      lg: "text-base leading-6",
+    },
+    weight: {
+      normal: "font-normal",
+      medium: "font-medium",
+      semibold: "font-semibold",
+      bold: "font-bold",
+    },
+  },
+  defaultVariants: {
+    role: "neutral",
+    size: "base",
+    weight: "normal",
+  },
+})
+
+type NumericRole = VariantProps<typeof numericTextVariants>['role']
+
+type NumericTextProps = React.ComponentProps<'span'> &
+  VariantProps<typeof numericTextVariants>
+
+function NumericText({ role, size, weight, className, ...props }: NumericTextProps) {
+  return (
+    <span
+      data-slot="numeric-text"
+      className={cn(numericTextVariants({ role, size, weight }), className)}
+      {...props}
+    />
+  )
+}
+
+/** Derives a positive/negative/neutral role from a signed value's sign. */
+function numericRoleForValue(
+  value: number
+): Extract<NumericRole, 'positive' | 'negative' | 'neutral'> {
+  if (value > 0) return 'positive'
+  if (value < 0) return 'negative'
+  return 'neutral'
+}
+
 function Numeric({
   value,
   format = 'number',
@@ -98,5 +161,5 @@ function Numeric({
   )
 }
 
-export { Numeric, numericVariants }
-export type { NumericRole, NumericProps }
+export { Numeric, numericVariants, NumericText, numericTextVariants, numericRoleForValue }
+export type { NumericRole, NumericProps, LegacyNumericRole, NumericTextProps }

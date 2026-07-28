@@ -13,6 +13,10 @@ type LoadingButtonProps = ComponentProps<typeof Button> & {
  * Button that owns its own pending presentation: disables itself, flags
  * `aria-busy` and swaps in a spinner. The spinner is `aria-hidden`, so the
  * accessible name is exactly `loadingText` (or the children).
+ *
+ * The spinner sits in a fixed-size slot that's always present (just hidden
+ * via `invisible` when not loading), so entering the loading state never
+ * changes the button's width.
  */
 function LoadingButton({
   isLoading = false,
@@ -30,14 +34,16 @@ function LoadingButton({
       className={cn("gap-1.5", className)}
       {...props}
     >
-      {isLoading ? (
-        <>
-          <Spinner />
-          {loadingText ?? children}
-        </>
-      ) : (
-        children
-      )}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "inline-flex size-3 shrink-0 items-center justify-center",
+          !isLoading && "invisible"
+        )}
+      >
+        {isLoading && <Spinner />}
+      </span>
+      {isLoading ? (loadingText ?? children) : children}
     </Button>
   )
 }

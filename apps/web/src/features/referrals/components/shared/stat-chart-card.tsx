@@ -1,4 +1,5 @@
 import { cn } from "@workspace/ui/lib/utils"
+import type { NumericRole } from "@workspace/ui/components/numeric"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { formatUsd } from "@/shared/lib/format"
 
