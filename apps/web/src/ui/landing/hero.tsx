@@ -20,9 +20,9 @@ const BIDS = [
 
 function OrderBook() {
   return (
-    <div className="overflow-hidden rounded-none border border-border bg-muted/20 p-2.5 font-mono-num text-[10.5px]">
+    <div className="overflow-hidden rounded-none border border-border bg-muted/20 p-2.5 font-mono-num text-10-5">
       {/* Header */}
-      <div className="mb-1.5 grid grid-cols-3 border-b border-border pb-1.5 text-[9.5px] uppercase tracking-[0.08em] text-muted-foreground">
+      <div className="mb-1.5 grid grid-cols-3 border-b border-border pb-1.5 text-9-5 uppercase tracking-[0.08em] text-muted-foreground">
         <span>Price</span>
         <span className="text-right">Size</span>
         <span className="text-right">Total</span>
@@ -42,7 +42,7 @@ function OrderBook() {
       ))}
 
       {/* Spread */}
-      <div className="my-0.5 flex justify-between border-t border-b border-border py-1.5 text-[9.5px] text-muted-foreground">
+      <div className="my-0.5 flex justify-between border-t border-b border-border py-1.5 text-9-5 text-muted-foreground">
         <span>Spread</span>
         <span className="text-primary font-medium">0.50</span>
         <span>0.0007%</span>
@@ -69,12 +69,12 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
   return (
     <div className="relative h-[220px] overflow-hidden rounded-none border border-border bg-muted/20">
       {/* Live price tag */}
-      <div className="font-mono-num absolute right-2.5 top-2.5 z-10 border border-primary/25 bg-primary/8 px-1.5 py-0.5 text-[11px] text-primary">
+      <div className="font-mono-num absolute right-2.5 top-2.5 z-10 border border-primary/25 bg-primary/8 px-1.5 py-0.5 text-11 text-primary">
         {priceLabel}
       </div>
 
       {/* Y-axis labels */}
-      <div className="font-mono-num absolute right-2 top-0 bottom-6 flex flex-col justify-between py-3 text-right text-[9.5px] text-muted-foreground/60">
+      <div className="font-mono-num absolute right-2 top-0 bottom-6 flex flex-col justify-between py-3 text-right text-9-5 text-muted-foreground/60">
         <span>67.4k</span>
         <span>67.0k</span>
         <span>66.6k</span>
@@ -100,22 +100,22 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
 
         {/* Candle bodies */}
         <g opacity="0.5">
-          <rect x="8" y="120" width="6" height="22" fill="#34D399" />
-          <line x1="11" x2="11" y1="110" y2="148" stroke="#34D399" strokeWidth="1" />
-          <rect x="20" y="115" width="6" height="18" fill="#34D399" />
-          <line x1="23" x2="23" y1="108" y2="138" stroke="#34D399" strokeWidth="1" />
-          <rect x="32" y="118" width="6" height="14" fill="#F87171" />
-          <line x1="35" x2="35" y1="112" y2="138" stroke="#F87171" strokeWidth="1" />
-          <rect x="44" y="112" width="6" height="22" fill="#34D399" />
-          <line x1="47" x2="47" y1="104" y2="140" stroke="#34D399" strokeWidth="1" />
-          <rect x="56" y="105" width="6" height="20" fill="#34D399" />
-          <line x1="59" x2="59" y1="98" y2="130" stroke="#34D399" strokeWidth="1" />
-          <rect x="68" y="108" width="6" height="14" fill="#F87171" />
-          <line x1="71" x2="71" y1="102" y2="128" stroke="#F87171" strokeWidth="1" />
-          <rect x="80" y="98" width="6" height="22" fill="#34D399" />
-          <line x1="83" x2="83" y1="90" y2="125" stroke="#34D399" strokeWidth="1" />
-          <rect x="92" y="92" width="6" height="16" fill="#34D399" />
-          <line x1="95" x2="95" y1="84" y2="115" stroke="#34D399" strokeWidth="1" />
+          <rect x="8" y="120" width="6" height="22" className="fill-emerald-400" />
+          <line x1="11" x2="11" y1="110" y2="148" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="20" y="115" width="6" height="18" className="fill-emerald-400" />
+          <line x1="23" x2="23" y1="108" y2="138" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="32" y="118" width="6" height="14" className="fill-red-400" />
+          <line x1="35" x2="35" y1="112" y2="138" className="stroke-red-400" strokeWidth="1" />
+          <rect x="44" y="112" width="6" height="22" className="fill-emerald-400" />
+          <line x1="47" x2="47" y1="104" y2="140" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="56" y="105" width="6" height="20" className="fill-emerald-400" />
+          <line x1="59" x2="59" y1="98" y2="130" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="68" y="108" width="6" height="14" className="fill-red-400" />
+          <line x1="71" x2="71" y1="102" y2="128" className="stroke-red-400" strokeWidth="1" />
+          <rect x="80" y="98" width="6" height="22" className="fill-emerald-400" />
+          <line x1="83" x2="83" y1="90" y2="125" className="stroke-emerald-400" strokeWidth="1" />
+          <rect x="92" y="92" width="6" height="16" className="fill-emerald-400" />
+          <line x1="95" x2="95" y1="84" y2="115" className="stroke-emerald-400" strokeWidth="1" />
         </g>
 
         {/* Price area fill */}
@@ -149,7 +149,7 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
       </svg>
 
       {/* X-axis labels */}
-      <div className="font-mono-num absolute right-2 bottom-1.5 left-2 flex justify-between text-[9.5px] text-muted-foreground/60">
+      <div className="font-mono-num absolute right-2 bottom-1.5 left-2 flex justify-between text-9-5 text-muted-foreground/60">
         <span>09:00</span>
         <span>11:00</span>
         <span>13:00</span>
@@ -184,18 +184,18 @@ function TradingCard() {
       {/* Card header */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 font-mono-num text-[12px] font-semibold text-white">
+          <span className="inline-flex h-[26px] w-[26px] items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-700 font-mono-num text-xs font-semibold text-white">
             B
           </span>
           <div>
-            <div className="text-[14.5px] font-medium text-foreground">
+            <div className="text-14-5 font-medium text-foreground">
               BTC<span className="ml-1 font-normal text-muted-foreground">-PERP</span>
             </div>
-            <div className="font-mono-num mt-0.5 text-[11px] text-muted-foreground">
+            <div className="font-mono-num mt-0.5 text-11 text-muted-foreground">
               ${fmt}
             </div>
           </div>
-          <span className="font-mono-num rounded-none bg-emerald-400/10 px-1.5 py-0.5 text-[11.5px] text-emerald-400">
+          <span className="font-mono-num rounded-none bg-emerald-400/10 px-1.5 py-0.5 text-11-5 text-emerald-400">
             +2.41%
           </span>
         </div>
@@ -207,8 +207,8 @@ function TradingCard() {
             { label: "Funding", value: "+0.0098%" },
           ].map(({ label, value }) => (
             <div key={label} className="font-mono-num text-right">
-              <div className="text-[11px] text-muted-foreground/60">{label}</div>
-              <div className="mt-0.5 text-[12.5px] font-medium text-foreground">{value}</div>
+              <div className="text-11 text-muted-foreground/60">{label}</div>
+              <div className="mt-0.5 text-12-5 font-medium text-foreground">{value}</div>
             </div>
           ))}
         </div>
@@ -222,10 +222,10 @@ function TradingCard() {
 
       {/* Card footer: buy/sell */}
       <div className="grid grid-cols-2 gap-2 p-3.5 pt-0">
-        <button className="font-mono-num h-9 border border-emerald-400/35 bg-emerald-400/15 text-[12px] font-medium uppercase tracking-[0.04em] text-emerald-400 transition-all hover:brightness-110">
+        <button className="font-mono-num h-9 border border-emerald-400/35 bg-emerald-400/15 text-xs font-medium uppercase tracking-[0.04em] text-emerald-400 transition-all hover:brightness-110">
           Buy / Long
         </button>
-        <button className="font-mono-num h-9 border border-red-400/32 bg-red-400/12 text-[12px] font-medium uppercase tracking-[0.04em] text-red-400 transition-all hover:brightness-110">
+        <button className="font-mono-num h-9 border border-red-400/32 bg-red-400/12 text-xs font-medium uppercase tracking-[0.04em] text-red-400 transition-all hover:brightness-110">
           Sell / Short
         </button>
       </div>
@@ -242,10 +242,13 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-[1320px] grid-cols-1 items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-16">
         {/* Left column */}
         <div>
-          <span className="font-mono-num inline-flex items-center gap-2.5 border border-border bg-card/50 px-3 py-1.5 text-[11.5px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span className="font-mono-num inline-flex items-center gap-2.5 border border-border bg-card/50 px-3 py-1.5 text-11-5 uppercase tracking-[0.14em] text-muted-foreground">
             <span
               className="inline-block h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]"
-              style={{ animation: "pulseDot 2.4s ease-in-out infinite" }}
+              style={{ 
+                animation: "pulseDot var(--duration-slow) var(--ease-smooth) infinite",
+                animationDuration: "2.4s"
+              }}
             />
             Mainnet · v1.4 · Lagos UTC+1
           </span>
@@ -262,7 +265,7 @@ export function Hero() {
             <span className="block">on-chain.</span>
           </h1>
 
-          <p className="mt-[22px] max-w-[520px] text-[17px] leading-[1.55] text-muted-foreground">
+          <p className="mt-[22px] max-w-[520px] text-17 leading-[1.55] text-muted-foreground">
             A unified-liquidity perp DEX. Deep books, sub-second matching, and
             self-custodied risk — built for traders who care where their fills
             come from.
@@ -277,7 +280,7 @@ export function Hero() {
             </Button>
           </div>
 
-          <div className="font-mono-num mt-9 flex flex-wrap items-center gap-4 text-[12.5px] text-muted-foreground/60">
+          <div className="font-mono-num mt-9 flex flex-wrap items-center gap-4 text-12-5 text-muted-foreground/60">
             <span>
               <span className="font-medium text-foreground">$8.42B</span> 24h volume
             </span>

@@ -1,6 +1,8 @@
 import { usePriceDelta24h } from "../../hooks/usePriceDelta24h"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
+import { OracleStalenessIndicator } from "../OracleStalenessIndicator"
 import { MarketSelector } from "./MarketSelector"
+import { formatUsd } from "@/shared/lib/format"
 
 type Props = {
   symbol: string | undefined
@@ -8,10 +10,11 @@ type Props = {
 }
 
 export function ChartHeader({ symbol, onSelectToken }: Props) {
-  const { getMidPrice } = useTokenPrices()
+  const { getMidPrice, getStaleness } = useTokenPrices()
   const { data: delta } = usePriceDelta24h(symbol)
 
   const midPrice = symbol ? getMidPrice(symbol) : 0
+  const staleness = symbol ? getStaleness(symbol) : "stale"
   const isPositive = (delta?.deltaPercentage ?? 0) > 0
   const isNegative = (delta?.deltaPercentage ?? 0) < 0
 
@@ -25,8 +28,9 @@ export function ChartHeader({ symbol, onSelectToken }: Props) {
       {/* Current price */}
       <div className="flex flex-col">
         <span className="text-xs text-muted-foreground">Price</span>
-        <span className="font-mono font-medium">
-          {midPrice > 0 ? `$${midPrice.toLocaleString("en-US", { maximumFractionDigits: 4 })}` : "—"}
+        <span className="flex items-center gap-2 font-mono font-medium">
+          {symbol && <OracleStalenessIndicator staleness={staleness} showLabel />}
+          {midPrice > 0 ? formatUsd(midPrice, { decimals: 4 }) : "—"}
         </span>
       </div>
 
@@ -50,7 +54,7 @@ export function ChartHeader({ symbol, onSelectToken }: Props) {
       <div className="flex flex-col">
         <span className="text-xs text-muted-foreground">24h High</span>
         <span className="font-mono">
-          {delta?.high ? `$${delta.high.toLocaleString()}` : "—"}
+          {delta?.high ? formatUsd(delta.high, { decimals: 2 }) : "—"}
         </span>
       </div>
 
@@ -58,7 +62,7 @@ export function ChartHeader({ symbol, onSelectToken }: Props) {
       <div className="flex flex-col">
         <span className="text-xs text-muted-foreground">24h Low</span>
         <span className="font-mono">
-          {delta?.low ? `$${delta.low.toLocaleString()}` : "—"}
+          {delta?.low ? formatUsd(delta.low, { decimals: 2 }) : "—"}
         </span>
       </div>
     </div>

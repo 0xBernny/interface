@@ -1,13 +1,25 @@
-import { fileURLToPath, URL } from "node:url"
-import { defineConfig } from "vitest/config"
+import { defineConfig, mergeConfig } from "vitest/config"
+import { reactConfig } from "@repo/vitest-config/react"
 
-export default defineConfig({
-  resolve: {
-    alias: {
-      "@workspace/ui": fileURLToPath(new URL("./src", import.meta.url)),
+export default mergeConfig(
+  reactConfig,
+  defineConfig({
+    test: {
+      // setupFiles comes from reactConfig (./vitest.setup.ts) — mergeConfig
+      // concatenates arrays, so overriding it here would add a second entry.
+      include: ["src/**/*.{test,spec}.{ts,tsx}"],
+      deps: {
+        inline: [
+          "react",
+          "react-dom",
+          "react/jsx-runtime",
+          "react/jsx-dev-runtime",
+          "@testing-library/react",
+          "@testing-library/user-event",
+          "@testing-library/jest-dom",
+          "vitest-axe",
+        ],
+      },
     },
-  },
-  test: {
-    environment: "jsdom",
-  },
-})
+  })
+)

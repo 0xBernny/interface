@@ -1,13 +1,14 @@
 import { useState } from "react"
 import { Link } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
-import { Skeleton } from "@workspace/ui/components/skeleton"
+import { Card, CardContent } from "@workspace/ui/components/card"
+import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { Stat } from "@workspace/ui/components/stat"
+import { Heading, Text } from "@workspace/ui/components/text"
 import { useUserSO4Stats } from "../../hooks/use-earn-data"
-import { vestEsSO4, compoundRewards } from "../../lib/earn"
-
-function fmtToken(v: number, symbol: string) {
-  return `${v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 })} ${symbol}`
-}
+import { compoundRewards, vestEsSO4 } from "../../lib/earn"
+import { formatToken } from "@/shared/lib/format"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
 
 function SectionCard({
   title,
@@ -24,8 +25,8 @@ function SectionCard({
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-prose space-y-1.5">
-          <h3 className="text-[13px] font-semibold">{title}</h3>
-          <p className="text-[12px] leading-relaxed text-muted-foreground">{description}</p>
+          <h3 className="text-13 font-semibold">{title}</h3>
+          <p className="text-xs leading-relaxed text-muted-foreground">{description}</p>
           {children && <div className="pt-2">{children}</div>}
         </div>
         <div className="shrink-0">{action}</div>
@@ -46,11 +47,11 @@ function StatRow({
   return (
     <div className="flex items-center gap-6">
       <div>
-        <p className="text-[10px] text-muted-foreground">{label}</p>
+        <p className="text-10 text-muted-foreground">{label}</p>
         {isLoading ? (
           <Skeleton className="mt-0.5 h-4 w-24" />
         ) : (
-          <p className="text-[12px] font-medium tabular-nums">{value}</p>
+          <p className="text-xs font-medium tabular-nums">{value}</p>
         )}
       </div>
     </div>
@@ -59,31 +60,33 @@ function StatRow({
 
 export function AdditionalOpportunitiesTab() {
   const { data: so4Stats, isLoading } = useUserSO4Stats()
+  const { address } = useWalletStore()
   const [vestPending, setVestPending] = useState(false)
   const [compoundPending, setCompoundPending] = useState(false)
 
   async function handleVest() {
+    if (!address) return
     setVestPending(true)
     try {
       // TODO: open vesting modal with amount input + confirmation
-      await vestEsSO4("DUMMY_ACCOUNT", so4Stats?.esSO4Balance ?? 0)
+      await vestEsSO4(address, so4Stats.esSO4Balance)
     } finally {
       setVestPending(false)
     }
   }
 
   async function handleCompound() {
+    if (!address) return
     setCompoundPending(true)
     try {
-      // TODO: pass real wallet account from wallet context
-      await compoundRewards("DUMMY_ACCOUNT")
+      await compoundRewards(address)
     } finally {
       setCompoundPending(false)
     }
   }
 
-  const hasEsSO4 = (so4Stats?.esSO4Balance ?? 0) > 0
-  const hasMultiplierPoints = (so4Stats?.multiplierPoints ?? 0) > 0
+  const hasEsSO4 = so4Stats.esSO4Balance > 0
+  const hasMultiplierPoints = so4Stats.multiplierPoints > 0
 
   return (
     <div className="space-y-4">
@@ -92,25 +95,26 @@ export function AdditionalOpportunitiesTab() {
         title="esSO4 Vesting"
         description="Convert esSO4 (escrowed SO4) into SO4 tokens over a 12-month linear vesting period. Tokens unlock gradually — claim anytime."
         action={
-          <Button
-            size="sm"
+          <LoadingButton
+            size="lg"
             variant="outline"
-            className="h-8 text-[12px]"
+            className="h-8 text-xs"
             disabled={vestPending || !hasEsSO4}
             onClick={() => void handleVest()}
           >
-            {vestPending ? "Starting…" : "Vest now"}
-          </Button>
+            Vest now
+          </LoadingButton>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow
+          <Stat
             label="esSO4 balance"
-            value={fmtToken(so4Stats?.esSO4Balance ?? 0, "esSO4")}
+            value={formatToken(so4Stats.esSO4Balance, "esSO4", { minDecimals: 2 })}
+            size="md"
             isLoading={isLoading}
           />
-          <StatRow label="Vesting duration" value="12 months" />
-          <StatRow label="Conversion rate" value="1 esSO4 → 1 SO4" />
+          <Stat label="Vesting duration" value="12 months" size="md" />
+          <Stat label="Conversion rate" value="1 esSO4 → 1 SO4" size="md" />
         </div>
       </SectionCard>
 
@@ -121,22 +125,24 @@ export function AdditionalOpportunitiesTab() {
         action={
           <Button
             size="sm"
-            className="h-8 text-[12px]"
+            className="h-8 text-xs"
             disabled={compoundPending || !hasMultiplierPoints}
             onClick={() => void handleCompound()}
           >
-            {compoundPending ? "Compounding…" : "Compound"}
+            Compound
           </Button>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow
+          <Stat
             label="Multiplier Points"
-            value={fmtToken(so4Stats?.multiplierPoints ?? 0, "MP")}
+            value={formatToken(so4Stats.multiplierPoints, "MP", { minDecimals: 2 })}
+            role="accent"
+            size="md"
             isLoading={isLoading}
           />
-          <StatRow label="Boost cap" value="100% of base APR" />
-          <StatRow label="Accrual rate" value="100% APR on staked SO4" />
+          <Stat label="Boost cap" value="100% of base APR" size="md" />
+          <Stat label="Accrual rate" value="100% APR on staked SO4" size="md" />
         </div>
       </SectionCard>
 
@@ -145,15 +151,17 @@ export function AdditionalOpportunitiesTab() {
         title="Referrals"
         description="Share your referral code to earn fee discounts and rebates. Referrers receive a percentage of their referees' trading fees, paid in USDC every epoch."
         action={
-          <Button size="sm" variant="outline" className="h-8 text-[12px]" asChild>
-            <Link to="/referrals">Go to Referrals →</Link>
-          </Button>
+          <Link to="/referrals">
+            <Button size="sm" variant="outline" className="h-8 text-xs">
+              Go to Referrals →
+            </Button>
+          </Link>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">
-          <StatRow label="Referrer rebate" value="5% of referee fees" />
-          <StatRow label="Referee discount" value="5% fee reduction" />
-          <StatRow label="Paid in" value="USDC weekly" />
+          <Stat label="Referrer rebate" value="5% of referee fees" size="md" />
+          <Stat label="Referee discount" value="5% fee reduction" size="md" />
+          <Stat label="Paid in" value="USDC weekly" size="md" />
         </div>
       </SectionCard>
     </div>

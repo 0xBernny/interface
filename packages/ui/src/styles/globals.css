@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:is(.dark *));
 @source "../../../apps/**/*.{ts,tsx}";
@@ -27,6 +28,17 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-neutral: var(--neutral);
+    --color-danger: var(--danger);
+    --color-long: var(--long);
+    --color-short: var(--short);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -41,14 +53,120 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+    --color-surface-canvas: var(--surface-canvas);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-overlay: var(--surface-overlay);
+    --color-surface-interactive: var(--surface-interactive);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-tertiary: var(--text-tertiary);
+    --color-text-disabled: var(--text-disabled);
+    --color-text-inverse: var(--text-inverse);
+    --color-text-link: var(--text-link);
+    --color-long-subtle: var(--long-subtle);
+    --color-long-border: var(--long-border);
+    --color-short-subtle: var(--short-subtle);
+    --color-short-border: var(--short-border);
+    --color-liquidation: var(--liquidation);
+    --color-liquidation-foreground: var(--liquidation-foreground);
+    --color-liquidation-subtle: var(--liquidation-subtle);
+    --color-liquidation-border: var(--liquidation-border);
+    --color-success-subtle: var(--success-subtle);
+    --color-success-border: var(--success-border);
+    --color-warning-subtle: var(--warning-subtle);
+    --color-warning-border: var(--warning-border);
+    --color-info-subtle: var(--info-subtle);
+    --color-info-border: var(--info-border);
+    --color-danger-subtle: var(--danger-subtle);
+    --color-danger-border: var(--danger-border);
+    --color-neutral-subtle: var(--neutral-subtle);
+    --color-neutral-border: var(--neutral-border);
+    
+    /*
+     * Shape and radius scale (DS-008).
+     *
+     * Defines a restrained, consistent border-radius system for UI elements.
+     * The scale provides five named sizes plus 'full' for pills and circular elements.
+     * 
+     * Component-to-radius mapping:
+     * - sm (0.25rem / 4px):   Small controls (buttons, inputs, badges, tabs)
+     * - md (0.375rem / 6px):  Medium controls (dropdowns, selects, chips)
+     * - lg (0.5rem / 8px):    Cards, panels, modals, popovers
+     * - xl (0.75rem / 12px):  Large cards, feature panels, section containers
+     * - full (9999px):        Pills, avatar badges, status indicators (fully rounded)
+     *
+     * Usage: rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full
+     */
+    --radius-sm: 0.25rem;   /* 4px  - buttons, inputs, badges, tabs */
+    --radius-md: 0.375rem;  /* 6px  - dropdowns, selects, chips */
+    --radius-lg: 0.5rem;    /* 8px  - cards, panels, modals */
+    --radius-xl: 0.75rem;   /* 12px - large cards, feature sections */
+    --radius-full: 9999px;  /* Fully rounded - pills, avatars, indicators */
+    
     --font-sans: 'Geist Variable', sans-serif;
+    --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+    /*
+     * Micro-typography scale (DS-050).
+     *
+     * The default Tailwind scale (xs=12px, sm=14px, base=16px, lg=18px) has
+     * no steps for the dense, data-table-heavy UI in this app (order books,
+     * position tables, referral stats), which had accumulated 250+ ad hoc
+     * `text-[Npx]` arbitrary values across the codebase instead. These are
+     * the exact values that usage actually converged on, promoted to named
+     * tokens so they're an intentional, documented scale instead of
+     * per-callsite magic numbers. Named by pixel value (at the default
+     * 16px root) rather than a semantic step name (2xs/3xs/...) since a
+     * dozen-plus half-pixel steps don't fit a small semantic vocabulary
+     * without the names becoming arbitrary themselves.
+     */
+    --text-9-5: 0.59375rem;   /* 9.5px */
+    --text-10: 0.625rem;      /* 10px */
+    --text-10-5: 0.65625rem;  /* 10.5px */
+    --text-11: 0.6875rem;     /* 11px */
+    --text-11-5: 0.71875rem;  /* 11.5px */
+    --text-12-5: 0.78125rem;  /* 12.5px */
+    --text-13: 0.8125rem;     /* 13px */
+    --text-13-5: 0.84375rem;  /* 13.5px */
+    --text-14-5: 0.90625rem;  /* 14.5px */
+    --text-15: 0.9375rem;     /* 15px */
+    --text-17: 1.0625rem;     /* 17px */
+    --text-22: 1.375rem;      /* 22px */
+    --text-26: 1.625rem;      /* 26px */
+    --text-40: 2.5rem;        /* 40px */
+
+    /*
+     * Spacing scale — micro through section spacing.
+     *
+     * Intent-named tokens that reduce one-off arbitrary spacing values
+     * across the UI. Numeric tokens follow the pixel value at the
+     * default 16px root. Semantic tokens encode density intent.
+     */
+    --spacing-0-5: 0.125rem;   /* 2px  — micro gap */
+    --spacing-4-5: 1.125rem;   /* 18px — tight */
+    --spacing-7: 1.75rem;      /* 28px */
+    --spacing-9: 2.25rem;      /* 36px */
+    --spacing-14: 3.5rem;      /* 56px — section */
+    --spacing-18: 4.5rem;      /* 72px — section */
+    --spacing-20: 5rem;        /* 80px — section */
+
+    /* Control height density tokens — compact / default / comfortable */
+    --height-compact: 1.25rem;       /* 20px  — h-5 equivalent */
+    --height-default: 1.75rem;       /* 28px  — h-7 equivalent */
+    --height-comfortable: 2.5rem;    /* 40px  — h-10 equivalent */
+
+    /*
+     * Page gutters — responsive horizontal padding at layout edges.
+     *
+     * Usage:
+     *   px-[var(--gutter-page-sm)]
+     *   md:px-[var(--gutter-page-md)]
+     *   lg:px-[var(--gutter-page-lg)]
+     */
+    --gutter-page-sm: 1rem;          /* 16px — mobile */
+    --gutter-page-md: 1.5rem;        /* 24px — tablet */
+    --gutter-page-lg: 2rem;          /* 32px — desktop */
 }
 
 :root {
@@ -67,49 +185,60 @@
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
-    --radius: 0;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.588 0.158 241.966);
-    --sidebar-primary-foreground: oklch(0.977 0.013 236.62);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-}
+    --chart-1: var(--long);
+    --chart-2: var(--short);
+    --chart-3: var(--liquidation);
+    --chart-4: var(--info);
+    --chart-5: var(--neutral);
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.443 0.11 240.79);
-    --primary-foreground: oklch(0.977 0.013 236.62);
-    --secondary: oklch(0.274 0.006 286.033);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
+    /* Semantic status roles — shared by badges, alerts, numeric text and the
+       trading chart so a "long" candle is the same green as a positive PnL. */
+    --success: oklch(0.596 0.145 163.225);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.681 0.162 75.834);
+    --warning-foreground: oklch(0.21 0 0);
+    --info: oklch(0.546 0.245 262.881);
+    --info-foreground: oklch(0.985 0 0);
+    --neutral: oklch(0.556 0 0);
+    --danger: var(--destructive);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    --long-foreground: var(--success-foreground);
+    --long-subtle: oklch(0.18 0.05 163.225);
+    --long-border: oklch(0.35 0.10 163.225);
+    --short-foreground: var(--destructive-foreground);
+    --short-subtle: oklch(0.18 0.05 27.325);
+    --short-border: oklch(0.35 0.10 27.325);
+    --liquidation: oklch(0.82 0.16 65);
+    --liquidation-foreground: oklch(0.21 0 0);
+    --liquidation-subtle: oklch(0.18 0.05 75.834);
+    --liquidation-border: oklch(0.35 0.10 75.834);
+    --success-subtle: oklch(0.18 0.05 163.225);
+    --success-border: oklch(0.35 0.10 163.225);
+    --warning-subtle: oklch(0.18 0.05 75.834);
+    --warning-border: oklch(0.35 0.10 75.834);
+    --info-subtle: oklch(0.18 0.05 262.881);
+    --info-border: oklch(0.35 0.10 262.881);
+    --danger-subtle: oklch(0.18 0.05 27.325);
+    --danger-border: oklch(0.35 0.10 27.325);
+    --neutral-subtle: oklch(0.20 0 0);
+    --neutral-border: oklch(0.32 0 0);
+
+    --chart-surface: oklch(0.145 0 0);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: oklch(0.269 0 0);
+    --chart-crosshair: oklch(0.44 0 0);
+    --chart-crosshair-label: oklch(0.269 0 0);
+    --chart-border: oklch(0.269 0 0);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.685 0.169 237.323);
@@ -130,4 +259,93 @@
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
     }
+}
+
+/*
+ * Typography role utilities (DS-060).
+ *
+ * Semantic roles that bundle size, line height, weight, and tracking into
+ * a single class — replaces ad-hoc combinations of text-*/font-*/leading-*
+ * that previously accumulated across the codebase.
+ *
+ * Numeric roles additionally enable tabular figures and slashed zero via
+ * font-variant-numeric, ensuring decimal-aligned columns and unambiguous
+ * zeros in data tables and trading interfaces.
+ */
+@utility text-display {
+  font-size: var(--text-40);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility text-display-sm {
+  font-size: var(--text-26);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-page-title {
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-section-title {
+  font-size: var(--text-17);
+  line-height: 1.3;
+  font-weight: 500;
+}
+@utility text-subtitle {
+  font-size: var(--text-15);
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility text-body {
+  font-size: var(--text-13-5);
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility text-body-sm {
+  font-size: var(--text-13);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-label {
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+@utility text-label-sm {
+  font-size: var(--text-11);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+@utility text-caption {
+  font-size: var(--text-11);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-numeric-lg {
+  font-family: var(--font-mono);
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric {
+  font-family: var(--font-mono);
+  font-size: var(--text-15);
+  line-height: 1.3;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric-sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums slashed-zero;
 }

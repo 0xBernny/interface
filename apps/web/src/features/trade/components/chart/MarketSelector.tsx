@@ -1,7 +1,9 @@
-import { type KeyboardEvent, type MouseEvent, useState, useRef, useEffect, useId } from "react"
-import { MARKETS, type Market } from "../../data/markets"
+import { useEffect, useRef, useState } from "react"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { usePriceDelta24h } from "../../hooks/usePriceDelta24h"
+import { useMarkets } from "../../hooks/useMarkets"
+import type { Market } from "../../hooks/useMarkets"
+import { formatUsd } from "@/shared/lib/format"
 
 type Props = {
   symbol: string | undefined
@@ -54,7 +56,7 @@ function MarketRow({
       <div className="flex items-center gap-3 text-right">
         <span className="font-mono text-xs text-foreground">
           {price > 0
-            ? `$${price.toLocaleString("en-US", { maximumFractionDigits: 4 })}`
+            ? formatUsd(price, { decimals: 4 })
             : "—"}
         </span>
         <span
@@ -82,9 +84,11 @@ export function MarketSelector({ symbol, onSelect }: Props) {
   const comboboxId = useId()
   const listboxId = `${comboboxId}-listbox`
 
-  const activeMarket = MARKETS.find((m) => m.indexTokenAddress === symbol)
+  const { markets } = useMarkets()
 
-  const filtered = MARKETS.filter((m) =>
+  const activeMarket = markets.find((m) => m.indexTokenAddress === symbol)
+
+  const filtered = markets.filter((m) =>
     search.trim() === ""
       ? true
       : m.name.toLowerCase().includes(search.toLowerCase()) ||
