@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:is(.dark *));
 @source "../../../apps/**/*.{ts,tsx}";
@@ -89,6 +90,7 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
     --font-sans: 'Geist Variable', sans-serif;
+    --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 
     /*
      * Micro-typography scale (DS-050).
@@ -118,6 +120,38 @@
     --text-22: 1.375rem;      /* 22px */
     --text-26: 1.625rem;      /* 26px */
     --text-40: 2.5rem;        /* 40px */
+
+    /*
+     * Spacing scale — micro through section spacing.
+     *
+     * Intent-named tokens that reduce one-off arbitrary spacing values
+     * across the UI. Numeric tokens follow the pixel value at the
+     * default 16px root. Semantic tokens encode density intent.
+     */
+    --spacing-0-5: 0.125rem;   /* 2px  — micro gap */
+    --spacing-4-5: 1.125rem;   /* 18px — tight */
+    --spacing-7: 1.75rem;      /* 28px */
+    --spacing-9: 2.25rem;      /* 36px */
+    --spacing-14: 3.5rem;      /* 56px — section */
+    --spacing-18: 4.5rem;      /* 72px — section */
+    --spacing-20: 5rem;        /* 80px — section */
+
+    /* Control height density tokens — compact / default / comfortable */
+    --height-compact: 1.25rem;       /* 20px  — h-5 equivalent */
+    --height-default: 1.75rem;       /* 28px  — h-7 equivalent */
+    --height-comfortable: 2.5rem;    /* 40px  — h-10 equivalent */
+
+    /*
+     * Page gutters — responsive horizontal padding at layout edges.
+     *
+     * Usage:
+     *   px-[var(--gutter-page-sm)]
+     *   md:px-[var(--gutter-page-md)]
+     *   lg:px-[var(--gutter-page-lg)]
+     */
+    --gutter-page-sm: 1rem;          /* 16px — mobile */
+    --gutter-page-md: 1.5rem;        /* 24px — tablet */
+    --gutter-page-lg: 2rem;          /* 32px — desktop */
 }
 
 :root {
