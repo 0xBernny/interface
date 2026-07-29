@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react"
+import { type KeyboardEvent, type MouseEvent, useState, useRef, useEffect, useId } from "react"
 import { MARKETS, type Market } from "../../data/markets"
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { usePriceDelta24h } from "../../hooks/usePriceDelta24h"
@@ -12,10 +12,12 @@ function MarketRow({
   market,
   isActive,
   onSelect,
+  id,
 }: {
   market: Market
   isActive: boolean
   onSelect: () => void
+  id: string
 }) {
   const { getMidPrice } = useTokenPrices()
   const { data: delta } = usePriceDelta24h(market.indexTokenAddress)
@@ -23,14 +25,30 @@ function MarketRow({
   const isPositive = (delta?.deltaPercentage ?? 0) > 0
   const isNegative = (delta?.deltaPercentage ?? 0) < 0
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      onSelect()
+    }
+  }
+
   return (
-    <button
-      onClick={onSelect}
-      className={`flex w-full items-center justify-between gap-4 rounded px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
-        isActive ? "bg-accent/60" : ""
+    <li
+      id={id}
+      role="option"
+      aria-selected={isActive}
+      tabIndex={-1}
+      className={`flex w-full cursor-pointer items-center justify-between gap-4 rounded px-3 py-2 text-left text-sm transition-colors ${
+        isActive ? "bg-accent/60" : "hover:bg-accent"
       }`}
+      onClick={onSelect}
+      onKeyDown={handleKeyDown}
+      onMouseDown={(event) => event.preventDefault()}
     >
-      <span className={`font-medium ${isActive ? "text-foreground" : "text-foreground/80"}`}>
+      <span
+        title={market.name}
+        className={`font-medium truncate ${isActive ? "text-foreground" : "text-foreground/80"}`}
+      >
         {market.name}
       </span>
       <div className="flex items-center gap-3 text-right">
@@ -51,14 +69,18 @@ function MarketRow({
           {delta?.deltaPercentageStr ?? "—"}
         </span>
       </div>
-    </button>
+    </li>
   )
 }
 
 export function MarketSelector({ symbol, onSelect }: Props) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const [activeIndex, setActiveIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const comboboxId = useId()
+  const listboxId = `${comboboxId}-listbox`
 
   const activeMarket = MARKETS.find((m) => m.indexTokenAddress === symbol)
 
@@ -69,17 +91,28 @@ export function MarketSelector({ symbol, onSelect }: Props) {
         m.indexTokenAddress.toLowerCase().includes(search.toLowerCase()),
   )
 
-  // Close on outside click
   useEffect(() => {
     if (!open) return
+
+    const currentIndex = filtered.findIndex((m) => m.indexTokenAddress === symbol)
+    setActiveIndex(Math.max(0, currentIndex))
+  }, [filtered, open, symbol])
+
+  useEffect(() => {
+    if (!open) return
+
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false)
       }
     }
+
     function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false)
+      if (e.key === "Escape") {
+        setOpen(false)
+      }
     }
+
     document.addEventListener("mousedown", handleClick)
     document.addEventListener("keydown", handleKey)
     return () => {
@@ -88,14 +121,81 @@ export function MarketSelector({ symbol, onSelect }: Props) {
     }
   }, [open])
 
+  const selectMarket = (market: Market) => {
+    onSelect(market.indexTokenAddress)
+    setOpen(false)
+    setSearch("")
+  }
+
+  const moveActive = (delta: number) => {
+    if (filtered.length === 0) return
+    setActiveIndex((current) => {
+      const next = current + delta
+      return Math.max(0, Math.min(next, filtered.length - 1))
+    })
+  }
+
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault()
+      if (!open) {
+        setOpen(true)
+        return
+      }
+      moveActive(1)
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault()
+      moveActive(-1)
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault()
+      setActiveIndex(0)
+    }
+
+    if (event.key === "End") {
+      event.preventDefault()
+      setActiveIndex(filtered.length - 1)
+    }
+
+    if (event.key === "Enter") {
+      event.preventDefault()
+      const market = filtered[activeIndex]
+      if (market) selectMarket(market)
+    }
+  }
+
+  const handleToggle = () => {
+    setOpen((value) => {
+      const next = !value
+      if (next) {
+        setTimeout(() => inputRef.current?.focus(), 0)
+      }
+      return next
+    })
+  }
+
+  const handleClear = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation()
+    onSelect("")
+    setSearch("")
+    setOpen(false)
+  }
+
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative inline-flex items-center gap-2">
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 rounded px-2 py-1 transition-colors hover:bg-accent"
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-controls={listboxId}
+        onClick={handleToggle}
+        className="flex items-center gap-1.5 rounded border border-border bg-background px-2 py-1 transition-colors hover:bg-accent"
       >
         <span className="text-sm font-semibold text-foreground">
-          {activeMarket?.name ?? symbol ?? "Select Market"}
+          {activeMarket?.name ?? symbol || "Select Market"}
         </span>
         <svg
           width="12"
@@ -112,37 +212,55 @@ export function MarketSelector({ symbol, onSelect }: Props) {
         </svg>
       </button>
 
+      {symbol && (
+        <button
+          type="button"
+          onClick={handleClear}
+          aria-label="Clear selected market"
+          className="rounded border border-border bg-background px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent"
+        >
+          ×
+        </button>
+      )}
+
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg">
           <div className="p-2">
+            <label htmlFor={`${comboboxId}-input`} className="sr-only" id={`${comboboxId}-label`}>
+              Search markets
+            </label>
             <input
+              ref={inputRef}
+              id={`${comboboxId}-input`}
+              role="combobox"
+              aria-labelledby={`${comboboxId}-label`}
+              aria-expanded={open}
+              aria-controls={listboxId}
+              aria-activedescendant={filtered[activeIndex]?.address ? `${comboboxId}-option-${filtered[activeIndex]?.address}` : undefined}
+              aria-autocomplete="list"
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleInputKeyDown}
               placeholder="Search markets..."
               className="w-full rounded bg-background px-2.5 py-1.5 text-xs text-foreground outline-none ring-1 ring-border placeholder:text-muted-foreground focus:ring-primary"
             />
           </div>
-          <div className="px-1 pb-1">
+          <ul className="max-h-72 overflow-y-auto px-1 pb-1" role="listbox" id={listboxId} aria-labelledby={`${comboboxId}-label`}>
             {filtered.length === 0 ? (
-              <p className="px-3 py-4 text-center text-xs text-muted-foreground">
-                No markets found
-              </p>
+              <li className="px-3 py-4 text-center text-xs text-muted-foreground">No markets found</li>
             ) : (
-              filtered.map((market) => (
+              filtered.map((market, index) => (
                 <MarketRow
                   key={market.address}
+                  id={`${comboboxId}-option-${market.address}`}
                   market={market}
-                  isActive={market.indexTokenAddress === symbol}
-                  onSelect={() => {
-                    onSelect(market.indexTokenAddress)
-                    setOpen(false)
-                    setSearch("")
-                  }}
+                  isActive={index === activeIndex}
+                  onSelect={() => selectMarket(market)}
                 />
               ))
             )}
-          </div>
+          </ul>
         </div>
       )}
     </div>
