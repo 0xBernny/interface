@@ -17,6 +17,27 @@
   }
 }
 
+/* Reduced motion: disable non-essential animations while preserving critical state changes */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Preserve focus and state change animations for accessibility */
+  :focus,
+  :focus-visible,
+  [data-state="open"],
+  [data-state="closed"],
+  [aria-expanded="true"],
+  [aria-expanded="false"] {
+    transition-duration: var(--duration-fast) !important;
+  }
+}
+
 /* Hero decorative gradients — adapt to primary token in both themes */
 .hero-glow::before {
   content: "";
