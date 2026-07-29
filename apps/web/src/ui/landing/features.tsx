@@ -77,7 +77,7 @@ export function Features() {
       <div className="mx-auto max-w-[1320px]">
         {/* Section header */}
         <div className="mb-12">
-          <div className="font-mono-num mb-4 flex items-center gap-2.5 text-[11.5px] uppercase tracking-[0.18em] text-primary">
+          <div className="font-mono-num mb-4 flex items-center gap-2.5 text-11-5 uppercase tracking-[0.18em] text-primary">
             <span className="inline-block h-px w-4 bg-primary" />
             Engine
           </div>
@@ -89,7 +89,7 @@ export function Features() {
             <span className="italic font-normal text-primary">who care</span>{" "}
             where their fills come from.
           </h2>
-          <p className="mt-4 max-w-[560px] text-[16px] leading-[1.55] text-muted-foreground">
+          <p className="mt-4 max-w-[560px] text-base leading-[1.55] text-muted-foreground">
             so4 runs a unified liquidity layer — one pool backs every market,
             with deterministic settlement on every fill. No hidden routes, no
             opaque MM rebates.
@@ -106,15 +106,15 @@ export function Features() {
               <div className="mb-5 inline-flex h-9 w-9 items-center justify-center border border-primary/20 bg-primary/8 text-primary">
                 {icon}
               </div>
-              <h3 className="mb-2.5 text-[18px] font-medium tracking-[-0.015em] text-foreground">
+              <h3 className="mb-2.5 text-lg font-medium tracking-[-0.015em] text-foreground">
                 {title}
               </h3>
-              <p className="text-[14px] leading-[1.55] text-muted-foreground">{body}</p>
+              <p className="text-sm leading-[1.55] text-muted-foreground">{body}</p>
               <div className="mt-5 flex items-baseline justify-between border-t border-border pt-4 font-mono-num">
-                <span className="text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground/60">
+                <span className="text-10-5 uppercase tracking-[0.12em] text-muted-foreground/60">
                   {statKey}
                 </span>
-                <span className="text-[18px] text-foreground">{statVal}</span>
+                <span className="text-lg text-foreground">{statVal}</span>
               </div>
             </div>
           ))}

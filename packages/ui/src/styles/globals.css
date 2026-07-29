@@ -27,6 +27,17 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-info: var(--info);
+    --color-info-foreground: var(--info-foreground);
+    --color-neutral: var(--neutral);
+    --color-danger: var(--danger);
+    --color-long: var(--long);
+    --color-short: var(--short);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -41,6 +52,35 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-surface-canvas: var(--surface-canvas);
+    --color-surface-sunken: var(--surface-sunken);
+    --color-surface-raised: var(--surface-raised);
+    --color-surface-overlay: var(--surface-overlay);
+    --color-surface-interactive: var(--surface-interactive);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-tertiary: var(--text-tertiary);
+    --color-text-disabled: var(--text-disabled);
+    --color-text-inverse: var(--text-inverse);
+    --color-text-link: var(--text-link);
+    --color-long-subtle: var(--long-subtle);
+    --color-long-border: var(--long-border);
+    --color-short-subtle: var(--short-subtle);
+    --color-short-border: var(--short-border);
+    --color-liquidation: var(--liquidation);
+    --color-liquidation-foreground: var(--liquidation-foreground);
+    --color-liquidation-subtle: var(--liquidation-subtle);
+    --color-liquidation-border: var(--liquidation-border);
+    --color-success-subtle: var(--success-subtle);
+    --color-success-border: var(--success-border);
+    --color-warning-subtle: var(--warning-subtle);
+    --color-warning-border: var(--warning-border);
+    --color-info-subtle: var(--info-subtle);
+    --color-info-border: var(--info-border);
+    --color-danger-subtle: var(--danger-subtle);
+    --color-danger-border: var(--danger-border);
+    --color-neutral-subtle: var(--neutral-subtle);
+    --color-neutral-border: var(--neutral-border);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -49,6 +89,35 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
     --font-sans: 'Geist Variable', sans-serif;
+
+    /*
+     * Micro-typography scale (DS-050).
+     *
+     * The default Tailwind scale (xs=12px, sm=14px, base=16px, lg=18px) has
+     * no steps for the dense, data-table-heavy UI in this app (order books,
+     * position tables, referral stats), which had accumulated 250+ ad hoc
+     * `text-[Npx]` arbitrary values across the codebase instead. These are
+     * the exact values that usage actually converged on, promoted to named
+     * tokens so they're an intentional, documented scale instead of
+     * per-callsite magic numbers. Named by pixel value (at the default
+     * 16px root) rather than a semantic step name (2xs/3xs/...) since a
+     * dozen-plus half-pixel steps don't fit a small semantic vocabulary
+     * without the names becoming arbitrary themselves.
+     */
+    --text-9-5: 0.59375rem;   /* 9.5px */
+    --text-10: 0.625rem;      /* 10px */
+    --text-10-5: 0.65625rem;  /* 10.5px */
+    --text-11: 0.6875rem;     /* 11px */
+    --text-11-5: 0.71875rem;  /* 11.5px */
+    --text-12-5: 0.78125rem;  /* 12.5px */
+    --text-13: 0.8125rem;     /* 13px */
+    --text-13-5: 0.84375rem;  /* 13.5px */
+    --text-14-5: 0.90625rem;  /* 14.5px */
+    --text-15: 0.9375rem;     /* 15px */
+    --text-17: 1.0625rem;     /* 17px */
+    --text-22: 1.375rem;      /* 22px */
+    --text-26: 1.625rem;      /* 26px */
+    --text-40: 2.5rem;        /* 40px */
 }
 
 :root {
@@ -67,49 +136,60 @@
     --accent: oklch(0.97 0 0);
     --accent-foreground: oklch(0.205 0 0);
     --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
-    --radius: 0;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.588 0.158 241.966);
-    --sidebar-primary-foreground: oklch(0.977 0.013 236.62);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-}
+    --chart-1: var(--long);
+    --chart-2: var(--short);
+    --chart-3: var(--liquidation);
+    --chart-4: var(--info);
+    --chart-5: var(--neutral);
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.443 0.11 240.79);
-    --primary-foreground: oklch(0.977 0.013 236.62);
-    --secondary: oklch(0.274 0.006 286.033);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
+    /* Semantic status roles — shared by badges, alerts, numeric text and the
+       trading chart so a "long" candle is the same green as a positive PnL. */
+    --success: oklch(0.596 0.145 163.225);
+    --success-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.681 0.162 75.834);
+    --warning-foreground: oklch(0.21 0 0);
+    --info: oklch(0.546 0.245 262.881);
+    --info-foreground: oklch(0.985 0 0);
+    --neutral: oklch(0.556 0 0);
+    --danger: var(--destructive);
+    --long: var(--success);
+    --short: var(--destructive);
+
+    --long-foreground: var(--success-foreground);
+    --long-subtle: oklch(0.18 0.05 163.225);
+    --long-border: oklch(0.35 0.10 163.225);
+    --short-foreground: var(--destructive-foreground);
+    --short-subtle: oklch(0.18 0.05 27.325);
+    --short-border: oklch(0.35 0.10 27.325);
+    --liquidation: oklch(0.82 0.16 65);
+    --liquidation-foreground: oklch(0.21 0 0);
+    --liquidation-subtle: oklch(0.18 0.05 75.834);
+    --liquidation-border: oklch(0.35 0.10 75.834);
+    --success-subtle: oklch(0.18 0.05 163.225);
+    --success-border: oklch(0.35 0.10 163.225);
+    --warning-subtle: oklch(0.18 0.05 75.834);
+    --warning-border: oklch(0.35 0.10 75.834);
+    --info-subtle: oklch(0.18 0.05 262.881);
+    --info-border: oklch(0.35 0.10 262.881);
+    --danger-subtle: oklch(0.18 0.05 27.325);
+    --danger-border: oklch(0.35 0.10 27.325);
+    --neutral-subtle: oklch(0.20 0 0);
+    --neutral-border: oklch(0.32 0 0);
+
+    --chart-surface: oklch(0.145 0 0);
+    --chart-text: var(--muted-foreground);
+    --chart-grid: oklch(0.269 0 0);
+    --chart-crosshair: oklch(0.44 0 0);
+    --chart-crosshair-label: oklch(0.269 0 0);
+    --chart-border: oklch(0.269 0 0);
+    --chart-up: var(--long);
+    --chart-down: var(--short);
+    --chart-liquidation: var(--warning);
+
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.685 0.169 237.323);

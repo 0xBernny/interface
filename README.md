@@ -139,6 +139,14 @@ cd so4-monorepo
 bun install
 ```
 
+### Full local stack (contracts + indexer + web)
+
+If you need the indexer and contracts running against the web app, follow the
+[Local Full-Stack Integration Guide](./docs/local-full-stack.md). It documents
+prerequisites, deploy/bootstrap, manifest sync, indexer start, smoke flow,
+GraphQL verification, UI verification, troubleshooting, and the definition of
+done. Run `bun run check:integration` before pushing to mirror the CI matrix.
+
 ### Running the development server
 
 ```bash
@@ -172,6 +180,41 @@ Run any of these from the **repository root**:
 | `bun lint` | Lint all packages with ESLint |
 | `bun format` | Format all files with Prettier |
 | `bun typecheck` | Run TypeScript type checks across all packages |
+
+## Testing Guide
+
+From a clean checkout, install workspace dependencies once:
+
+```bash
+bun install
+```
+
+Run the focused test suites from the repository root:
+
+```bash
+bun run --cwd packages/contracts test
+bun run --cwd apps/web test
+bun run test:e2e
+```
+
+Generate the CI coverage reports locally with `bun run test:coverage`. The
+baseline gates are intentionally below current coverage: web requires 65% lines
+and functions; contracts require 85% lines, 65% functions, 85% branches, and
+80% statements. Reports are written to each package's `coverage/` directory.
+
+The end-to-end suite uses Playwright. On a fresh machine, Playwright may need
+browser binaries or OS-level system dependencies before `bun run test:e2e` can
+launch browsers. If Playwright reports missing dependencies, install them with
+the Playwright CLI through Bun:
+
+```bash
+bunx playwright install --with-deps
+```
+
+Web tests run with MSW enabled and `onUnhandledRequest: "error"`, so every
+network request made by a test must have an explicit mock handler. Add shared
+handlers in `apps/web/test/msw/handlers.ts` or test-specific handlers with
+`server.use(...)`. Tests must not depend on real external network calls.
 
 ---
 
@@ -299,5 +342,3 @@ SOFTWARE.
   Built by <a href="https://so4.market">so4 labs</a> ·
   <a href="https://twitter.com/so4market">@so4market</a>
 </p>
-
-
