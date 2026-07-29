@@ -1,74 +1,44 @@
-import { useState } from "react"
+import { useLocation } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
+import { ConnectButton } from "@/features/wallet/components/ConnectButton"
 import { ThemeToggle } from "../theme-toggle"
-
-function Logo() {
-  return (
-    <a href="#" className="flex items-center gap-2.5 tracking-[-0.02em]">
-      <span className="inline-flex h-[22px] w-[22px] items-center justify-center">
-        <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
-          <path
-            d="M4 6 L12 2 L20 6 L20 14 L12 18 L4 14 Z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            fill="currentColor"
-            fillOpacity="0.08"
-            className="text-primary"
-          />
-          <path
-            d="M12 2 L12 18"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            className="text-primary"
-          />
-          <path
-            d="M4 6 L20 14"
-            stroke="currentColor"
-            strokeWidth="0.5"
-            opacity="0.5"
-            className="text-primary"
-          />
-          <path
-            d="M20 6 L4 14"
-            stroke="currentColor"
-            strokeWidth="0.5"
-            opacity="0.5"
-            className="text-primary"
-          />
-        </svg>
-      </span>
-      <span className="font-mono-num text-17 font-medium tracking-[0.02em] text-foreground">
-        so4<span className="text-muted-foreground">.market</span>
-      </span>
-    </a>
-  )
-}
+import {
+  SiteLogo,
+  HamburgerButton,
+  useMobileMenu,
+  navOuterClass,
+  containerClass,
+  desktopLinkClass,
+  desktopActiveLinkClass,
+  mobileLinkClass,
+  mobileActiveLinkClass,
+} from "../nav/primitives"
 
 const NAV_LINKS = [
-  { label: "Trade", href: "#", active: true },
-  { label: "Earn", href: "#" },
+  { label: "Trade", href: "/trade" },
+  { label: "Earn", href: "/earn" },
   { label: "Stats", href: "#" },
   { label: "Docs", href: "#" },
   { label: "Governance", href: "#" },
 ]
 
 export function Nav() {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const { open, toggle, close } = useMobileMenu()
+  const { pathname } = useLocation()
+  const isActive = (href: string) => href !== "#" && pathname === href
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md backdrop-saturate-150">
-      <div className="mx-auto flex h-16 max-w-[1320px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+    <nav className={navOuterClass}>
+      <div className={`${containerClass} h-16 max-w-330`}>
+        <SiteLogo variant="landing" />
 
         {/* Desktop nav links */}
         <ul className="hidden items-center gap-7 md:flex">
-          {NAV_LINKS.map(({ label, href, active }) => (
+          {NAV_LINKS.map(({ label, href }) => (
             <li key={label}>
               <a
                 href={href}
-                className={`text-13-5 font-normal transition-colors hover:text-foreground ${
-                  active ? "text-foreground" : "text-muted-foreground"
-                }`}
+                className={isActive(href) ? desktopActiveLinkClass : desktopLinkClass}
               >
                 {label}
               </a>
@@ -79,66 +49,21 @@ export function Nav() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button variant="outline" className="h-[38px] px-4 text-13-5">
-            Connect
-          </Button>
-          <Button
-            variant="default"
-            className="hidden h-[38px] gap-2 px-4 text-13-5 sm:inline-flex"
-          >
-            Launch app
-            <span className="transition-transform group-hover:translate-x-0.5">→</span>
-          </Button>
-
-          {/* Mobile hamburger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            aria-label="Open menu"
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? (
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M3 12h18M3 6h18M3 18h18" />
-              </svg>
-            )}
-          </Button>
+          <ConnectButton />
+          <HamburgerButton open={open} onToggle={toggle} />
         </div>
       </div>
 
       {/* Mobile dropdown */}
-      {mobileOpen && (
+      {open && (
         <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
           <ul className="flex flex-col gap-1 pt-2">
-            {NAV_LINKS.map(({ label, href, active }) => (
+            {NAV_LINKS.map(({ label, href }) => (
               <li key={label}>
                 <a
                   href={href}
-                  className={`block rounded py-2 text-sm transition-colors hover:text-foreground ${
-                    active ? "text-foreground" : "text-muted-foreground"
-                  }`}
-                  onClick={() => setMobileOpen(false)}
+                  className={isActive(href) ? mobileActiveLinkClass : mobileLinkClass}
+                  onClick={close}
                 >
                   {label}
                 </a>

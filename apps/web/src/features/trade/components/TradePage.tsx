@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import { getRouteApi } from "@tanstack/react-router"
 import { useTradeState } from "../hooks/useTradeState"
 import { useOrderEventPolling } from "../hooks/useOrderEventPolling"
+import { AppShell } from "@workspace/ui/components/app-shell"
 import { Navbar } from "../../../ui/Navbar"
 import { TVChart } from "./chart/TVChart"
 import { TradePanel } from "./trade-panel/TradePanel"
@@ -36,9 +37,12 @@ export function TradePage() {
   }, [search.ref])
 
   return (
-    <div className="flex h-svh flex-col overflow-hidden bg-background text-foreground">
-      <Navbar variant="app" />
-      <CircuitBreakerBanner symbol={trade.toTokenAddress} />
+    <AppShell
+      variant="full"
+      navbar={<Navbar variant="app" />}
+      banner={<CircuitBreakerBanner symbol={trade.toTokenAddress} />}
+      className="overflow-hidden"
+    >
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row lg:px-6">
         {/* ── Left: Chart + Bottom Tabs ──────────────────────────────── */}
         <div className="flex min-w-0 flex-1 flex-col">
@@ -67,6 +71,6 @@ export function TradePage() {
           <TradePanel trade={trade} />
         </div>
       </div>
-    </div>
+    </AppShell>
   )
 }
