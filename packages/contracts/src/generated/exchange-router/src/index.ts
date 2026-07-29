@@ -152,6 +152,24 @@ export function claimFundingFeesArgs(
   ]
 }
 
+export interface ClientOptions {
+  contractId: string
+  networkPassphrase: string
+  rpcUrl: string
+}
+
+export class Client {
+  public contractId: string
+  public networkPassphrase: string
+  public rpcUrl: string
+
+  constructor(opts: ClientOptions) {
+    this.contractId = opts.contractId
+    this.networkPassphrase = opts.networkPassphrase
+    this.rpcUrl = opts.rpcUrl
+  }
+}
+
 // ── Network config (contractId filled at startup from env) ──────────────────
 
 export const networks = {
@@ -164,3 +182,4 @@ export const networks = {
     networkPassphrase: "Public Global Stellar Network ; September 2015",
   },
 }
+

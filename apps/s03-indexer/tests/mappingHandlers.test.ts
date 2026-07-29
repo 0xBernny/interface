@@ -8,6 +8,7 @@ import {
   decodeTopicName,
   decodeTuple,
   dispatchEvent,
+  handleEvent,
   type DecodedEvent,
 } from "../src/mappings/mappingHandlers";
 import { Address, Keypair, nativeToScVal, xdr } from "@stellar/stellar-sdk";
@@ -376,7 +377,7 @@ describe("SO4 event dispatch", () => {
     expect(withdrawal.id).toBe("withdrawal:wth-2");
     expect(withdrawal.status).toBe("CREATED");
     expect(withdrawal.account).toBe(account);
-    expect(withdrawal.market).toBe(marketToken);
+    expect(withdrawal.marketId).toBe(`market:${marketToken}`);
     expect(withdrawal.createdLedger).toBe(100);
   });
 
@@ -823,6 +824,200 @@ describe("SO4 event dispatch", () => {
     const unknownEventLog = logs.find((message) => message.includes("Skipping unknown SO4 event"));
     expect(unknownEventLog).toBeDefined();
     expect(unknownEventLog).toContain("irrelevant");
+  });
+
+  test("indexes position increase and decrease lifecycle with high-precision values", async () => {
+    // 1. Position Increase
+    const posIncPayload = {
+      position_key: "pos-lifecycle-test-1",
+      market: marketToken,
+      account,
+      collateral_token: marketToken,
+      is_long: true,
+      next_size_usd: "10000000000000000000000000000000000000000000000000000000000", // 1e56 USD
+      next_collateral_amount: "5000000000000000000000000000000000", // 5e33
+      average_price: "2500000000000000000000000000000", // 2.5e30
+      entry_funding_rate: "100",
+      reserve_amount: "3000",
+      order_key: "order-pos-inc-1",
+    };
+    await dispatchEvent(so4Event("pos_inc", posIncPayload));
+
+    const positionsAfterInc = records("Position");
+    const positionChangesAfterInc = records("PositionChange");
+
+    expect(positionsAfterInc).toHaveLength(1);
+    expect(positionChangesAfterInc).toHaveLength(1);
+
+    const position = positionsAfterInc[0];
+    expect(position.id).toBe("position:pos-lifecycle-test-1");
+    expect(position.status).toBe("OPEN");
+    expect(position.account).toBe(account);
+    expect(position.marketId).toBe(`market:${marketToken}`);
+    expect(position.isLong).toBe(true);
+    // Asserting numeric fields are preserved as high-precision strings
+    expect(position.sizeUsd).toBe("10000000000000000000000000000000000000000000000000000000000");
+    expect(position.collateralAmount).toBe("5000000000000000000000000000000000");
+    expect(position.averagePrice).toBe("2500000000000000000000000000000");
+
+    const change = positionChangesAfterInc[0];
+    expect(change.positionId).toBe("position:pos-lifecycle-test-1");
+    expect(change.changeType).toBe("INCREASE");
+
+    // 2. Position Decrease
+    const posDecPayload = {
+      position_key: "pos-lifecycle-test-1",
+      market: marketToken,
+      account,
+      collateral_token: marketToken,
+      is_long: true,
+      next_size_usd: "8000000000000000000000000000000000000000000000000000000000", // reduced
+      next_collateral_amount: "4000000000000000000000000000000000", // reduced
+      average_price: "2500000000000000000000000000000",
+      entry_funding_rate: "100",
+      reserve_amount: "3000",
+      realized_pnl_usd: "-2000000000000000000000000000000000",
+      realized_pnl_amount: "-800000000",
+      order_key: "order-pos-dec-1",
+    };
+    await dispatchEvent(so4Event("pos_dec", posDecPayload));
+
+    const positionsAfterDec = records("Position");
+    const positionChangesAfterDec = records("PositionChange");
+
+    expect(positionsAfterDec).toHaveLength(1);
+    expect(positionChangesAfterDec).toHaveLength(2); // One increase, one decrease
+
+    const positionDec = positionsAfterDec[0];
+    expect(positionDec.status).toBe("DECREASED");
+    expect(positionDec.sizeUsd).toBe("8000000000000000000000000000000000000000000000000000000000");
+    expect(positionDec.collateralAmount).toBe("4000000000000000000000000000000000");
+    expect(positionDec.realizedPnlUsd).toBe("-2000000000000000000000000000000000");
+
+    const changeDec = positionChangesAfterDec.find((c) => c.changeType === "DECREASE");
+    expect(changeDec).toBeDefined();
+    expect(changeDec!.positionId).toBe("position:pos-lifecycle-test-1");
+  });
+
+  test("indexes liquidation risk events (liq_req and liq_exe)", async () => {
+    // 1. Liquidation Request
+    const liqReqPayload = {
+      liquidation_key: "liq-test-key-1",
+      market: marketToken,
+      account,
+      is_long: true,
+      position_key: "pos-liq-test-1",
+      liquidator: "GDZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+      collateral_token: marketToken,
+      size_delta_usd: "1500000000000000000000000000000000",
+      collateral_liquidated_amount: "500000000000",
+      remaining_collateral_amount: "1000000",
+    };
+    await dispatchEvent(so4Event("liq_req", liqReqPayload));
+
+    const liquidationsAfterReq = records("Liquidation");
+    expect(liquidationsAfterReq).toHaveLength(1);
+
+    const liquidation = liquidationsAfterReq[0];
+    expect(liquidation.id).toBe("liquidation:liq-test-key-1");
+    expect(liquidation.key).toBe("liq-test-key-1");
+    expect(liquidation.status).toBe("REQUESTED");
+    expect(liquidation.account).toBe(account);
+    expect(liquidation.marketId).toBe(`market:${marketToken}`);
+    expect(liquidation.positionId).toBe("position:pos-liq-test-1");
+    expect(liquidation.isLong).toBe(true);
+    expect(liquidation.sizeDeltaUsd).toBe("1500000000000000000000000000000000");
+    expect(liquidation.ledger).toBe(100);
+    expect(liquidation.transactionHash).toBe("tx-liq_req");
+
+    // 2. Liquidation Execution
+    const liqExePayload = {
+      liquidation_key: "liq-test-key-1",
+      market: marketToken,
+      account,
+      pnl_usd: "-1500000000000000000000000000000000",
+      liquidation_price: "2450000000000000000000000000000",
+    };
+    await dispatchEvent(so4Event("liq_exe", liqExePayload));
+
+    const liquidationsAfterExe = records("Liquidation");
+    expect(liquidationsAfterExe).toHaveLength(1);
+
+    const liquidationExe = liquidationsAfterExe[0];
+    expect(liquidationExe.status).toBe("EXECUTED");
+    expect(liquidationExe.pnlUsd).toBe("-1500000000000000000000000000000000");
+    expect(liquidationExe.liquidationPrice).toBe("2450000000000000000000000000000");
+  });
+
+  test("indexes ADL risk events (adl_req and adl_exe)", async () => {
+    // 1. ADL Request
+    const adlReqPayload = {
+      adl_key: "adl-test-key-1",
+      market: marketToken,
+      account,
+      is_long: false,
+      position_key: "pos-adl-test-1",
+      collateral_token: marketToken,
+      size_reduction_usd: "2000000000000000000000000000000000",
+      pnl_usd: "30000000000000000000000000000000",
+    };
+    await dispatchEvent(so4Event("adl_req", adlReqPayload));
+
+    const adlAfterReq = records("AdlEvent");
+    expect(adlAfterReq).toHaveLength(1);
+
+    const adl = adlAfterReq[0];
+    expect(adl.id).toBe("adl:adl-test-key-1");
+    expect(adl.key).toBe("adl-test-key-1");
+    expect(adl.status).toBe("REQUESTED");
+    expect(adl.account).toBe(account);
+    expect(adl.marketId).toBe(`market:${marketToken}`);
+    expect(adl.positionId).toBe("position:pos-adl-test-1");
+    expect(adl.isLong).toBe(false);
+    expect(adl.sizeReductionUsd).toBe("2000000000000000000000000000000000");
+    expect(adl.pnlUsd).toBe("30000000000000000000000000000000");
+    expect(adl.ledger).toBe(100);
+    expect(adl.transactionHash).toBe("tx-adl_req");
+
+    // 2. ADL Execution
+    const adlExePayload = {
+      adl_key: "adl-test-key-1",
+      market: marketToken,
+      account,
+      size_reduction_usd: "2000000000000000000000000000000000",
+      pnl_usd: "30000000000000000000000000000000",
+      execution_price: "2600000000000000000000000000000",
+    };
+    await dispatchEvent(so4Event("adl_exe", adlExePayload));
+
+    const adlAfterExe = records("AdlEvent");
+    expect(adlAfterExe).toHaveLength(1);
+
+    const adlExe = adlAfterExe[0];
+    expect(adlExe.status).toBe("EXECUTED");
+    expect(adlExe.executionPrice).toBe("2600000000000000000000000000000");
+  });
+
+  test("handles malformed risk events safely", async () => {
+    // If event value has corrupted XDR, decoding throws and handleEvent catches it safely.
+    const malformedEvent = {
+      id: "raw-malformed-liq",
+      topic: [xdr.ScVal.scvSymbol("liq_req")],
+      value: {
+        switch() {
+          throw new Error("Corrupted event value");
+        },
+      } as any,
+      contractId: Address.fromString(handlerContract).toScAddress(),
+      ledger: { sequence: 100 },
+      ledgerClosedAt: "2026-06-24T12:00:00Z",
+      txHash: "tx-malformed-liq",
+    } as any;
+
+    await handleEvent(malformedEvent);
+
+    expect(records("Liquidation")).toHaveLength(0);
+    expect(logs.some((message) => message.includes("Skipping malformed SO4 event"))).toBe(true);
   });
 });
 

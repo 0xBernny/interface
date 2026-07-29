@@ -162,7 +162,10 @@ export function Footer() {
           <span className="flex items-center gap-2">
             <span
               className="inline-block h-[5px] w-[5px] rounded-full bg-emerald-400"
-              style={{ animation: "pulseDot 2s ease-in-out infinite" }}
+              style={{ 
+                animation: "pulseDot var(--duration-slow) var(--ease-smooth) infinite",
+                animationDuration: "2s" 
+              }}
             />
             Mainnet · block 84,218,402
           </span>
