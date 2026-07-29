@@ -2,43 +2,11 @@ import { useState } from "react"
 import { Button } from "@workspace/ui/components/button"
 import { Card } from "@workspace/ui/components/card"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Heading, Text } from "@workspace/ui/components/text"
+import { Text } from "@workspace/ui/components/text"
 import { TokenAvatar } from "@workspace/ui/components/token-avatar"
 import { GLV_VAULTS, GM_POOLS } from "../../data/pools"
 import { buySO4, depositGLV, depositGM } from "../../lib/earn"
 import { formatPct } from "@/shared/lib/format"
-
-const TOKEN_COLORS: Record<string, string> = {
-  BTC: "bg-orange-500/10 text-orange-400 ring-orange-500/20",
-  ETH: "bg-indigo-500/10 text-indigo-400 ring-indigo-500/20",
-  XLM: "bg-sky-500/10 text-sky-400 ring-sky-500/20",
-  USDC: "bg-blue-500/10 text-blue-400 ring-blue-500/20",
-  GLV: "bg-teal-500/10 text-teal-400 ring-teal-500/20",
-  SO4: "bg-primary/10 text-primary ring-primary/20",
-}
-
-function TokenAvatar({
-  symbol,
-  size = "md",
-}: {
-  symbol: string
-  size?: "sm" | "md" | "lg"
-}) {
-  const color = TOKEN_COLORS[symbol] ?? "bg-muted/60 text-muted-foreground ring-border"
-  const dimensions = { sm: "h-7 w-7 text-10", md: "h-9 w-9 text-11", lg: "h-11 w-11 text-sm" }
-  return (
-    <div
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-full font-semibold ring-1",
-        color,
-        dimensions[size],
-      )}
-    >
-      {symbol.slice(0, 2)}
-    </div>
-  )
-}
 
 function LightningIcon() {
   return (
@@ -122,8 +90,8 @@ function SO4Card() {
         onClick={handleBuy}
       >
         Buy SO4
-      </LoadingButton>
-    </Card>
+      </Button>
+    </div>
   )
 }
 
@@ -154,7 +122,7 @@ function GlvCard() {
             <Text tone="muted" render={<span />}>
               [{vault.displayPair}]
             </Text>
-          </Text>
+          </p>
           <div className="flex items-baseline gap-1">
             <span className="text-base font-bold text-green-400">{formatPct(vault.apy, { sign: false })}</span>
             <span className="text-10 text-muted-foreground">Performance APY</span>
@@ -167,9 +135,9 @@ function GlvCard() {
           onClick={() => void handleEarn()}
         >
           Earn
-        </LoadingButton>
+        </Button>
       </div>
-    </Card>
+    </div>
   )
 }
 
@@ -196,7 +164,7 @@ function GmCard() {
         <button className="flex items-center gap-1 text-11 text-muted-foreground transition-colors hover:text-foreground">
           Explore more
           <ExternalLinkIcon />
-        </Button>
+        </button>
       </div>
 
       <div className="space-y-3">
@@ -207,7 +175,7 @@ function GmCard() {
               <p className="text-xs font-medium">{pool.name}</p>
               <p className="text-10 text-muted-foreground">
                 [{pool.longToken}-{pool.shortToken}]
-              </Text>
+              </p>
             </div>
             <div className="shrink-0 text-right">
               <p className="text-13 font-bold text-green-400">{formatPct(pool.apy, { sign: false })}</p>

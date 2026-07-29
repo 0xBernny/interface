@@ -47,4 +47,21 @@ describe("NumberInput", () => {
     await userEvent.click(screen.getByRole("button", { name: "MAX" }))
     expect(onMax).toHaveBeenCalled()
   })
+
+  it("disables both the input and the max button when disabled", async () => {
+    const onMax = vi.fn()
+    render(<NumberInput value="" onValueChange={vi.fn()} onMax={onMax} disabled />)
+
+    expect(screen.getByRole("textbox")).toBeDisabled()
+    const maxButton = screen.getByRole("button", { name: "MAX" })
+    expect(maxButton).toBeDisabled()
+
+    await userEvent.click(maxButton)
+    expect(onMax).not.toHaveBeenCalled()
+  })
+
+  it("exposes an invalid state via aria-invalid", () => {
+    render(<NumberInput value="" onValueChange={vi.fn()} aria-invalid="true" />)
+    expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true")
+  })
 })

@@ -130,7 +130,7 @@ export function AdditionalOpportunitiesTab() {
             onClick={() => void handleCompound()}
           >
             Compound
-          </LoadingButton>
+          </Button>
         }
       >
         <div className="flex flex-wrap gap-x-8 gap-y-3">

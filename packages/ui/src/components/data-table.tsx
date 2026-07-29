@@ -12,7 +12,7 @@ interface Column<T> {
 
 interface DataTableProps<T> {
   columns: Array<Column<T>>
-  data: T[]
+  data: Array<T>
   isLoading?: boolean
   emptyMessage?: string
   emptyAction?: React.ReactNode
