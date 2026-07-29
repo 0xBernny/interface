@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
 
 @custom-variant dark (&:is(.dark *));
 @source "../../../apps/**/*.{ts,tsx}";
@@ -143,6 +144,7 @@
     --ring-offset: 2px;
     
     --font-sans: 'Geist Variable', sans-serif;
+    --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 
     /*
      * Micro-typography scale (DS-050).
@@ -172,6 +174,38 @@
     --text-22: 1.375rem;      /* 22px */
     --text-26: 1.625rem;      /* 26px */
     --text-40: 2.5rem;        /* 40px */
+
+    /*
+     * Spacing scale — micro through section spacing.
+     *
+     * Intent-named tokens that reduce one-off arbitrary spacing values
+     * across the UI. Numeric tokens follow the pixel value at the
+     * default 16px root. Semantic tokens encode density intent.
+     */
+    --spacing-0-5: 0.125rem;   /* 2px  — micro gap */
+    --spacing-4-5: 1.125rem;   /* 18px — tight */
+    --spacing-7: 1.75rem;      /* 28px */
+    --spacing-9: 2.25rem;      /* 36px */
+    --spacing-14: 3.5rem;      /* 56px — section */
+    --spacing-18: 4.5rem;      /* 72px — section */
+    --spacing-20: 5rem;        /* 80px — section */
+
+    /* Control height density tokens — compact / default / comfortable */
+    --height-compact: 1.25rem;       /* 20px  — h-5 equivalent */
+    --height-default: 1.75rem;       /* 28px  — h-7 equivalent */
+    --height-comfortable: 2.5rem;    /* 40px  — h-10 equivalent */
+
+    /*
+     * Page gutters — responsive horizontal padding at layout edges.
+     *
+     * Usage:
+     *   px-[var(--gutter-page-sm)]
+     *   md:px-[var(--gutter-page-md)]
+     *   lg:px-[var(--gutter-page-lg)]
+     */
+    --gutter-page-sm: 1rem;          /* 16px — mobile */
+    --gutter-page-md: 1.5rem;        /* 24px — tablet */
+    --gutter-page-lg: 2rem;          /* 32px — desktop */
 }
 
 :root {
@@ -264,4 +298,93 @@
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
     }
+}
+
+/*
+ * Typography role utilities (DS-060).
+ *
+ * Semantic roles that bundle size, line height, weight, and tracking into
+ * a single class — replaces ad-hoc combinations of text-*/font-*/leading-*
+ * that previously accumulated across the codebase.
+ *
+ * Numeric roles additionally enable tabular figures and slashed zero via
+ * font-variant-numeric, ensuring decimal-aligned columns and unambiguous
+ * zeros in data tables and trading interfaces.
+ */
+@utility text-display {
+  font-size: var(--text-40);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility text-display-sm {
+  font-size: var(--text-26);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-page-title {
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-section-title {
+  font-size: var(--text-17);
+  line-height: 1.3;
+  font-weight: 500;
+}
+@utility text-subtitle {
+  font-size: var(--text-15);
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility text-body {
+  font-size: var(--text-13-5);
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility text-body-sm {
+  font-size: var(--text-13);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-label {
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+@utility text-label-sm {
+  font-size: var(--text-11);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+@utility text-caption {
+  font-size: var(--text-11);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-numeric-lg {
+  font-family: var(--font-mono);
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric {
+  font-family: var(--font-mono);
+  font-size: var(--text-15);
+  line-height: 1.3;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric-sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums slashed-zero;
 }
