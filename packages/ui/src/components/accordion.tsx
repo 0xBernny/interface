@@ -99,17 +99,21 @@ function Accordion(props: AccordionProps) {
         const nextValue = openValues.includes(itemValue)
           ? openValues.filter((openValue) => openValue !== itemValue)
           : [...openValues, itemValue]
+        const multipleOnValueChange =
+          onValueChange as MultipleAccordionProps["onValueChange"]
 
         if (!isControlled) setUncontrolledValue(nextValue)
-        ;(onValueChange as MultipleAccordionProps["onValueChange"])?.(nextValue)
+        multipleOnValueChange?.(nextValue)
         return
       }
 
       const isOpen = openValues.includes(itemValue)
       const nextValue = isOpen && collapsible ? null : itemValue
+      const singleOnValueChange =
+        onValueChange as SingleAccordionProps["onValueChange"]
 
       if (!isControlled) setUncontrolledValue(nextValue)
-      ;(onValueChange as SingleAccordionProps["onValueChange"])?.(nextValue)
+      singleOnValueChange?.(nextValue)
     },
     [collapsible, isControlled, onValueChange, openValues, type]
   )
