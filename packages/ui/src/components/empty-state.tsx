@@ -138,8 +138,8 @@ function EmptyState({
             variant === "page" ? "mt-2 gap-3" : "mt-1 gap-2"
           )}
         >
-          {actions?.primary}
-          {actions?.secondary}
+          {actions.primary}
+          {actions.secondary}
         </div>
       )}
     </div>

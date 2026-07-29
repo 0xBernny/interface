@@ -1,9 +1,6 @@
-import { Alert } from "@workspace/ui/components/alert"
 import { Card } from "@workspace/ui/components/card"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Text } from "@workspace/ui/components/text"
+import { cn } from "@workspace/ui/lib/utils"
 import { getNextTier, getTierByLevel } from "../../data/tiers"
-import { TierBadge } from "./tier-badge"
 import { formatUsd } from "@/shared/lib/format"
 
 type Props = {
@@ -69,7 +66,7 @@ export function TierProgress({ tier, volumeUsd }: Props) {
         </div>
         <span className="text-11 text-muted-foreground" aria-label="remaining volume">
           {formatUsd(remaining, { compact: true })} more needed
-        </NumericText>
+        </span>
       </div>
       <div
         role="progressbar"

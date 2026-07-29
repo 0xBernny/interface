@@ -53,7 +53,7 @@ export function DistributionsTab() {
           <h3 className="text-13 font-semibold">Distribution History</h3>
         </div>
         <DistributionsTable distributions={MOCK_DISTRIBUTIONS} />
-      </Card>
+      </div>
     </div>
   )
 }

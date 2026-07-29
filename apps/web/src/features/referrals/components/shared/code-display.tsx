@@ -1,7 +1,4 @@
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Text } from "@workspace/ui/components/text"
 import { cn } from "@workspace/ui/lib/utils"
 import { useCopy } from "../../hooks/use-copy"
 
@@ -91,31 +88,12 @@ export function CodeDisplay({ code, label = "Active referral code", onEdit, clas
         </div>
 
         {onEdit && (
-          <button
-            onClick={onEdit}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
-          >
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <CopyIcon copied={copied} />
-            </Button>
-          </div>
-
-          {onEdit && (
-            <Button variant="outline" size="lg" className="shrink-0" onClick={onEdit}>
-              <EditIcon />
-              Edit
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          <Button variant="outline" size="lg" className="shrink-0" onClick={onEdit}>
+            <EditIcon />
+            Edit
+          </Button>
+        )}
+      </div>
+    </div>
   )
 }

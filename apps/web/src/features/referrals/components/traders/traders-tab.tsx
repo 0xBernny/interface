@@ -1,21 +1,9 @@
 import { useState } from "react"
-import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/alert"
-import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
+import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
 import { NumericText } from "@workspace/ui/components/numeric"
 import { Skeleton } from "@workspace/ui/components/skeleton"
-import { Stat } from "@workspace/ui/components/stat"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadRow,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
-import { Heading, Text } from "@workspace/ui/components/text"
 import { useDistributions, useTraderStats } from "../../hooks/use-referrals-data"
 import { useReferralStats } from "../../queries/useReferralStats"
 import {
@@ -25,8 +13,6 @@ import {
 } from "../../lib/referrals"
 import { TimePeriodFilter } from "../shared/time-period-filter"
 import { StatChartCard } from "../shared/stat-chart-card"
-import { TierBadge } from "../shared/tier-badge"
-import { TIERS } from "../../data/tiers"
 import type { TimePeriod } from "../../hooks/use-referrals-data"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { formatUsd } from "@/shared/lib/format"
@@ -106,7 +92,7 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
             Referral code
           </label>
           <div className="flex gap-2">
-            <input
+            <Input
               id="referral-code"
               value={code}
               onChange={(e) => {
@@ -116,47 +102,19 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
               placeholder="e.g. MYCODE123"
               autoComplete="off"
               spellCheck={false}
-              className="flex h-9 w-full rounded-lg border border-border bg-muted/30 px-3 font-mono text-13 tracking-widest placeholder:font-sans placeholder:tracking-normal placeholder:text-muted-foreground/50 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+              aria-invalid={error ? true : undefined}
+              className="h-9 font-mono tracking-widest placeholder:font-sans placeholder:tracking-normal"
             />
-            <Button
+            <LoadingButton
               type="submit"
-              size="sm"
-              tone="muted"
-              weight="medium"
-              render={<label htmlFor="referral-code" />}
+              size="lg"
+              className="h-9 shrink-0 px-5"
+              isLoading={pending}
+              loadingText="Applying…"
+              disabled={!code.trim() || !account}
             >
-              Referral code
-            </Text>
-            <div className="flex gap-2">
-              <Input
-                id="referral-code"
-                value={code}
-                onChange={(e) => {
-                  setCode(e.target.value.toUpperCase())
-                  setError(null)
-                }}
-                placeholder="e.g. MYCODE123"
-                autoComplete="off"
-                spellCheck={false}
-                aria-invalid={error ? true : undefined}
-                className="h-9 font-mono tracking-widest placeholder:font-sans placeholder:tracking-normal"
-              />
-              <LoadingButton
-                type="submit"
-                size="lg"
-                className="h-9 shrink-0 px-5"
-                isLoading={pending}
-                loadingText="Applying…"
-                disabled={!code.trim() || !account}
-              >
-                Apply
-              </LoadingButton>
-            </div>
-            {error && (
-              <Text size="xs" tone="danger">
-                {error}
-              </Text>
-            )}
+              Apply
+            </LoadingButton>
           </div>
           {error && <p className="text-11 text-destructive">{error}</p>}
         </div>
@@ -181,8 +139,8 @@ function JoinCodeForm({ onSuccess }: JoinCodeFormProps) {
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
 
@@ -256,7 +214,7 @@ function Overview({
           <NumericText role="muted" size="xs">
             {fmtDate(stats.lastUpdated)}
           </NumericText>
-        </Text>
+        </p>
       )}
     </div>
   )

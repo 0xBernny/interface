@@ -46,7 +46,7 @@ function PoolCompositionBar({ longPct, shortPct }: { longPct: number; shortPct: 
       </div>
       <p className="text-10 text-muted-foreground">
         {longPct}% / {shortPct}%
-      </Text>
+      </p>
     </div>
   )
 }
@@ -206,8 +206,8 @@ export function DiscoverTab() {
               <p className="text-10 text-muted-foreground">Pending Rewards</p>
               <p className="text-13 font-medium tabular-nums">{formatToken(fromSorobanAmount(stakingInfo.pendingEsSO4Rewards, 7), "esSO4")}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Pool table */}
@@ -249,7 +249,7 @@ export function DiscoverTab() {
         </div>
         <p className="ml-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
-        </Text>
+        </p>
       </div>
 
       {/* Deposit modal */}
@@ -350,7 +350,7 @@ function DiscoverRow({
           <TokenIcon symbol={row.longToken} size={32} />
           <span className="font-medium">{row.name}</span>
         </div>
-      </td>
+      </TableCell>
       <td className="px-5 py-4">
         <span
           className={cn(
@@ -378,7 +378,7 @@ function DiscoverRow({
         ) : (
           <span className="text-11 text-muted-foreground">Diversified</span>
         )}
-      </TableCell>
+      </td>
       <TableCell align="right" className="py-4">
         <LoadingButton
           size="xs"
