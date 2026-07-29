@@ -245,3 +245,92 @@
     cursor: pointer;
     }
 }
+
+/*
+ * Typography role utilities (DS-060).
+ *
+ * Semantic roles that bundle size, line height, weight, and tracking into
+ * a single class — replaces ad-hoc combinations of text-*/font-*/leading-*
+ * that previously accumulated across the codebase.
+ *
+ * Numeric roles additionally enable tabular figures and slashed zero via
+ * font-variant-numeric, ensuring decimal-aligned columns and unambiguous
+ * zeros in data tables and trading interfaces.
+ */
+@utility text-display {
+  font-size: var(--text-40);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility text-display-sm {
+  font-size: var(--text-26);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-page-title {
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility text-section-title {
+  font-size: var(--text-17);
+  line-height: 1.3;
+  font-weight: 500;
+}
+@utility text-subtitle {
+  font-size: var(--text-15);
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility text-body {
+  font-size: var(--text-13-5);
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility text-body-sm {
+  font-size: var(--text-13);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-label {
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+@utility text-label-sm {
+  font-size: var(--text-11);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+@utility text-caption {
+  font-size: var(--text-11);
+  line-height: 1.4;
+  font-weight: 400;
+}
+@utility text-numeric-lg {
+  font-family: var(--font-mono);
+  font-size: var(--text-22);
+  line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric {
+  font-family: var(--font-mono);
+  font-size: var(--text-15);
+  line-height: 1.3;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
+@utility text-numeric-sm {
+  font-family: var(--font-mono);
+  font-size: var(--text-12-5);
+  line-height: 1.3;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums slashed-zero;
+}
