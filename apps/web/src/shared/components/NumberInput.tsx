@@ -1,5 +1,6 @@
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import { cn } from "@workspace/ui/lib/utils"
 import type { ComponentPropsWithoutRef } from "react"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -21,6 +22,7 @@ export function NumberInput({
   maxButtonLabel = "MAX",
   placeholder,
   className,
+  disabled,
   ...props
 }: NumberInputProps) {
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -39,7 +41,8 @@ export function NumberInput({
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
-          className={className}
+          className={cn(onMax && "pr-14", className)}
+          disabled={disabled}
           {...props}
         />
         {onMax ? (
@@ -49,6 +52,7 @@ export function NumberInput({
             variant="outline"
             className="absolute right-2 top-1/2 -translate-y-1/2 px-2 text-11"
             onClick={onMax}
+            disabled={disabled}
           >
             {maxButtonLabel}
           </Button>

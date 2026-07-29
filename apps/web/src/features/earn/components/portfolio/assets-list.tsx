@@ -255,6 +255,6 @@ export function AssetsList() {
           </TableBody>
         </Table>
       )}
-    </Card>
+    </div>
   )
 }

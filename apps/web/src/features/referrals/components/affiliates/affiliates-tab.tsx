@@ -4,6 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@workspace/ui/components/al
 import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
 import { Input } from "@workspace/ui/components/input"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
+import { cn } from "@workspace/ui/lib/utils"
 import { NumericText } from "@workspace/ui/components/numeric"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Stat } from "@workspace/ui/components/stat"
@@ -118,7 +119,8 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
             }
             <span className="text-11 tabular-nums text-muted-foreground/50">{code.length}/16</span>
           </div>
-        </form>
+        </div>
+      </form>
 
       {/* Tier table */}
       <div className="mt-6 border-t border-border pt-5">
@@ -157,56 +159,12 @@ function CreateCodeForm({ onSuccess }: { onSuccess: () => void }) {
             </tbody>
           </table>
         </div>
-      </CardContent>
-    </Card>
-  )
-}
-
-// ── Dashboard (when code exists) ────────────────────────────────────────────
-
-function TierProgress({ tier, volumeUsd }: { tier: 1 | 2 | 3; volumeUsd: number }) {
-  const current = getTierByLevel(tier)
-  const next = getNextTier(tier)
-
-  if (!next) {
-    return (
-      <div className="flex items-center gap-2 rounded-lg border border-yellow-500/20 bg-yellow-500/[0.06] px-4 py-2.5">
-        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", current.colorClass, current.ringClass)}>
-          {current.label}
-        </span>
-        <span className="text-xs font-medium text-yellow-400">Maximum tier reached!</span>
-      </div>
-    )
-  }
-
-  const progress = Math.min((volumeUsd / next.minVolumeUsd) * 100, 100)
-  const remaining = Math.max(next.minVolumeUsd - volumeUsd, 0)
-
-  return (
-    <div className="rounded-lg border border-border bg-card px-4 py-3">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", current.colorClass, current.ringClass)}>
-            {current.label}
-          </span>
-          <span className="text-11 text-muted-foreground">→</span>
-          <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-10 font-semibold ring-1", next.colorClass, next.ringClass)}>
-            {next.label}
-          </span>
-        </div>
-        <span className="text-11 text-muted-foreground">
-          {formatUsd(remaining, { compact: true })} more needed
-        </span>
-      </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-blue-400 transition-all"
-          style={{ width: `${progress}%` }}
-        />
       </div>
     </div>
   )
 }
+
+// ── Dashboard (when code exists) ────────────────────────────────────────────
 
 function ReferralsTable() {
   const { data: referrals = [], isLoading } = useAffiliateReferrals()
@@ -253,7 +211,7 @@ function ReferralsTable() {
           </TableBody>
         </Table>
       )}
-    </Card>
+    </div>
   )
 }
 

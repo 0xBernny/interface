@@ -71,5 +71,7 @@ export function OpportunityCard({
         {isAvailable ? actionLabel : "Coming Soon"}
       </Button>
     </div>
+      </CardContent>
+    </Card>
   )
 }

@@ -91,7 +91,7 @@ function TokenCard({
 
       <div className="flex items-center justify-between gap-3">
         <p className="min-w-0 truncate text-xs text-muted-foreground">{cooldownText}</p>
-        <Button
+        <LoadingButton
           variant="outline"
           size="lg"
           className="shrink-0"
