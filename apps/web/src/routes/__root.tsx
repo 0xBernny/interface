@@ -117,18 +117,6 @@ export const Route = createRootRoute({
       // ── Canonical ───────────────────────────────────────────────
       { rel: "canonical", href: SITE_URL },
 
-      // ── Fonts ───────────────────────────────────────────────────
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;600&display=swap",
-      },
-
       // ── App CSS ─────────────────────────────────────────────────
       { rel: "stylesheet", href: appCss },
     ],
