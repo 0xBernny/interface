@@ -1,18 +1,26 @@
 import { useState } from "react"
 import { AppShell } from "@workspace/ui/components/app-shell"
+import { Avatar, AvatarGroup } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Input } from "@workspace/ui/components/input"
+import { KeyboardShortcut } from "@workspace/ui/components/keyboard-shortcut"
 import { PageHeader } from "@workspace/ui/components/page-header"
+import { ProgressIndicator } from "@workspace/ui/components/progress-indicator"
 import { Separator } from "@workspace/ui/components/separator"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Slider } from "@workspace/ui/components/slider"
+import { Spinner } from "@workspace/ui/components/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 
 const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const
 const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const
 const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost", "link"] as const
+const AVATAR_SIZES = ["xs", "sm", "md", "lg", "xl", "2xl"] as const
+const PROGRESS_SIZES = ["sm", "md", "lg"] as const
+const PROGRESS_TONES = ["neutral", "accent", "success", "danger"] as const
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -255,6 +263,157 @@ export function GalleryPage() {
                 }
               />
             </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="KeyboardShortcut">
+        <div className="flex flex-wrap items-center gap-3">
+          <KeyboardShortcut keys={["Mod", "K"]} platform="mac" />
+          <KeyboardShortcut keys={["Mod", "Shift", "P"]} platform="mac" />
+          <KeyboardShortcut keys={["Ctrl", "Alt", "Delete"]} platform="windows" />
+          <KeyboardShortcut keys={["Mod", "S"]} presentation="grouped" />
+        </div>
+      </Section>
+
+      <Section title="Card">
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">Default variant</p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Card Title</CardTitle>
+                <CardDescription>Card description goes here</CardDescription>
+              </CardHeader>
+              <CardContent>Content area with default padding</CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm">
+                  Cancel
+                </Button>
+                <Button size="sm">Save</Button>
+              </CardFooter>
+            </Card>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">Interactive variant</p>
+            <Card variant="interactive" className="cursor-pointer">
+              <CardHeader>
+                <CardTitle>Interactive Card</CardTitle>
+              </CardHeader>
+              <CardContent>Hover to see interactive states</CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">Subtle variant</p>
+            <Card variant="subtle">
+              <CardHeader>
+                <CardTitle>Supporting Information</CardTitle>
+              </CardHeader>
+              <CardContent>Recessed surface for secondary information</CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">With compact padding</p>
+            <Card padding="compact">
+              <CardHeader>
+                <CardTitle>Compact Card</CardTitle>
+              </CardHeader>
+              <CardContent>Minimal spacing card</CardContent>
+            </Card>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Spinner">
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">Decorative (hidden from screen readers)</p>
+            <Spinner />
+          </div>
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">With accessible label</p>
+            <Spinner label="Loading data..." />
+          </div>
+        </div>
+      </Section>
+
+      <Section title="ProgressIndicator">
+        <div className="space-y-6">
+          {PROGRESS_SIZES.map((size) => (
+            <div key={size}>
+              <p className="mb-2 text-13 text-muted-foreground">{size}</p>
+              {PROGRESS_TONES.map((tone) => (
+                <div key={`${size}-${tone}`} className="mb-3 space-y-1">
+                  <span className="text-10 text-text-tertiary">{tone}</span>
+                  <ProgressIndicator value={65} size={size} tone={tone as any} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Avatar">
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">All sizes</p>
+            <div className="flex items-center gap-4">
+              {AVATAR_SIZES.map((size) => (
+                <Avatar key={size} size={size} fallback={size.charAt(0).toUpperCase()} />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">With image</p>
+            <div className="flex gap-4">
+              <Avatar
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=user1"
+                alt="User avatar"
+                fallback="AB"
+              />
+              <Avatar
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=user2"
+                alt="Another user"
+                fallback="CD"
+              />
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="AvatarGroup">
+        <div className="space-y-6">
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">With maximum visible</p>
+            <AvatarGroup max={3}>
+              <Avatar fallback="A" />
+              <Avatar fallback="B" />
+              <Avatar fallback="C" />
+              <Avatar fallback="D" />
+              <Avatar fallback="E" />
+            </AvatarGroup>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">All visible</p>
+            <AvatarGroup>
+              <Avatar fallback="X" />
+              <Avatar fallback="Y" />
+              <Avatar fallback="Z" />
+            </AvatarGroup>
+          </div>
+
+          <div>
+            <p className="mb-3 text-13 text-muted-foreground">Without overflow count</p>
+            <AvatarGroup max={2} showCount={false}>
+              <Avatar fallback="A" />
+              <Avatar fallback="B" />
+              <Avatar fallback="C" />
+            </AvatarGroup>
           </div>
         </div>
       </Section>
