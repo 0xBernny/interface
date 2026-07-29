@@ -1,7 +1,9 @@
 import { useState } from "react"
+import { AppShell } from "@workspace/ui/components/app-shell"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
+import { PageHeader } from "@workspace/ui/components/page-header"
 import { Separator } from "@workspace/ui/components/separator"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Slider } from "@workspace/ui/components/slider"
@@ -138,6 +140,123 @@ export function GalleryPage() {
           </TooltipTrigger>
           <TooltipContent>A tooltip, positioned automatically.</TooltipContent>
         </Tooltip>
+      </Section>
+
+      <Section title="AppShell">
+        <div className="space-y-4">
+          <p className="text-13 text-muted-foreground">
+            Constrained layout (default) — used for Pools, Earn, Referrals, Faucet
+          </p>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <AppShell
+              variant="constrained"
+              maxWidth="full"
+              navbar={
+                <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
+                  <span className="text-13 font-medium text-foreground">Navbar slot</span>
+                </div>
+              }
+              banner={
+                <div className="bg-warning/10 px-4 py-2 text-13 text-warning">
+                  Banner slot
+                </div>
+              }
+            >
+              <div className="rounded-lg border border-dashed border-border bg-muted/10 p-8 text-center text-13 text-muted-foreground">
+                Content area
+              </div>
+            </AppShell>
+          </div>
+
+          <p className="mt-4 text-13 text-muted-foreground">
+            Full layout — used for Trade (fills viewport)
+          </p>
+          <div className="overflow-hidden rounded-lg border border-border">
+            <AppShell
+              variant="full"
+              navbar={
+                <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
+                  <span className="text-13 font-medium text-foreground">Navbar slot</span>
+                </div>
+              }
+            >
+              <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border bg-muted/10 p-8 text-13 text-muted-foreground">
+                Full-viewport content area
+              </div>
+            </AppShell>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="PageHeader">
+        <div className="space-y-6">
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">Minimal — title + description</p>
+            <div className="rounded-lg border border-border bg-muted/10 p-4">
+              <PageHeader title="Pools" description="Provide liquidity to SO4 GM markets." />
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">With actions slot</p>
+            <div className="rounded-lg border border-border bg-muted/10 p-4">
+              <PageHeader
+                title="Earn"
+                description="Stake SO4 and earn rewards."
+                actions={
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm">
+                      Filter
+                    </Button>
+                    <Button size="sm">Claim all</Button>
+                  </div>
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">With metadata + tabs slot</p>
+            <div className="rounded-lg border border-border bg-muted/10 p-4">
+              <PageHeader
+                title="Referrals"
+                description="Get fee discounts and earn up to 15% commission."
+                metadata={
+                  <>
+                    <Badge variant="success">Active</Badge>
+                    <span className="text-13 text-muted-foreground">Tier 3</span>
+                  </>
+                }
+                tabs={
+                  <Tabs defaultValue="traders">
+                    <TabsList className="h-9">
+                      <TabsTrigger value="traders">Traders</TabsTrigger>
+                      <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
+                      <TabsTrigger value="distributions">Distributions</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">With breadcrumbs slot</p>
+            <div className="rounded-lg border border-border bg-muted/10 p-4">
+              <PageHeader
+                title="Settings"
+                description="Manage your account settings."
+                breadcrumbs={
+                  <nav className="flex items-center gap-1.5 text-13 text-muted-foreground">
+                    <span>Home</span>
+                    <span aria-hidden="true">/</span>
+                    <span className="text-foreground">Settings</span>
+                  </nav>
+                }
+              />
+            </div>
+          </div>
+        </div>
       </Section>
     </main>
   )

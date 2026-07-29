@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router"
+import { AppShell } from "@workspace/ui/components/app-shell"
+import { PageHeader } from "@workspace/ui/components/page-header"
 import { usePoolsData } from "../hooks/use-pools-data"
 import { usePoolsTimeRange } from "../hooks/use-pools-time-range"
 import { PoolsCard } from "./pools-card"
@@ -13,18 +15,15 @@ export function PoolsPage() {
   const { markets, glvEnabled } = usePoolsData(timeRange)
 
   return (
-    <div className="flex min-h-svh flex-col bg-background text-foreground">
-      <Navbar variant="app" />
-      <NetworkMismatchBanner />
-
-      <main className="mx-auto w-full max-w-320 px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-        <header className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h1 className="text-22 font-semibold tracking-tight">Pools</h1>
-            <p className="mt-1.5 max-w-160 text-sm text-muted-foreground">
-              Provide liquidity to bootstrapped SO4 GM markets on Stellar testnet.
-            </p>
-          </div>
+    <AppShell
+      navbar={<Navbar variant="app" />}
+      banner={<NetworkMismatchBanner />}
+      maxWidth="320"
+    >
+      <PageHeader
+        title="Pools"
+        description="Provide liquidity to bootstrapped SO4 GM markets on Stellar testnet."
+        actions={
           <div className="grid grid-cols-2 gap-3 sm:flex sm:items-center">
             <div className="rounded-lg border border-border bg-card px-4 py-3">
               <p className="text-11 uppercase text-muted-foreground">Total pool TVL</p>
@@ -32,7 +31,8 @@ export function PoolsPage() {
             </div>
             <PoolsTimeRangeFilter value={timeRange} options={options} onChange={setTimeRange} />
           </div>
-        </header>
+        }
+      />
 
         <div className="mb-5 rounded-lg border border-yellow-500/30 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-700 dark:text-yellow-300">
           Deposit and withdrawal transactions are disabled until liquidity seeding and oracle
@@ -65,7 +65,6 @@ export function PoolsPage() {
             GLV vaults are hidden because GLV contracts are not deployed for this testnet.
           </div>
         ) : null}
-      </main>
-    </div>
+    </AppShell>
   )
 }
