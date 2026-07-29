@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
+import { AppShell } from "@workspace/ui/components/app-shell"
+import { PageHeader } from "@workspace/ui/components/page-header"
 import { useQueryClient } from "@tanstack/react-query"
 import { Navbar } from "../../../ui/Navbar"
 import { useTraderStats } from "../hooks/use-referrals-data"
@@ -45,21 +47,16 @@ export function ReferralsPage() {
   const hasAffiliateCode = Boolean(affiliateCode)
 
   return (
-    <div className="flex min-h-svh flex-col bg-background text-foreground">
-      <Navbar variant="app" />
-      <div className="mx-auto w-full max-w-260 px-4 pb-16 pt-8 sm:px-6 lg:px-12">
-        <header className="mb-8">
-          <h1 className="text-22 font-semibold tracking-tight">Referrals</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Get fee discounts and earn up to 15% commission through the SO4 referral program
-          </p>
-        </header>
-
-        <Tabs
-          value={tab}
-          onValueChange={(v) => setTab(v as ReferralsTab)}
-          className="gap-6"
-        >
+    <AppShell navbar={<Navbar variant="app" />} maxWidth="260">
+      <PageHeader
+        title="Referrals"
+        description="Get fee discounts and earn up to 15% commission through the SO4 referral program"
+        tabs={
+          <Tabs
+            value={tab}
+            onValueChange={(v) => setTab(v as ReferralsTab)}
+            className="gap-6"
+          >
           <TabsList className="h-9 w-full overflow-x-auto sm:w-fit">
             <TabsTrigger value="traders">Traders</TabsTrigger>
             <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
@@ -101,7 +98,7 @@ export function ReferralsPage() {
             />
           </div>
         </Tabs>
-      </div>
-    </div>
+      </PageHeader>
+    </AppShell>
   )
 }

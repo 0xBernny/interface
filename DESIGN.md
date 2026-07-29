@@ -10,6 +10,59 @@ All tokens are defined in [`packages/ui/src/styles/globals.css`](./packages/ui/s
 
 Colors are defined as `oklch()` values in `:root` (light theme) and `.dark` (dark theme), then exposed to Tailwind via `@theme inline` (`--color-background`, `--color-primary`, etc.). Always reach for a semantic name (`bg-background`, `text-muted-foreground`, `border-border`) over a raw palette color (`bg-zinc-900`) — semantic names are what make the light/dark split work automatically.
 
+#### Surface roles
+
+The app uses five explicit surface layers instead of the generic shadcn page/card/popover pattern. Each has a Tailwind utility via the `@theme inline` mapping:
+
+| Token | Tailwind | Purpose |
+|---|---|---|
+| `--surface-canvas` | `bg-surface-canvas` | Base page background |
+| `--surface-sunken` | `bg-surface-sunken` | Inset/recessed areas (well containers, stat cards) |
+| `--surface-raised` | `bg-surface-raised` | Elevated above canvas (cards, panels) |
+| `--surface-overlay` | `bg-surface-overlay` | Floating on top of everything (modals, popovers) |
+| `--surface-interactive` | `bg-surface-interactive` | Hoverable/active areas (buttons, table rows) |
+
+The existing `--background`, `--card`, `--popover` shadcn aliases remain for backwards compatibility during migration but new code should prefer the surface tokens.
+
+#### Text and icon roles
+
+Explicit text roles replace scattered opacity modifiers. Each maps to a Tailwind `text-*` utility:
+
+| Token | Tailwind | Usage |
+|---|---|---|
+| `--text-primary` | `text-text-primary` | Default body text, headings |
+| `--text-secondary` | `text-text-secondary` | Supporting labels, descriptions |
+| `--text-tertiary` | `text-text-tertiary` | Placeholders, hints, metadata |
+| `--text-disabled` | `text-text-disabled` | Inactive UI elements |
+| `--text-inverse` | `text-text-inverse` | Text on solid color fills (badges, buttons) |
+| `--text-link` | `text-text-link` | Interactive/navigation text |
+
+#### Trading-state and semantic market colors
+
+Each trading state (long, short, liquidation) and semantic status (success, warning, info, danger, neutral) has a foreground, subtle background, and border token. Color is never the only signal — shape, position, or label should accompany it.
+
+| Token family | Foreground | Subtle | Border | Tailwind |
+|---|---|---|---|---|
+| `long` | `--long-foreground` | `--long-subtle` | `--long-border` | `bg-long-subtle border-long-border` |
+| `short` | `--short-foreground` | `--short-subtle` | `--short-border` | `bg-short-subtle border-short-border` |
+| `liquidation` | `--liquidation-foreground` | `--liquidation-subtle` | `--liquidation-border` | `bg-liquidation-subtle border-liquidation-border` |
+| `success` | `--success-foreground` | `--success-subtle` | `--success-border` | `bg-success-subtle border-success-border` |
+| `warning` | `--warning-foreground` | `--warning-subtle` | `--warning-border` | `bg-warning-subtle border-warning-border` |
+| `info` | `--info-foreground` | `--info-subtle` | `--info-border` | `bg-info-subtle border-info-border` |
+| `danger` | `--danger-foreground` | `--danger-subtle` | `--danger-border` | `bg-danger-subtle border-danger-border` |
+| `neutral` | `--neutral-foreground` | `--neutral-subtle` | `--neutral-border` | `bg-neutral-subtle border-neutral-border` |
+
+Chart colors (`chart-1` through `chart-5`) are mapped to the same semantic palette (`long`, `short`, `liquidation`, `info`, `neutral`) so the entire app uses one consistent color language.
+
+#### When to use Geist Mono
+
+Geist Mono is available via `@fontsource-variable/geist` but is **not** the default body font. Use it for:
+- Order book prices and sizes (monospaced alignment is critical)
+- Address/transaction hash display
+- Code snippets or technical values
+
+Use Geist Variable (`font-sans`) for everything else.
+
 ### Radius
 
 `--radius` is `0` at the root — this app's default visual language is sharp corners everywhere. The `--radius-sm/md/lg/xl/2xl/3xl/4xl` scale is derived from it via `calc()`, so as long as new UI uses `rounded-sm`/`rounded-lg`/etc. instead of an arbitrary value, changing `--radius` in one place re-skins the whole app's corner treatment.
