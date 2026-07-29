@@ -82,6 +82,16 @@
     --color-danger-border: var(--danger-border);
     --color-neutral-subtle: var(--neutral-subtle);
     --color-neutral-border: var(--neutral-border);
+    
+    /* Border role mappings (DS-009) */
+    --color-border-default: var(--border-default);
+    --color-border-hover: var(--border-hover);
+    --color-border-active: var(--border-active);
+    --color-border-strong: var(--border-strong);
+    
+    /* Focus ring mappings (DS-009) */
+    --color-ring-default: var(--ring-default);
+    
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -91,27 +101,47 @@
     --radius-4xl: calc(var(--radius) * 2.6);
     
     /*
-     * Motion duration and easing tokens (DS-010).
+     * Elevation, border, and focus-ring tokens (DS-009).
      *
-     * Standardizes timing for micro-interactions, panel transitions, and page-level animations.
-     * All motion respects prefers-reduced-motion to ensure accessibility.
-     * 
-     * Duration scale:
-     * - fast (150ms):   Micro-interactions (hover states, focus rings, tooltips)
-     * - normal (250ms): Standard UI transitions (dropdowns, modals, tab switches)
-     * - slow (400ms):   Page-level animations (drawer slides, route transitions)
+     * Defines consistent separators, interactive borders, overlay shadows,
+     * and keyboard focus treatments that work across all surfaces and themes.
      *
-     * Easing functions:
-     * - ease-smooth:    General purpose for most UI transitions
-     * - ease-bounce:    Playful interactions, attention-grabbing elements
+     * Border roles:
+     * - border-default:  Subtle separators and card outlines
+     * - border-hover:    Interactive element borders on hover
+     * - border-active:   Active/pressed state borders
+     * - border-strong:   Emphasized borders for important divisions
      *
-     * Usage: duration-fast, duration-normal, duration-slow, ease-smooth, ease-bounce
+     * Shadow roles:
+     * - shadow-xs:       Subtle lift for inputs and small controls
+     * - shadow-sm:       Small elevated panels and dropdowns
+     * - shadow-md:       Medium floating panels and popovers
+     * - shadow-lg:       Large modals and dialogs
+     * - shadow-xl:       Maximum elevation for overlays
+     *
+     * Focus rings:
+     * - ring-default:    Standard keyboard focus indicator
+     * - ring-offset:     Space between element and focus ring
+     *
+     * Usage: border-default, shadow-md, ring-2 ring-ring-default
      */
-    --duration-fast: 150ms;     /* Micro-interactions: hover, focus, tooltips */
-    --duration-normal: 250ms;   /* UI transitions: dropdowns, modals, tabs */
-    --duration-slow: 400ms;     /* Page animations: drawers, route changes */
-    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);  /* Default easing for smooth transitions */
-    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);  /* Playful bounce effect */
+    --border-default: var(--border);
+    --border-hover: oklch(from var(--border) calc(l * 0.85) c h);
+    --border-active: oklch(from var(--border) calc(l * 0.70) c h);
+    --border-strong: oklch(from var(--border) calc(l * 0.60) c h);
+    
+    --shadow-xs: 0 1px 2px 0 oklch(from var(--foreground) l c h / 0.05);
+    --shadow-sm: 0 1px 3px 0 oklch(from var(--foreground) l c h / 0.1),
+                 0 1px 2px -1px oklch(from var(--foreground) l c h / 0.1);
+    --shadow-md: 0 4px 6px -1px oklch(from var(--foreground) l c h / 0.1),
+                 0 2px 4px -2px oklch(from var(--foreground) l c h / 0.1);
+    --shadow-lg: 0 10px 15px -3px oklch(from var(--foreground) l c h / 0.1),
+                 0 4px 6px -4px oklch(from var(--foreground) l c h / 0.1);
+    --shadow-xl: 0 20px 25px -5px oklch(from var(--foreground) l c h / 0.1),
+                 0 8px 10px -6px oklch(from var(--foreground) l c h / 0.1);
+    
+    --ring-default: var(--ring);
+    --ring-offset: 2px;
     
     --font-sans: 'Geist Variable', sans-serif;
     --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
