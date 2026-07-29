@@ -245,7 +245,10 @@ export function Hero() {
           <span className="font-mono-num inline-flex items-center gap-2.5 border border-border bg-card/50 px-3 py-1.5 text-11-5 uppercase tracking-[0.14em] text-muted-foreground">
             <span
               className="inline-block h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_var(--color-primary)]"
-              style={{ animation: "pulseDot 2.4s ease-in-out infinite" }}
+              style={{ 
+                animation: "pulseDot var(--duration-slow) var(--ease-smooth) infinite",
+                animationDuration: "2.4s"
+              }}
             />
             Mainnet · v1.4 · Lagos UTC+1
           </span>

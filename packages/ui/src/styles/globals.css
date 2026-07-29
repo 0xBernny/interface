@@ -89,6 +89,30 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+    
+    /*
+     * Motion duration and easing tokens (DS-010).
+     *
+     * Standardizes timing for micro-interactions, panel transitions, and page-level animations.
+     * All motion respects prefers-reduced-motion to ensure accessibility.
+     * 
+     * Duration scale:
+     * - fast (150ms):   Micro-interactions (hover states, focus rings, tooltips)
+     * - normal (250ms): Standard UI transitions (dropdowns, modals, tab switches)
+     * - slow (400ms):   Page-level animations (drawer slides, route transitions)
+     *
+     * Easing functions:
+     * - ease-smooth:    General purpose for most UI transitions
+     * - ease-bounce:    Playful interactions, attention-grabbing elements
+     *
+     * Usage: duration-fast, duration-normal, duration-slow, ease-smooth, ease-bounce
+     */
+    --duration-fast: 150ms;     /* Micro-interactions: hover, focus, tooltips */
+    --duration-normal: 250ms;   /* UI transitions: dropdowns, modals, tabs */
+    --duration-slow: 400ms;     /* Page animations: drawers, route changes */
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);  /* Default easing for smooth transitions */
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);  /* Playful bounce effect */
+    
     --font-sans: 'Geist Variable', sans-serif;
     --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 
