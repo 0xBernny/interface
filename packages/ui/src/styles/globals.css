@@ -83,65 +83,26 @@
     --color-neutral-subtle: var(--neutral-subtle);
     --color-neutral-border: var(--neutral-border);
     
-    /* Border role mappings (DS-009) */
-    --color-border-default: var(--border-default);
-    --color-border-hover: var(--border-hover);
-    --color-border-active: var(--border-active);
-    --color-border-strong: var(--border-strong);
-    
-    /* Focus ring mappings (DS-009) */
-    --color-ring-default: var(--ring-default);
-    
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
-    
     /*
-     * Elevation, border, and focus-ring tokens (DS-009).
+     * Shape and radius scale (DS-008).
      *
-     * Defines consistent separators, interactive borders, overlay shadows,
-     * and keyboard focus treatments that work across all surfaces and themes.
+     * Defines a restrained, consistent border-radius system for UI elements.
+     * The scale provides five named sizes plus 'full' for pills and circular elements.
+     * 
+     * Component-to-radius mapping:
+     * - sm (0.25rem / 4px):   Small controls (buttons, inputs, badges, tabs)
+     * - md (0.375rem / 6px):  Medium controls (dropdowns, selects, chips)
+     * - lg (0.5rem / 8px):    Cards, panels, modals, popovers
+     * - xl (0.75rem / 12px):  Large cards, feature panels, section containers
+     * - full (9999px):        Pills, avatar badges, status indicators (fully rounded)
      *
-     * Border roles:
-     * - border-default:  Subtle separators and card outlines
-     * - border-hover:    Interactive element borders on hover
-     * - border-active:   Active/pressed state borders
-     * - border-strong:   Emphasized borders for important divisions
-     *
-     * Shadow roles:
-     * - shadow-xs:       Subtle lift for inputs and small controls
-     * - shadow-sm:       Small elevated panels and dropdowns
-     * - shadow-md:       Medium floating panels and popovers
-     * - shadow-lg:       Large modals and dialogs
-     * - shadow-xl:       Maximum elevation for overlays
-     *
-     * Focus rings:
-     * - ring-default:    Standard keyboard focus indicator
-     * - ring-offset:     Space between element and focus ring
-     *
-     * Usage: border-default, shadow-md, ring-2 ring-ring-default
+     * Usage: rounded-sm, rounded-md, rounded-lg, rounded-xl, rounded-full
      */
-    --border-default: var(--border);
-    --border-hover: oklch(from var(--border) calc(l * 0.85) c h);
-    --border-active: oklch(from var(--border) calc(l * 0.70) c h);
-    --border-strong: oklch(from var(--border) calc(l * 0.60) c h);
-    
-    --shadow-xs: 0 1px 2px 0 oklch(from var(--foreground) l c h / 0.05);
-    --shadow-sm: 0 1px 3px 0 oklch(from var(--foreground) l c h / 0.1),
-                 0 1px 2px -1px oklch(from var(--foreground) l c h / 0.1);
-    --shadow-md: 0 4px 6px -1px oklch(from var(--foreground) l c h / 0.1),
-                 0 2px 4px -2px oklch(from var(--foreground) l c h / 0.1);
-    --shadow-lg: 0 10px 15px -3px oklch(from var(--foreground) l c h / 0.1),
-                 0 4px 6px -4px oklch(from var(--foreground) l c h / 0.1);
-    --shadow-xl: 0 20px 25px -5px oklch(from var(--foreground) l c h / 0.1),
-                 0 8px 10px -6px oklch(from var(--foreground) l c h / 0.1);
-    
-    --ring-default: var(--ring);
-    --ring-offset: 2px;
+    --radius-sm: 0.25rem;   /* 4px  - buttons, inputs, badges, tabs */
+    --radius-md: 0.375rem;  /* 6px  - dropdowns, selects, chips */
+    --radius-lg: 0.5rem;    /* 8px  - cards, panels, modals */
+    --radius-xl: 0.75rem;   /* 12px - large cards, feature sections */
+    --radius-full: 9999px;  /* Fully rounded - pills, avatars, indicators */
     
     --font-sans: 'Geist Variable', sans-serif;
     --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
