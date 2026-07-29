@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 1,
   "workspaces": {
     "": {
       "name": "so4-market",
@@ -125,6 +124,7 @@
         "@vitest/coverage-v8": "^3.2.0",
         "axe-core": "^4.12.1",
         "eslint": "^9.39.2",
+        "jsdom": "^30.0.1",
         "tailwindcss": "^4.1.18",
         "typescript": "^5.9.3",
         "vitest": "3",
