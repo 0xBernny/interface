@@ -67,7 +67,7 @@ export function TradePage() {
         </div>
 
         {/* ── Right: Trade Panel ─────────────────────────────────────── */}
-        <div className="w-full shrink-0 overflow-x-hidden overflow-y-auto border-t border-border lg:border-t-0 lg:border-l lg:w-80">
+        <div className="w-full shrink-0 overflow-x-hidden overflow-y-auto border-t border-border lg:border-t-0 lg:border-inline-start lg:w-80">
           <TradePanel trade={trade} />
         </div>
       </div>

@@ -54,8 +54,8 @@ export function Infrastructure() {
             <div
               key={key}
               className={`p-6 sm:p-7 ${
-                i < INFRA.length - 1 ? "border-b border-border lg:border-b-0 lg:border-r" : ""
-              } ${i % 2 === 0 && i < 2 ? "max-lg:border-r" : ""}`}
+                i < INFRA.length - 1 ? "border-b border-border lg:border-b-0 lg:border-inline-end" : ""
+              } ${i % 2 === 0 && i < 2 ? "max-lg:border-inline-end" : ""}`}
             >
               <div className="font-mono-num text-10-5 uppercase tracking-[0.14em] text-muted-foreground">
                 {key}
@@ -63,7 +63,7 @@ export function Infrastructure() {
               <div className="font-mono-num mt-3 text-26 tracking-[-0.02em] text-foreground">
                 {val}
                 {unit && (
-                  <span className="ml-0.5 text-base text-muted-foreground">{unit}</span>
+                  <span className="ms-0.5 text-base text-muted-foreground">{unit}</span>
                 )}
               </div>
               <p className="mt-2.5 text-13 leading-[1.5] text-muted-foreground/70">{desc}</p>

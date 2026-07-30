@@ -32,7 +32,7 @@ function OrderBook() {
       {ASKS.map((row) => (
         <div key={row.price} className="relative grid grid-cols-3 py-[2.5px]">
           <div
-            className="absolute right-0 top-0 bottom-0 bg-red-400/15"
+            className="absolute inset-inline-end-0 top-0 bottom-0 bg-red-400/15"
             style={{ width: row.w }}
           />
           <span className="relative text-red-400">{row.price}</span>
@@ -52,7 +52,7 @@ function OrderBook() {
       {BIDS.map((row) => (
         <div key={row.price} className="relative grid grid-cols-3 py-[2.5px]">
           <div
-            className="absolute right-0 top-0 bottom-0 bg-emerald-400/15"
+            className="absolute inset-inline-end-0 top-0 bottom-0 bg-emerald-400/15"
             style={{ width: row.w }}
           />
           <span className="relative text-emerald-400">{row.price}</span>
@@ -69,12 +69,12 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
   return (
     <div className="relative h-[220px] overflow-hidden rounded-none border border-border bg-muted/20">
       {/* Live price tag */}
-      <div className="font-mono-num absolute right-2.5 top-2.5 z-10 border border-primary/25 bg-primary/8 px-1.5 py-0.5 text-11 text-primary">
+      <div className="font-mono-num absolute inset-inline-end-2.5 top-2.5 z-10 border border-primary/25 bg-primary/8 px-1.5 py-0.5 text-11 text-primary">
         {priceLabel}
       </div>
 
       {/* Y-axis labels */}
-      <div className="font-mono-num absolute right-2 top-0 bottom-6 flex flex-col justify-between py-3 text-right text-9-5 text-muted-foreground/60">
+      <div className="font-mono-num absolute inset-inline-end-2 top-0 bottom-6 flex flex-col justify-between py-3 text-right text-9-5 text-muted-foreground/60">
         <span>67.4k</span>
         <span>67.0k</span>
         <span>66.6k</span>
@@ -149,7 +149,7 @@ function MiniChart({ priceLabel }: { priceLabel: string }) {
       </svg>
 
       {/* X-axis labels */}
-      <div className="font-mono-num absolute right-2 bottom-1.5 left-2 flex justify-between text-9-5 text-muted-foreground/60">
+      <div className="font-mono-num absolute inset-inline-end-2 bottom-1.5 inset-inline-start-2 flex justify-between text-9-5 text-muted-foreground/60">
         <span>09:00</span>
         <span>11:00</span>
         <span>13:00</span>
@@ -189,7 +189,7 @@ function TradingCard() {
           </span>
           <div>
             <div className="text-14-5 font-medium text-foreground">
-              BTC<span className="ml-1 font-normal text-muted-foreground">-PERP</span>
+              BTC<span className="ms-1 font-normal text-muted-foreground">-PERP</span>
             </div>
             <div className="font-mono-num mt-0.5 text-11 text-muted-foreground">
               ${fmt}

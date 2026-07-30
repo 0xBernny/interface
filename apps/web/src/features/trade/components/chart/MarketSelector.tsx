@@ -40,7 +40,7 @@ function MarketRow({
       role="option"
       aria-selected={isActive}
       tabIndex={-1}
-      className={`flex w-full cursor-pointer items-center justify-between gap-4 rounded px-3 py-2 text-left text-sm transition-colors ${
+      className={`flex w-full cursor-pointer items-center justify-between gap-4 rounded px-3 py-2 text-start text-sm transition-colors ${
         isActive ? "bg-accent/60" : "hover:bg-accent"
       }`}
       onClick={onSelect}
@@ -228,7 +228,7 @@ export function MarketSelector({ symbol, onSelect }: Props) {
       )}
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg">
+        <div className="absolute inset-inline-start-0 top-full z-50 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg">
           <div className="p-2">
             <label htmlFor={`${comboboxId}-input`} className="sr-only" id={`${comboboxId}-label`}>
               Search markets

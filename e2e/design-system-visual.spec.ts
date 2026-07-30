@@ -31,6 +31,7 @@ const VIEWPORTS = {
 } as const
 
 const THEMES = ["light", "dark"] as const
+const DIRECTIONS = ["ltr", "rtl"] as const
 
 const ROUTES = [
   { name: "gallery", path: "/gallery" },
@@ -63,8 +64,6 @@ for (const theme of THEMES) {
 
       test.beforeEach(async ({ page }) => {
         await stubExternalNetwork(page)
-        // Set localStorage before the app's own THEME_SCRIPT runs, so the
-        // correct theme class is present from first paint.
         await page.addInitScript((t) => {
           window.localStorage.setItem("so4-theme", t)
         }, theme)
@@ -82,5 +81,35 @@ for (const theme of THEMES) {
         })
       }
     })
+  }
+}
+
+// RTL gallery fixtures — the gallery has a direction toggle, so take
+// screenshots in both directions to verify RTL layout correctness.
+for (const theme of THEMES) {
+  for (const direction of DIRECTIONS) {
+    for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
+      test.describe(`${theme} theme, ${direction}, ${viewportName}`, () => {
+        test.use({ viewport })
+
+        test.beforeEach(async ({ page }) => {
+          await stubExternalNetwork(page)
+          await page.addInitScript(({ t, d }: { t: string; d: string }) => {
+            window.localStorage.setItem("so4-theme", t)
+            window.localStorage.setItem("so4-direction", d)
+          }, { t: theme, d: direction })
+        })
+
+        test(`gallery`, async ({ page }) => {
+          await page.goto("/gallery")
+          await page.waitForLoadState("networkidle")
+
+          await expect(page).toHaveScreenshot(`gallery-${theme}-${direction}-${viewportName}.png`, {
+            fullPage: true,
+            animations: "disabled",
+          })
+        })
+      })
+    }
   }
 }

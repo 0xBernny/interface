@@ -67,7 +67,7 @@ export function MarketSelector({ markets, activeMarketId, onSelect }: Props) {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-md border border-border bg-popover shadow-lg">
+        <div className="absolute inset-inline-start-0 top-full z-50 mt-1 w-56 rounded-md border border-border bg-popover shadow-lg">
           <div className="p-2">
             <input
               autoFocus
@@ -93,7 +93,7 @@ export function MarketSelector({ markets, activeMarketId, onSelect }: Props) {
                     setOpen(false)
                     setQuery("")
                   }}
-                  className={`flex w-full rounded px-3 py-2 text-left text-sm transition-colors hover:bg-accent ${
+                  className={`flex w-full rounded px-3 py-2 text-start text-sm transition-colors hover:bg-accent ${
                     market.id === activeMarketId ? "bg-accent/60 font-medium" : ""
                   }`}
                 >

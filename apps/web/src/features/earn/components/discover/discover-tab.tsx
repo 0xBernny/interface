@@ -171,7 +171,7 @@ export function DiscoverTab() {
           </FilterButton>
         </div>
 
-        <div className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="ms-auto flex items-center gap-1 text-xs text-muted-foreground">
           <span>Sort</span>
           <SortButton active={sort === "apy"} onClick={() => setSort("apy")}>
             APY {sort === "apy" && "↓"}
@@ -247,7 +247,7 @@ export function DiscoverTab() {
           <span className="h-2.5 w-2.5 rounded-full bg-amber-400/70" />
           Short token
         </div>
-        <p className="ml-auto text-11 text-muted-foreground">
+        <p className="ms-auto text-11 text-muted-foreground">
           APY based on trailing 30-day performance
         </p>
       </div>

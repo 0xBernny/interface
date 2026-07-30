@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useDirection } from "@/ui/direction-provider"
 import { AppShell } from "@workspace/ui/components/app-shell"
 import { Avatar, AvatarGroup } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
@@ -48,30 +49,41 @@ function Section({ title, children }: { title: string; children: React.ReactNode
  * Just render every shipped variant so a regression is visible on sight.
  */
 export function GalleryPage() {
+  const { direction, setDirection } = useDirection()
   const [sliderValue, setSliderValue] = useState<Array<number>>([40])
   const [announceCount, setAnnounceCount] = useState(0)
 
   return (
     <main className="mx-auto max-w-4xl space-y-10 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-foreground">Component Gallery</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Every packages/ui primitive, all variants. See{" "}
-          <a
-            href="https://github.com/SO4-Markets/interface/blob/main/DESIGN.md"
-            className="text-primary underline underline-offset-2"
-          >
-            DESIGN.md
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://github.com/SO4-Markets/interface/blob/main/packages/ui/CONTRIBUTING.md"
-            className="text-primary underline underline-offset-2"
-          >
-            packages/ui/CONTRIBUTING.md
-          </a>{" "}
-          for how to add to this page.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">Component Gallery</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Every packages/ui primitive, all variants. See{" "}
+            <a
+              href="https://github.com/SO4-Markets/interface/blob/main/DESIGN.md"
+              className="text-primary underline underline-offset-2"
+            >
+              DESIGN.md
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://github.com/SO4-Markets/interface/blob/main/packages/ui/CONTRIBUTING.md"
+              className="text-primary underline underline-offset-2"
+            >
+              packages/ui/CONTRIBUTING.md
+            </a>{" "}
+            for how to add to this page.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setDirection(direction === "ltr" ? "rtl" : "ltr")}
+          className="shrink-0 rounded-md border border-border bg-card px-3 py-1.5 text-13 font-medium text-foreground transition-colors hover:bg-muted"
+          aria-label={`Switch to ${direction === "ltr" ? "right-to-left" : "left-to-right"} layout`}
+        >
+          {direction === "ltr" ? "LTR" : "RTL"}
+        </button>
       </div>
 
       <Section title="Button">

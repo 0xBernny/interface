@@ -197,7 +197,7 @@ export function Markets() {
                   {oi}
                 </span>
 
-                <span className="font-mono-num text-right text-11-5 text-muted-foreground transition-colors group-hover:text-primary">
+                <span className="font-mono-num text-end text-11-5 text-muted-foreground transition-colors group-hover:text-primary">
                   Trade →
                 </span>
               </div>

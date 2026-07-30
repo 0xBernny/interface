@@ -79,14 +79,14 @@ function DropdownMenuCheckboxItem({
     <MenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-1.5 pr-2 pl-8 text-xs/relaxed outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-1.5 pe-2 ps-8 text-xs/relaxed outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
         className
       )}
       {...props}
     >
       <MenuPrimitive.CheckboxItemIndicator
         data-slot="dropdown-menu-checkbox-item-indicator"
-        className="absolute left-2 inline-flex items-center justify-center"
+        className="absolute inset-inline-start-2 inline-flex items-center justify-center"
       >
         <Icon
           icon={CheckmarkCircle01Icon}
@@ -116,14 +116,14 @@ function DropdownMenuRadioItem({
     <MenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-1.5 pr-2 pl-8 text-xs/relaxed outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-lg py-1.5 pe-2 ps-8 text-xs/relaxed outline-none data-highlighted:bg-accent data-highlighted:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
         className
       )}
       {...props}
     >
       <MenuPrimitive.RadioItemIndicator
         data-slot="dropdown-menu-radio-item-indicator"
-        className="absolute left-2 inline-flex items-center justify-center"
+        className="absolute inset-inline-start-2 inline-flex items-center justify-center"
       >
         <Icon
           icon={RadioButtonIcon}
@@ -176,7 +176,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "ml-auto text-[0.625rem] tracking-widest text-muted-foreground",
+        "ms-auto text-[0.625rem] tracking-widest text-muted-foreground",
         className
       )}
       {...props}
