@@ -200,10 +200,30 @@ This checklist helps verify that SO4's interface remains operable when Windows H
 - [ ] Horizontal rules (`<hr>`) are visible
 - [ ] Section dividers are visible
 - [ ] Card borders are visible
+- [ ] `Separator` subtle/default/strong tones are all still visible (all three
+      collapse to `CanvasText` — that is expected; the *presence* of the line is
+      what matters, not the tone)
+- [ ] `Divider` labels remain readable against `Canvas`
 
 **Test locations:**
 - Between major sections
 - Within complex forms
+
+### ✅ Scroll Areas (DS-079)
+
+The gradient edge affordances are dropped in forced-colors mode (background
+images are removed), so the scrollbar itself has to carry the "there is more
+content" signal.
+
+- [ ] Scrollbars are visible on every `ScrollArea` that overflows
+- [ ] Scrollbar thumb (`CanvasText`) is distinguishable from its track (`Canvas`)
+- [ ] Scroll position is still discoverable without the edge shadows
+- [ ] Keyboard scrolling (arrows, Page Up/Down) still works on focusable areas
+
+**Test locations:**
+- Command menu (`Cmd/Ctrl+K`) — long, filtered result list
+- `/trade` — bottom tabs and trade panel
+- Any horizontally overflowing tab row
 - Card components
 
 ## Additional Checks

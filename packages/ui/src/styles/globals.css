@@ -351,6 +351,41 @@
 }
 
 /*
+ * Themed scrollbars for ScrollArea (DS-079)
+ *
+ * Colors only — width, momentum, and overlay-vs-classic behaviour stay with the
+ * platform, so a user who has asked for permanently visible scrollbars keeps
+ * them. `scrollbar-color` covers Firefox and Chromium 121+; the ::-webkit rules
+ * cover older Chromium and Safari.
+ */
+@utility scroll-area-scrollbars {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--surface-sunken);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: var(--radius-full);
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-tertiary);
+  }
+
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+/*
  * Windows forced-colors mode support (DS-067)
  *
  * When Windows High Contrast Mode is active, CSS gradients, translucent
@@ -559,5 +594,25 @@
     background-color: Canvas !important;
     color: CanvasText !important;
     border: 1px solid CanvasText !important;
+  }
+
+  /*
+   * Scroll areas (DS-079). The blanket `* { background-color: Canvas }` above
+   * would otherwise flatten the scrollbar into its track, and the gradient edge
+   * affordances are dropped in forced colors — so the scrollbar itself has to
+   * carry the "there is more content" signal.
+   */
+  [data-slot="scroll-area-viewport"] {
+    forced-color-adjust: none;
+    scrollbar-color: CanvasText Canvas !important;
+  }
+
+  [data-slot="scroll-area-viewport"]::-webkit-scrollbar-track {
+    background-color: Canvas !important;
+    border: 1px solid CanvasText !important;
+  }
+
+  [data-slot="scroll-area-viewport"]::-webkit-scrollbar-thumb {
+    background-color: CanvasText !important;
   }
 }

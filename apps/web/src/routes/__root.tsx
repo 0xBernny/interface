@@ -1,7 +1,14 @@
-import { HeadContent, Scripts, createRootRoute, Link } from "@tanstack/react-router"
+import {
+  HeadContent,
+  Link,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router"
 import { Toaster } from "sonner"
 import appCss from "@workspace/ui/globals.css?url"
 import { AppProviders } from "../app/providers"
+import { RouteAnnouncer } from "../shared/components/RouteAnnouncer"
 import { useTheme } from "../ui/theme-provider"
 
 // Update this to your production domain before going live.
@@ -134,8 +141,20 @@ export const Route = createRootRoute({
       </div>
     </main>
   ),
+  component: RootComponent,
   shellComponent: RootDocument,
 })
+
+// Sits above every route so the post-navigation focus/announcement handoff
+// (DS-078) is installed exactly once, inside router context.
+function RootComponent() {
+  return (
+    <>
+      <RouteAnnouncer />
+      <Outlet />
+    </>
+  )
+}
 
 // Minified blocking script — runs synchronously before first paint.
 // Reads localStorage and sets dark/light class on <html> so CSS variables
