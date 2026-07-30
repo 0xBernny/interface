@@ -149,7 +149,7 @@ export function RewardsBar() {
           isLoading={isLoading}
         />
 
-        <div className="ml-auto">
+        <div className="ms-auto">
           <LoadingButton
             variant="outline"
             size="lg"

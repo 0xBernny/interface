@@ -17,7 +17,7 @@ const TICKERS = [
 
 function TickerItem({ sym, px, ch, dir }: { sym: string; px: string; ch: string; dir: string }) {
   return (
-    <div className="flex shrink-0 items-center gap-2.5 border-r border-border px-6 py-3.5 font-mono-num text-12-5">
+    <div className="flex shrink-0 items-center gap-2.5 border-inline-end border-border px-6 py-3.5 font-mono-num text-12-5">
       <span className="font-medium text-foreground">{sym}</span>
       <span className="text-muted-foreground">${px}</span>
       <span className={`text-11-5 ${dir === "up" ? "text-emerald-400" : "text-red-400"}`}>

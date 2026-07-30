@@ -43,9 +43,9 @@ export function Stats() {
               key={label}
               className={`relative p-7 sm:p-8 ${
                 i < STATS.length - 1
-                  ? "border-b border-border lg:border-b-0 lg:border-r"
+                  ? "border-b border-border lg:border-b-0 lg:border-inline-end"
                   : ""
-              } ${i % 2 === 0 && i < 2 ? "max-lg:border-r" : ""}`}
+              } ${i % 2 === 0 && i < 2 ? "max-lg:border-inline-end" : ""}`}
             >
               <div className="font-mono-num flex items-center gap-2 text-11 uppercase tracking-[0.14em] text-muted-foreground">
                 <span className="inline-block h-1 w-1 rounded-full bg-primary" />

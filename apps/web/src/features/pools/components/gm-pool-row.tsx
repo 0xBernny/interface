@@ -46,7 +46,7 @@ function ValueCell({
   className?: string
 }) {
   if (isLoading) {
-    return <Skeleton className="ml-auto h-4 w-20 max-w-full" />
+    return <Skeleton className="ms-auto h-4 w-20 max-w-full" />
   }
 
   return (
@@ -207,7 +207,7 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
       <td className="px-4 py-4 text-right font-mono text-sm">
         <ValueCell value={userGmLabel} title={userGmTitle} isLoading={isLoading} />
       </td>
-      <td className="px-5 py-4 text-right">
+      <td className="px-5 py-4 text-end">
         <PoolActions
           hasWallet={!!address && isConnected}
           hasUserGm={hasUserGm}

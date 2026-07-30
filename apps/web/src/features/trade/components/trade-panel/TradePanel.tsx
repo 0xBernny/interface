@@ -142,10 +142,10 @@ export function TradePanel({ trade }: TradePanelProps) {
             <Input
               type="number"
               placeholder="0.00"
-              className="pr-12 font-mono text-sm"
+              className="pe-12 font-mono text-sm"
               onChange={(e) => setTriggerPrice(e.target.value)}
             />
-            <span className="absolute top-1/2 right-3 -translate-y-1/2 text-xs text-muted-foreground">
+            <span className="absolute top-1/2 inset-inline-end-3 -translate-y-1/2 text-xs text-muted-foreground">
               USD
             </span>
           </div>
@@ -202,7 +202,7 @@ export function TradePanel({ trade }: TradePanelProps) {
                   step={0.1}
                   value={advanced.slippagePct}
                   onChange={(e) => trade.setSlippagePct(Number(e.target.value))}
-                  className="pr-10 font-mono text-sm"
+                  className="pe-10 font-mono text-sm"
                 />
                 <span className="text-xs text-muted-foreground">%</span>
               </div>

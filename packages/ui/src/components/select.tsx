@@ -90,14 +90,14 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-2 rounded-lg py-1.5 pr-2 pl-8 text-xs/relaxed outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
+        "relative flex w-full cursor-default items-center gap-2 rounded-lg py-1.5 pe-2 ps-8 text-xs/relaxed outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&>svg]:size-3.5 [&>svg]:shrink-0",
         className
       )}
       {...props}
     >
       <SelectPrimitive.ItemIndicator
         data-slot="select-item-indicator"
-        className="absolute left-2 inline-flex items-center justify-center"
+        className="absolute inset-inline-start-2 inline-flex items-center justify-center"
       >
         <Icon icon={Tick02Icon} size="sm" />
       </SelectPrimitive.ItemIndicator>

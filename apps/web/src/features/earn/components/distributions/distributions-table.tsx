@@ -88,13 +88,13 @@ export function DistributionsTable({ distributions, onClaim }: DistributionsTabl
     <div className="overflow-x-auto">
       <table className="w-full text-xs">
         <thead>
-          <tr className="border-b border-border bg-muted/25 text-left">
+          <tr className="border-b border-border bg-muted/25 text-start">
             <th className="px-5 py-3 font-medium text-muted-foreground">Epoch</th>
             <th className="px-5 py-3 font-medium text-muted-foreground">Date</th>
             <th className="px-5 py-3 text-right font-medium text-muted-foreground">Amount</th>
             <th className="px-5 py-3 font-medium text-muted-foreground">Token</th>
             <th className="px-5 py-3 font-medium text-muted-foreground">Status</th>
-            <th className="px-5 py-3 text-right font-medium text-muted-foreground">Tx</th>
+            <th className="px-5 py-3 text-end font-medium text-muted-foreground">Tx</th>
           </tr>
         </thead>
         <tbody>
@@ -124,7 +124,7 @@ export function DistributionsTable({ distributions, onClaim }: DistributionsTabl
                     <StatusBadge status={row.status} />
                   )}
                 </td>
-                <td className="px-5 py-3.5 text-right">
+                <td className="px-5 py-3.5 text-end">
                   {row.txHash ? (
                     <span className="font-mono text-muted-foreground">
                       {row.txHash.slice(0, 8)}…

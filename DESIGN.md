@@ -120,9 +120,11 @@ then review the diffs in `e2e/design-system-visual.spec.ts-snapshots/` in your P
 
 - give reviewers one place to see every variant of a component at once instead of hunting through feature pages for one that happens to use the state you changed
 - act as the fixed, deterministic target for the visual regression suite above
+- provide an **RTL toggle** (top-right corner) that switches the page between left-to-right and right-to-left layout, making directional-CSS regressions visible at a glance
 
 When you add a new component to `packages/ui`, add it to the gallery in the same PR — see [`packages/ui/CONTRIBUTING.md`](./packages/ui/CONTRIBUTING.md) for the full checklist.
 
+<<<<<<< HEAD
 ## Separators and dividers
 
 Borders are the cheapest way to make a layout look organised and the fastest way to make it look noisy. Linear's calm hierarchy comes from *space* and *surface* doing the grouping, with lines reserved for the few places where a relationship genuinely needs marking. [`packages/ui/src/components/separator.tsx`](./packages/ui/src/components/separator.tsx) (DS-080) exists so those few places look the same everywhere.
@@ -140,6 +142,47 @@ Borders are the cheapest way to make a layout look organised and the fastest way
 **Labelled dividers.** `<Divider label="or" />` names a break instead of just drawing one — grouped form sections, "or" between auth methods, date breaks in a feed. The rules are decorative and the label is ordinary text, so assistive technology reads the words rather than the geometry. Label contrast comes from `text-text-secondary`, which holds up in light, dark, and high-contrast themes.
 
 Existing page borders were left alone in DS-080; migrate them opportunistically when you're already touching the markup.
+=======
+## Right-to-left (RTL) support
+
+### Logical CSS properties
+
+The design system uses **logical CSS properties** instead of physical directional properties wherever the behaviour is semantic (i.e. describes content flow rather than a fixed visual direction):
+
+| Physical | Logical equivalent |
+|---|---|
+| `left` / `right` | `inset-inline-start` / `inset-inline-end` |
+| `margin-left` / `margin-right` | `margin-inline-start` / `margin-inline-end` |
+| `padding-left` / `padding-right` | `padding-inline-start` / `padding-inline-end` |
+| `border-left` / `border-right` | `border-inline-start` / `border-inline-end` |
+| `text-left` / `text-right` | `text-start` / `text-end` |
+| `translate-x` | Use `inset-inline-start` + `translate` or percent-based |
+
+Tailwind v4 provides logical utility classes — `ms-*`, `me-*`, `ps-*`, `pe-*`, `border-s-*`, `border-e-*`, `text-start`, `text-end`, `inset-inline-start-*`, `inset-inline-end-*` — which map to the correct physical side at runtime based on the `dir` attribute.
+
+### Justified physical directions
+
+Some directional properties are intentionally kept physical:
+
+- **Numeric financial values**: columns containing prices, sizes, volumes, APY, and other numbers use `text-right` (not `text-end`) because financial convention requires right-aligned digits in all locales, regardless of script direction.
+- **Chart time flow**: time-series charts (candlesticks, line charts) render left-to-right regardless of page direction, per financial-market convention.
+- **Data-attributed sides**: components that accept a physical `side` prop (e.g. `sheet` with `side="left"` or `side="right"`, tooltip arrow positioning for `data-[side=left]`/`data-[side=right]`) remain physical because they refer to the screen-relative position, not the content-flow direction. The logical `inline-start` / `inline-end` variants are also supported for direction-aware placement.
+
+### DirectionProvider
+
+A `DirectionProvider` (in `apps/web/src/ui/direction-provider.tsx`) persists the chosen direction to `localStorage` under `so4-direction` and sets the `dir` attribute on `<html>`. It wraps the app in the provider tree alongside `ThemeProvider`.
+
+### RTL gallery fixture
+
+The component gallery at `/gallery` includes an RTL/LTR toggle button (top-right corner). Use it during development and review to verify that:
+
+- Dialogs, menus, fields, tabs, breadcrumbs, tables, and navigation remain usable in RTL
+- Leading/trailing icons and controls mirror correctly
+- Focus order follows DOM order and remains logical
+- Numeric financial values preserve readable direction
+
+The visual regression suite (`e2e/design-system-visual.spec.ts`) captures gallery screenshots in both directions across all themes and viewports. Run `bun run test:e2e -- design-system-visual` to verify, or `bun run test:e2e -- design-system-visual --update-snapshots` to update baselines after an intentional change.
+>>>>>>> e242e90 (Audit layouts for RTL and logical CSS properties)
 
 ## Audit history
 
