@@ -19,7 +19,7 @@ vi.mock("../lib/pool-transactions", () => ({
   }),
 }))
 
-vi.mock("sonner", () => ({
+vi.mock("@workspace/ui/components/toast", () => ({
   toast: {
     loading: vi.fn().mockReturnValue("toast-id"),
     success: vi.fn(),

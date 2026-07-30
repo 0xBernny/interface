@@ -261,6 +261,31 @@
     }
 }
 
+@layer base {
+  :root, .density-default {
+    --density-height-control: var(--height-default);
+    --density-gap: var(--spacing-4-5);
+    --density-padding-cell: 0.75rem;
+  }
+  .density-compact {
+    --density-height-control: var(--height-compact);
+    --density-gap: var(--spacing-0-5);
+    --density-padding-cell: 0.25rem;
+  }
+  .density-comfortable {
+    --density-height-control: var(--height-comfortable);
+    --density-gap: var(--spacing-7);
+    --density-padding-cell: 1rem;
+  }
+  
+  @media (pointer: coarse) {
+    /* Ensure minimum accessible touch target size (44px) on coarse pointer devices */
+    .density-compact, .density-default, .density-comfortable, :root {
+       --density-height-control: 2.75rem; 
+    }
+  }
+}
+
 /*
  * Typography role utilities (DS-060).
  *
