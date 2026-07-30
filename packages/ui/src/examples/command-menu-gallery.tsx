@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "@workspace/ui/components/icon"
 import {
   Home01Icon,
   Search01Icon,
@@ -24,7 +24,7 @@ export function CommandMenuGallery() {
           id: "open-dashboard",
           label: "Open dashboard",
           description: "View account activity and positions",
-          icon: <HugeiconsIcon icon={Home01Icon} strokeWidth={2} />,
+          icon: <Icon icon={Home01Icon} size="md" />,
           shortcut: ["⌘", "1"],
           onSelect: () => setLastAction("Opened dashboard"),
         },
@@ -32,7 +32,7 @@ export function CommandMenuGallery() {
           id: "search-markets",
           label: "Search markets",
           description: "Find a market by name or symbol",
-          icon: <HugeiconsIcon icon={Search01Icon} strokeWidth={2} />,
+          icon: <Icon icon={Search01Icon} size="md" />,
           shortcut: ["⌘", "K"],
           onSelect: () => setLastAction("Started market search"),
         },
@@ -46,7 +46,7 @@ export function CommandMenuGallery() {
           id: "open-settings",
           label: "Open settings",
           description: "Manage application preferences",
-          icon: <HugeiconsIcon icon={Settings01Icon} strokeWidth={2} />,
+          icon: <Icon icon={Settings01Icon} size="md" />,
           shortcut: ["⌘", ","],
           onSelect: () => setLastAction("Opened settings"),
         },

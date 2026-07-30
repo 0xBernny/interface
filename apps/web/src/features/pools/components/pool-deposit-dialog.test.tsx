@@ -16,7 +16,7 @@ vi.mock("../lib/pool-transactions", () => ({
   submitPoolWithdrawal: vi.fn(),
 }))
 
-vi.mock("sonner", () => ({
+vi.mock("@workspace/ui/components/toast", () => ({
   toast: {
     loading: vi.fn().mockReturnValue("toast-id"),
     success: vi.fn(),

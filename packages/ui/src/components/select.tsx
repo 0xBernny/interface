@@ -4,7 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 
 import { ChevronDownIcon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
 
 function Select<TValue, TMultiple extends boolean | undefined = false>({
@@ -36,7 +36,7 @@ function SelectTrigger({
         data-slot="select-trigger-icon"
         className="text-muted-foreground"
       >
-        <HugeiconsIcon icon={ChevronDownIcon} strokeWidth={2} />
+        <Icon icon={ChevronDownIcon} size="sm" tone="muted" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -99,7 +99,7 @@ function SelectItem({
         data-slot="select-item-indicator"
         className="absolute left-2 inline-flex items-center justify-center"
       >
-        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2} className="size-3.5" />
+        <Icon icon={Tick02Icon} size="sm" />
       </SelectPrimitive.ItemIndicator>
       <SelectPrimitive.ItemText data-slot="select-item-text">
         {children}

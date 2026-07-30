@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
 import { cleanup, render, screen, fireEvent } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { toast } from "sonner"
+import { toast } from "@workspace/ui/components/toast"
 import { CodeDisplay } from "./code-display"
 
-vi.mock("sonner", () => ({
+vi.mock("@workspace/ui/components/toast", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
 

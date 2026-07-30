@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@workspace/ui/components/button"
-import { toast } from "sonner"
+import { toast } from "@workspace/ui/components/toast"
 
 import { cn } from "@workspace/ui/lib/utils"
 import { useBalance } from "../hooks/useBalance"

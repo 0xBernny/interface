@@ -3,7 +3,7 @@
 import * as React from "react"
 
 import { ChevronDownIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
 
 type AccordionType = "single" | "multiple"
@@ -212,11 +212,12 @@ function AccordionTrigger({
       >
         <span>{children}</span>
         {showIcon && (
-          <HugeiconsIcon
-            aria-hidden="true"
+          <Icon
             icon={ChevronDownIcon}
             strokeWidth={2.5}
-            className="size-3.5 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
+            size="sm"
+            tone="muted"
+            className="shrink-0 transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
           />
         )}
       </button>

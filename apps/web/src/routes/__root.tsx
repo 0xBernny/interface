@@ -5,7 +5,8 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router"
-import { Toaster } from "sonner"
+import { ToastProvider } from "@workspace/ui/components/toast"
+import { DensityProvider } from "@workspace/ui/components/density-provider"
 import appCss from "@workspace/ui/globals.css?url"
 import { AppProviders } from "../app/providers"
 import { RouteAnnouncer } from "../shared/components/RouteAnnouncer"
@@ -162,11 +163,6 @@ function RootComponent() {
 const THEME_SCRIPT =
   `(function(){try{var t=localStorage.getItem('so4-theme');var d=t==='dark'||((!t||t==='system')&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.classList.add(d?'dark':'light')}catch(e){}})()` as const
 
-function ThemedToaster() {
-  const { theme } = useTheme()
-  return <Toaster richColors position="bottom-right" theme={theme} />
-}
-
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     // suppressHydrationWarning: the blocking script adds a class before React
@@ -184,10 +180,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         />
       </head>
       <body>
-        <AppProviders>
-          {children}
-          <ThemedToaster />
-        </AppProviders>
+        <DensityProvider>
+          <AppProviders>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </AppProviders>
+        </DensityProvider>
         <Scripts />
       </body>
     </html>
