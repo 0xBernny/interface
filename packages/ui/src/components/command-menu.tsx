@@ -146,7 +146,7 @@ export function CommandMenu({
             />
           </div>
 
-          <ScrollArea className="max-h-80">
+          <ScrollArea className="max-h-80" tone="overlay">
             <ComboboxList className="space-y-3 p-2">
               {filteredGroups.map((group) => {
                 const groupItems = group.items.map((item) => {

@@ -6,14 +6,17 @@ import { Button } from "@workspace/ui/components/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Input } from "@workspace/ui/components/input"
 import { KeyboardShortcut } from "@workspace/ui/components/keyboard-shortcut"
+import { LiveRegion } from "@workspace/ui/components/live-region"
 import { PageHeader } from "@workspace/ui/components/page-header"
 import { ProgressIndicator } from "@workspace/ui/components/progress-indicator"
-import { Separator } from "@workspace/ui/components/separator"
+import { ScrollArea } from "@workspace/ui/components/scroll-area"
+import { Divider, Separator } from "@workspace/ui/components/separator"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Slider } from "@workspace/ui/components/slider"
 import { Spinner } from "@workspace/ui/components/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
+import { VisuallyHidden } from "@workspace/ui/components/visually-hidden"
 
 const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const
 const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const
@@ -21,6 +24,7 @@ const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost
 const AVATAR_SIZES = ["xs", "sm", "md", "lg", "xl", "2xl"] as const
 const PROGRESS_SIZES = ["sm", "md", "lg"] as const
 const PROGRESS_TONES = ["neutral", "accent", "success", "danger"] as const
+const SEPARATOR_TONES = ["subtle", "default", "strong"] as const
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -45,6 +49,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
  */
 export function GalleryPage() {
   const [sliderValue, setSliderValue] = useState<Array<number>>([40])
+  const [announceCount, setAnnounceCount] = useState(0)
 
   return (
     <main className="mx-auto max-w-4xl space-y-10 p-6">
@@ -139,6 +144,106 @@ export function GalleryPage() {
         <p className="text-sm text-foreground">Above the separator</p>
         <Separator className="my-3" />
         <p className="text-sm text-foreground">Below the separator</p>
+
+        <div className="mt-6 space-y-3">
+          {SEPARATOR_TONES.map((tone) => (
+            <div key={tone} className="space-y-2">
+              <p className="text-11 uppercase text-muted-foreground">{tone}</p>
+              <Separator tone={tone} decorative />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 flex h-10 items-center gap-3 text-sm text-foreground">
+          <span>Vertical</span>
+          <Separator orientation="vertical" decorative />
+          <span>in a flex row</span>
+          <Separator orientation="vertical" tone="strong" decorative />
+          <span>without a fixed height</span>
+        </div>
+      </Section>
+
+      <Section title="Divider">
+        <div className="space-y-6">
+          <Divider label="or" />
+          <Divider label="Advanced" align="start" tone="subtle" />
+          <Divider label="Yesterday" align="end" tone="strong" />
+        </div>
+      </Section>
+
+      <Section title="ScrollArea">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="space-y-2">
+            <p className="text-11 uppercase text-muted-foreground">
+              Vertical — edge shadows follow scroll position
+            </p>
+            <ScrollArea className="max-h-40 rounded-md border border-border" tone="card">
+              <div className="space-y-1 p-3">
+                {Array.from({ length: 20 }, (_, i) => (
+                  <p key={i} className="text-13 text-foreground">
+                    Row {i + 1}
+                  </p>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-11 uppercase text-muted-foreground">Horizontal</p>
+            <ScrollArea
+              orientation="horizontal"
+              className="rounded-md border border-border"
+              tone="card"
+            >
+              <div className="flex w-max gap-2 p-3">
+                {Array.from({ length: 16 }, (_, i) => (
+                  <span
+                    key={i}
+                    className="rounded-md border border-border px-3 py-1 text-13 text-foreground"
+                  >
+                    Market {i + 1}
+                  </span>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        </div>
+      </Section>
+
+      <Section title="Accessibility primitives">
+        <div className="space-y-4">
+          <p className="text-13 text-muted-foreground">
+            VisuallyHidden and LiveRegion render nothing visible by default — the
+            button below carries a hidden label, and the counter announces itself
+            politely. See packages/ui/ACCESSIBILITY_PRIMITIVES.md.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="outline" onClick={() => setAnnounceCount((n) => n + 1)}>
+              Announce
+              <VisuallyHidden> a polite status message</VisuallyHidden>
+            </Button>
+            <LiveRegion
+              visible
+              message={
+                announceCount === 0
+                  ? "Nothing announced yet"
+                  : `Announced ${announceCount} time(s)`
+              }
+              announcementKey={announceCount}
+              className="text-13 text-muted-foreground"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-13 text-muted-foreground">
+              Focusable hidden content (tab to reveal):
+            </span>
+            <VisuallyHidden focusable>
+              <button type="button" className="text-13 text-primary underline">
+                Hidden until focused
+              </button>
+            </VisuallyHidden>
+          </div>
+        </div>
       </Section>
 
       <Section title="Tooltip">
@@ -159,6 +264,10 @@ export function GalleryPage() {
             <AppShell
               variant="constrained"
               maxWidth="full"
+              // Preview only: the real page already owns the <main> landmark
+              // and the skip-link target, and neither may be duplicated.
+              landmark={false}
+              skipLink={false}
               navbar={
                 <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
                   <span className="text-13 font-medium text-foreground">Navbar slot</span>
@@ -182,6 +291,8 @@ export function GalleryPage() {
           <div className="overflow-hidden rounded-lg border border-border">
             <AppShell
               variant="full"
+              landmark={false}
+              skipLink={false}
               navbar={
                 <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
                   <span className="text-13 font-medium text-foreground">Navbar slot</span>

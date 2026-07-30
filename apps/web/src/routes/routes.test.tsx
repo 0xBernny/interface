@@ -50,6 +50,10 @@ vi.mock("@tanstack/react-router", () => {
       useLoaderData: () => ({}),
       useParams: () => ({}),
     }),
+    // __root now renders the route announcer above <Outlet /> (DS-078)
+    Outlet: () => null,
+    useLocation: (opts?: { select?: (location: { pathname: string }) => unknown }) =>
+      opts?.select ? opts.select({ pathname: "/" }) : { pathname: "/" },
   }
 })
 
