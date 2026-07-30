@@ -19,7 +19,7 @@ function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
 }
 
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
+  return <DialogPrimitive.Close data-slot="dialog-close" className="touch-target" {...props} />
 }
 
 function DialogOverlay({
@@ -37,6 +37,7 @@ function DialogOverlay({
     />
   )
 }
+
 
 function DialogContent({
   className,
@@ -59,6 +60,8 @@ function DialogContent({
           // Layout, surface, typography
           "flex flex-col gap-4 rounded-xl bg-popover p-4 text-xs/relaxed text-popover-foreground",
           "ring-1 ring-foreground/10 outline-none",
+          // Safe areas for mobile layouts
+          "max-sm:safe-top max-sm:safe-bottom max-sm:safe-left max-sm:safe-right",
           // Desktop max-width default
           "sm:max-w-sm",
           // Enter / exit animations
@@ -76,7 +79,7 @@ function DialogContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-2 right-2"
+                className="absolute top-2 right-2 touch-target" // <-- AGREGADO AQUÍ
                 size="icon-sm"
               />
             }

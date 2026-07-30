@@ -351,50 +351,213 @@
 }
 
 /*
- * High-contrast mode overrides (DS-066)
+ * Windows forced-colors mode support (DS-067)
  *
- * When .high-contrast is applied to :root, these overrides ensure WCAG AAA
- * contrast ratios for essential text and controls. Applied independently of
- * light/dark theme choice.
+ * When Windows High Contrast Mode is active, CSS gradients, translucent
+ * borders, and custom colors are replaced with system colors. These overrides
+ * ensure core primitives remain operable and distinguishable.
+ *
+ * System color keywords:
+ * - ButtonText, ButtonFace, GrayText, Highlight, HighlightText
+ * - LinkText, CanvasText, Canvas, Field, FieldText
+ * - Mark, MarkText
+ *
+ * Reference: https://drafts.csswg.org/css-color-adjust-1/#forced
  */
-.high-contrast {
-  /* Boost primary text contrast */
-  --text-primary: oklch(0 0 0); /* Pure black in light, adjusted in dark */
-  --text-secondary: oklch(0.3 0 0);
-  --text-tertiary: oklch(0.4 0 0);
-  
-  /* Stronger borders */
-  --border: oklch(0.6 0 0);
-  --input: oklch(0.5 0 0);
-  
-  /* Enhanced focus indicators */
-  --ring: oklch(0.4 0.2 242.749);
-  
-  /* Clearer interactive states */
-  --primary: oklch(0.45 0.15 242.749);
-  --destructive: oklch(0.5 0.25 27.325);
-  
-  /* Status colors remain distinguishable */
-  --success: oklch(0.5 0.16 163.225);
-  --warning: oklch(0.6 0.18 75.834);
-  --info: oklch(0.45 0.25 262.881);
-}
+@media (forced-colors: active) {
+  /* Base text and backgrounds */
+  * {
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border-color: CanvasText !important;
+  }
 
-.dark.high-contrast {
-  /* Dark mode high-contrast adjustments */
-  --text-primary: oklch(1 0 0); /* Pure white */
-  --text-secondary: oklch(0.85 0 0);
-  --text-tertiary: oklch(0.7 0 0);
-  
-  --border: oklch(0.5 0 0);
-  --input: oklch(0.6 0 0);
-  
-  --ring: oklch(0.7 0.2 242.749);
-  
-  --primary: oklch(0.65 0.15 242.749);
-  --destructive: oklch(0.65 0.25 27.325);
-  
-  --success: oklch(0.65 0.16 163.225);
-  --warning: oklch(0.75 0.18 75.834);
-  --info: oklch(0.65 0.25 262.881);
+  /* Buttons */
+  button,
+  [role="button"],
+  [data-slot="button"] {
+    background-color: ButtonFace !important;
+    color: ButtonText !important;
+    border: 1px solid ButtonText !important;
+  }
+
+  button:hover,
+  [role="button"]:hover,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  button:disabled,
+  [role="button"]:disabled,
+  button[aria-disabled="true"],
+  [role="button"][aria-disabled="true"] {
+    color: GrayText !important;
+    border-color: GrayText !important;
+  }
+
+  /* Links */
+  a {
+    color: LinkText !important;
+    text-decoration: underline;
+  }
+
+  a:hover,
+  a:focus-visible {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    outline: 2px solid Highlight !important;
+  }
+
+  /* Form controls */
+  input,
+  textarea,
+  select,
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="select"] {
+    background-color: Field !important;
+    color: FieldText !important;
+    border: 1px solid FieldText !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    forced-color-adjust: none;
+    outline: 2px solid Highlight !important;
+    outline-offset: 0;
+  }
+
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    color: GrayText !important;
+    border-color: GrayText !important;
+  }
+
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  [data-slot="input"][aria-invalid="true"] {
+    border: 2px solid CanvasText !important;
+    outline: 1px solid CanvasText !important;
+    outline-offset: -3px;
+  }
+
+  /* Checkboxes and radios */
+  input[type="checkbox"],
+  input[type="radio"],
+  [role="checkbox"],
+  [role="radio"] {
+    forced-color-adjust: none;
+    appearance: auto;
+    background-color: Field !important;
+    border: 1px solid FieldText !important;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked,
+  [role="checkbox"][aria-checked="true"],
+  [role="radio"][aria-checked="true"] {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    border-color: Highlight !important;
+  }
+
+  /* Selected and highlighted states */
+  [aria-selected="true"],
+  [data-selected="true"],
+  [aria-current]:not([aria-current="false"]) {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight !important;
+  }
+
+  /* Tabs */
+  [role="tab"][aria-selected="true"] {
+    forced-color-adjust: none;
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border-bottom: 3px solid CanvasText !important;
+  }
+
+  /* Dialogs and overlays */
+  [role="dialog"],
+  [role="alertdialog"],
+  [data-slot="dialog"],
+  [data-slot="sheet"] {
+    background-color: Canvas !important;
+    border: 2px solid CanvasText !important;
+  }
+
+  /* Alerts */
+  [role="alert"],
+  [role="status"],
+  [data-slot="alert"] {
+    border: 2px solid CanvasText !important;
+  }
+
+  /* Menus */
+  [role="menu"],
+  [role="menubar"],
+  [role="listbox"] {
+    background-color: Canvas !important;
+    border: 1px solid CanvasText !important;
+  }
+
+  [role="menuitem"],
+  [role="option"] {
+    color: CanvasText !important;
+  }
+
+  [role="menuitem"]:hover,
+  [role="menuitem"]:focus,
+  [role="option"]:hover,
+  [role="option"]:focus,
+  [role="menuitem"][data-highlighted],
+  [role="option"][data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+  }
+
+  /* Focus indicators - always visible */
+  *:focus-visible {
+    forced-color-adjust: none;
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  /* Icons and SVGs */
+  svg {
+    forced-color-adjust: auto;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  /* Ensure separators are visible */
+  hr,
+  [role="separator"] {
+    border-color: CanvasText !important;
+    background-color: CanvasText !important;
+  }
+
+  /* Remove background images and gradients */
+  * {
+    background-image: none !important;
+  }
+
+  /* Ensure tooltips are visible */
+  [role="tooltip"] {
+    forced-color-adjust: none;
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border: 1px solid CanvasText !important;
+  }
 }
