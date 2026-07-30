@@ -4,7 +4,7 @@ import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 
 import { MinusSignIcon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
@@ -22,16 +22,14 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
         className="flex items-center justify-center text-current"
       >
         {props.indeterminate ? (
-          <HugeiconsIcon
+          <Icon
             icon={MinusSignIcon}
-            strokeWidth={2.5}
-            className="size-3"
+            size="sm"
           />
         ) : (
-          <HugeiconsIcon
+          <Icon
             icon={Tick02Icon}
-            strokeWidth={2.5}
-            className="size-3"
+            size="sm"
           />
         )}
       </CheckboxPrimitive.Indicator>

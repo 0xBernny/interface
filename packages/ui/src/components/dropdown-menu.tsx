@@ -4,7 +4,7 @@ import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
 import { CheckmarkCircle01Icon, RadioButtonIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
@@ -88,10 +88,9 @@ function DropdownMenuCheckboxItem({
         data-slot="dropdown-menu-checkbox-item-indicator"
         className="absolute left-2 inline-flex items-center justify-center"
       >
-        <HugeiconsIcon
+        <Icon
           icon={CheckmarkCircle01Icon}
-          strokeWidth={2}
-          className="size-3.5"
+          size="sm"
         />
       </MenuPrimitive.CheckboxItemIndicator>
       {children}
@@ -126,10 +125,9 @@ function DropdownMenuRadioItem({
         data-slot="dropdown-menu-radio-item-indicator"
         className="absolute left-2 inline-flex items-center justify-center"
       >
-        <HugeiconsIcon
+        <Icon
           icon={RadioButtonIcon}
-          strokeWidth={2}
-          className="size-3.5"
+          size="sm"
         />
       </MenuPrimitive.RadioItemIndicator>
       {children}
