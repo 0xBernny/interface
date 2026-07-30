@@ -349,3 +349,215 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums slashed-zero;
 }
+
+/*
+ * Windows forced-colors mode support (DS-067)
+ *
+ * When Windows High Contrast Mode is active, CSS gradients, translucent
+ * borders, and custom colors are replaced with system colors. These overrides
+ * ensure core primitives remain operable and distinguishable.
+ *
+ * System color keywords:
+ * - ButtonText, ButtonFace, GrayText, Highlight, HighlightText
+ * - LinkText, CanvasText, Canvas, Field, FieldText
+ * - Mark, MarkText
+ *
+ * Reference: https://drafts.csswg.org/css-color-adjust-1/#forced
+ */
+@media (forced-colors: active) {
+  /* Base text and backgrounds */
+  * {
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border-color: CanvasText !important;
+  }
+
+  /* Buttons */
+  button,
+  [role="button"],
+  [data-slot="button"] {
+    background-color: ButtonFace !important;
+    color: ButtonText !important;
+    border: 1px solid ButtonText !important;
+  }
+
+  button:hover,
+  [role="button"]:hover,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  button:disabled,
+  [role="button"]:disabled,
+  button[aria-disabled="true"],
+  [role="button"][aria-disabled="true"] {
+    color: GrayText !important;
+    border-color: GrayText !important;
+  }
+
+  /* Links */
+  a {
+    color: LinkText !important;
+    text-decoration: underline;
+  }
+
+  a:hover,
+  a:focus-visible {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    outline: 2px solid Highlight !important;
+  }
+
+  /* Form controls */
+  input,
+  textarea,
+  select,
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [data-slot="select"] {
+    background-color: Field !important;
+    color: FieldText !important;
+    border: 1px solid FieldText !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    forced-color-adjust: none;
+    outline: 2px solid Highlight !important;
+    outline-offset: 0;
+  }
+
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    color: GrayText !important;
+    border-color: GrayText !important;
+  }
+
+  input[aria-invalid="true"],
+  textarea[aria-invalid="true"],
+  [data-slot="input"][aria-invalid="true"] {
+    border: 2px solid CanvasText !important;
+    outline: 1px solid CanvasText !important;
+    outline-offset: -3px;
+  }
+
+  /* Checkboxes and radios */
+  input[type="checkbox"],
+  input[type="radio"],
+  [role="checkbox"],
+  [role="radio"] {
+    forced-color-adjust: none;
+    appearance: auto;
+    background-color: Field !important;
+    border: 1px solid FieldText !important;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked,
+  [role="checkbox"][aria-checked="true"],
+  [role="radio"][aria-checked="true"] {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    border-color: Highlight !important;
+  }
+
+  /* Selected and highlighted states */
+  [aria-selected="true"],
+  [data-selected="true"],
+  [aria-current]:not([aria-current="false"]) {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+    border-color: Highlight !important;
+  }
+
+  /* Tabs */
+  [role="tab"][aria-selected="true"] {
+    forced-color-adjust: none;
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border-bottom: 3px solid CanvasText !important;
+  }
+
+  /* Dialogs and overlays */
+  [role="dialog"],
+  [role="alertdialog"],
+  [data-slot="dialog"],
+  [data-slot="sheet"] {
+    background-color: Canvas !important;
+    border: 2px solid CanvasText !important;
+  }
+
+  /* Alerts */
+  [role="alert"],
+  [role="status"],
+  [data-slot="alert"] {
+    border: 2px solid CanvasText !important;
+  }
+
+  /* Menus */
+  [role="menu"],
+  [role="menubar"],
+  [role="listbox"] {
+    background-color: Canvas !important;
+    border: 1px solid CanvasText !important;
+  }
+
+  [role="menuitem"],
+  [role="option"] {
+    color: CanvasText !important;
+  }
+
+  [role="menuitem"]:hover,
+  [role="menuitem"]:focus,
+  [role="option"]:hover,
+  [role="option"]:focus,
+  [role="menuitem"][data-highlighted],
+  [role="option"][data-highlighted] {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    color: HighlightText !important;
+  }
+
+  /* Focus indicators - always visible */
+  *:focus-visible {
+    forced-color-adjust: none;
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px;
+  }
+
+  /* Icons and SVGs */
+  svg {
+    forced-color-adjust: auto;
+    fill: currentColor;
+    stroke: currentColor;
+  }
+
+  /* Ensure separators are visible */
+  hr,
+  [role="separator"] {
+    border-color: CanvasText !important;
+    background-color: CanvasText !important;
+  }
+
+  /* Remove background images and gradients */
+  * {
+    background-image: none !important;
+  }
+
+  /* Ensure tooltips are visible */
+  [role="tooltip"] {
+    forced-color-adjust: none;
+    background-color: Canvas !important;
+    color: CanvasText !important;
+    border: 1px solid CanvasText !important;
+  }
+}
