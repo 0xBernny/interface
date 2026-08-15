@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { axe } from "vitest-axe"
 import { Avatar, AvatarImage, AvatarFallback, AvatarGroup } from "./avatar"
 
@@ -28,7 +28,7 @@ describe("Avatar", () => {
     const img = screen.getByRole("img", { name: "User" }) as HTMLImageElement
     expect(img).toBeInTheDocument()
 
-    img.onerror?.(new Event("error"))
+    fireEvent.error(img)
     rerender(<Avatar src="invalid.jpg" alt="User" fallback="AB" />)
     expect(screen.getByText("AB")).toBeInTheDocument()
   })
@@ -107,7 +107,10 @@ describe("AvatarGroup", () => {
       </AvatarGroup>
     )
     const group = screen.getByRole("group")
-    expect(group).toHaveAttribute("aria-label", expect.stringContaining("1 hidden"))
+    expect(group).toHaveAttribute(
+      "aria-label",
+      expect.stringContaining("1 hidden")
+    )
   })
 
   it("forwards ref properly", () => {

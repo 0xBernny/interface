@@ -15,19 +15,16 @@ import type { ComponentProps } from "react"
 
 type MeterThreshold = "neutral" | "success" | "warning" | "danger"
 
-const meterTrackVariants = cva(
-  "relative w-full overflow-hidden rounded-full",
-  {
-    variants: {
-      size: {
-        sm: "h-1",
-        md: "h-2",
-        lg: "h-3",
-      },
+const meterTrackVariants = cva("relative w-full overflow-hidden rounded-full", {
+  variants: {
+    size: {
+      sm: "h-1",
+      md: "h-2",
+      lg: "h-3",
     },
-    defaultVariants: { size: "md" },
   },
-)
+  defaultVariants: { size: "md" },
+})
 
 const meterFillVariants = cva("h-full transition-all ease-out", {
   variants: {
@@ -54,7 +51,8 @@ const meterBackgroundVariants = cva("", {
 })
 
 interface MeterProps
-  extends Omit<ComponentProps<"div">, "role">,
+  extends
+    Omit<ComponentProps<"div">, "role">,
     VariantProps<typeof meterTrackVariants> {
   value: number
   min?: number
@@ -87,7 +85,7 @@ function Meter({
       className={cn(
         meterTrackVariants({ size }),
         meterBackgroundVariants({ threshold }),
-        className,
+        className
       )}
       {...props}
     >
@@ -137,11 +135,20 @@ function normalizeSegments(segments: AllocationSegment[]): Array<{
   })
 
   const adjustedTotal = adjusted.reduce((sum, p) => sum + p, 0)
+  const excess = Math.max(0, adjustedTotal - 100)
+  const reducibleTotal = adjusted.reduce(
+    (sum, pct) => sum + Math.max(0, pct - MIN_SEGMENT_PCT),
+    0
+  )
 
-  const normalized =
-    adjustedTotal === 0
-      ? adjusted
-      : adjusted.map((p) => (p / adjustedTotal) * 100)
+  // Pay for raised tiny segments from larger segments while preserving the
+  // minimum. Renormalizing every segment would shrink tiny segments below it.
+  const normalized = adjusted.map((pct) => {
+    const reducible = Math.max(0, pct - MIN_SEGMENT_PCT)
+    return reducibleTotal === 0
+      ? pct
+      : pct - excess * (reducible / reducibleTotal)
+  })
 
   return segments.map((s, i) => ({
     label: s.label,
@@ -191,11 +198,14 @@ function AllocationBar({
       <div
         className={cn(
           "flex w-full overflow-hidden rounded-full",
-          allocationSizeMap[size ?? "md"],
+          allocationSizeMap[size ?? "md"]
         )}
         role="img"
         aria-label={`Allocation: ${normalized
-          .map((s) => `${s.label} ${total === 0 ? 0 : ((s.value / total) * 100).toFixed(1)}%`)
+          .map(
+            (s) =>
+              `${s.label} ${total === 0 ? 0 : ((s.value / total) * 100).toFixed(1)}%`
+          )
           .join(", ")}`}
       >
         {normalized.map((segment) => (

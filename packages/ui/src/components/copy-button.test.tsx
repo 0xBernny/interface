@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { cleanup, render, screen } from "@testing-library/react"
+import { act, cleanup, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { axe } from "vitest-axe"
 import { CopyButton } from "./copy-button"
@@ -33,7 +33,7 @@ describe("CopyButton", () => {
 
   it("has no accessibility violations in icon-only mode", async () => {
     const { container } = render(
-      <CopyButton value="GABC123" label="Copy address" />,
+      <CopyButton value="GABC123" label="Copy address" />
     )
     const results = await axe(container)
     expect(results).toHaveNoViolations()
@@ -43,7 +43,7 @@ describe("CopyButton", () => {
     const { container } = render(
       <CopyButton value="GABC123" label="Copy address">
         Copy
-      </CopyButton>,
+      </CopyButton>
     )
     const results = await axe(container)
     expect(results).toHaveNoViolations()
@@ -52,17 +52,20 @@ describe("CopyButton", () => {
   it("uses label as accessible name in icon-only mode", () => {
     render(<CopyButton value="GABC123" label="Copy address" />)
     expect(
-      screen.getByRole("button", { name: "Copy address" }),
+      screen.getByRole("button", { name: "Copy address" })
     ).toBeInTheDocument()
   })
 
   it("copies value to clipboard on click", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const clipboardWrite = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockResolvedValue(undefined)
     render(<CopyButton value="GABC123" label="Copy" />)
 
     await user.click(screen.getByRole("button", { name: "Copy" }))
 
-    expect(writeText).toHaveBeenCalledWith("GABC123")
+    expect(clipboardWrite).toHaveBeenCalledWith("GABC123")
   })
 
   it("announces success politely", async () => {
@@ -76,8 +79,10 @@ describe("CopyButton", () => {
   })
 
   it("shows failure state when clipboard rejects", async () => {
-    writeText.mockRejectedValue(new Error("denied"))
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
+      new Error("denied")
+    )
     render(<CopyButton value="test" label="Copy" />)
 
     await user.click(screen.getByRole("button", { name: "Copy" }))
@@ -93,16 +98,19 @@ describe("CopyButton", () => {
     await user.click(screen.getByRole("button", { name: "Copy" }))
     expect(screen.getByRole("status")).toHaveTextContent("Copied!")
 
-    vi.advanceTimersByTime(500)
+    act(() => vi.advanceTimersByTime(500))
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument()
   })
 
   it("does not fire when disabled", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const clipboardWrite = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockResolvedValue(undefined)
     render(<CopyButton value="test" label="Copy" disabled />)
 
     await user.click(screen.getByRole("button", { name: "Copy" }))
-    expect(writeText).not.toHaveBeenCalled()
+    expect(clipboardWrite).not.toHaveBeenCalled()
   })
 })

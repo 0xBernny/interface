@@ -3,25 +3,28 @@ import { cva } from "class-variance-authority"
 import { cn } from "@workspace/ui/lib/utils"
 import type { VariantProps } from "class-variance-authority"
 
-const progressIndicatorVariants = cva("relative w-full overflow-hidden rounded-full", {
-  variants: {
-    size: {
-      sm: "h-1",
-      md: "h-2",
-      lg: "h-3",
+const progressIndicatorVariants = cva(
+  "relative w-full overflow-hidden rounded-full",
+  {
+    variants: {
+      size: {
+        sm: "h-1",
+        md: "h-2",
+        lg: "h-3",
+      },
+      tone: {
+        neutral: "bg-surface-sunken",
+        accent: "bg-surface-sunken",
+        success: "bg-success-subtle",
+        danger: "bg-danger-subtle",
+      },
     },
-    tone: {
-      neutral: "bg-surface-sunken",
-      accent: "bg-surface-sunken",
-      success: "bg-success-subtle",
-      danger: "bg-danger-subtle",
+    defaultVariants: {
+      size: "md",
+      tone: "neutral",
     },
-  },
-  defaultVariants: {
-    size: "md",
-    tone: "neutral",
-  },
-})
+  }
+)
 
 const progressBarVariants = cva("h-full transition-all ease-out", {
   variants: {
@@ -38,7 +41,8 @@ const progressBarVariants = cva("h-full transition-all ease-out", {
 })
 
 interface ProgressIndicatorProps
-  extends React.ComponentProps<"div">,
+  extends
+    React.ComponentProps<"div">,
     VariantProps<typeof progressIndicatorVariants> {
   value?: number
   max?: number
@@ -61,12 +65,14 @@ const ProgressIndicator = forwardRef<HTMLDivElement, ProgressIndicatorProps>(
     ref
   ) => {
     const clampedValue = Math.min(Math.max(value, min), max)
-    const percentage = max === min ? 0 : ((clampedValue - min) / (max - min)) * 100
+    const percentage =
+      max === min ? 0 : ((clampedValue - min) / (max - min)) * 100
 
     return (
       <div
         ref={ref}
         data-slot="progress-indicator"
+        data-tone={tone}
         className={cn(progressIndicatorVariants({ size, tone }), className)}
         role="progressbar"
         aria-valuenow={clampedValue}
@@ -88,4 +94,8 @@ const ProgressIndicator = forwardRef<HTMLDivElement, ProgressIndicatorProps>(
 )
 ProgressIndicator.displayName = "ProgressIndicator"
 
-export { ProgressIndicator, progressIndicatorVariants, type ProgressIndicatorProps }
+export {
+  ProgressIndicator,
+  progressIndicatorVariants,
+  type ProgressIndicatorProps,
+}

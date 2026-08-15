@@ -10,18 +10,18 @@ import {
   explorerUrl,
 } from "./address-display"
 
-const ACCOUNT = "GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN"
+const ACCOUNT = "GCHSTH45PP3LUDHR4PVTXR4GRYF7S24NYTZQONAEPKSOOTWGNV7YAAJM"
 const CONTRACT = "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF"
 const TX_HASH =
   "a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2"
 
 describe("truncate", () => {
   it("truncates with default 4 chars", () => {
-    expect(truncate(ACCOUNT, 4)).toBe("GAAZ…CWWN")
+    expect(truncate(ACCOUNT, 4)).toBe("GCHS…AAJM")
   })
 
   it("supports custom visible chars", () => {
-    expect(truncate(ACCOUNT, 6)).toBe("GAAZI4…OCCWN")
+    expect(truncate(ACCOUNT, 6)).toBe("GCHSTH…7YAAJM")
   })
 
   it("returns full value when too short to truncate", () => {
@@ -62,25 +62,25 @@ describe("isValidIdentifier", () => {
 describe("explorerUrl", () => {
   it("generates testnet account URL", () => {
     expect(explorerUrl(ACCOUNT, "account", "testnet")).toBe(
-      `https://stellar.expert/explorer/testnet/account/${ACCOUNT}`,
+      `https://stellar.expert/explorer/testnet/account/${ACCOUNT}`
     )
   })
 
   it("generates mainnet account URL", () => {
     expect(explorerUrl(ACCOUNT, "account", "mainnet")).toBe(
-      `https://stellar.expert/explorer/public/account/${ACCOUNT}`,
+      `https://stellar.expert/explorer/public/account/${ACCOUNT}`
     )
   })
 
   it("generates contract URL", () => {
     expect(explorerUrl(CONTRACT, "contract", "testnet")).toBe(
-      `https://stellar.expert/explorer/testnet/contract/${CONTRACT}`,
+      `https://stellar.expert/explorer/testnet/contract/${CONTRACT}`
     )
   })
 
   it("generates transaction URL", () => {
     expect(explorerUrl(TX_HASH, "transaction", "testnet")).toBe(
-      `https://stellar.expert/explorer/testnet/tx/${TX_HASH}`,
+      `https://stellar.expert/explorer/testnet/tx/${TX_HASH}`
     )
   })
 
@@ -121,7 +121,7 @@ describe("AddressDisplay", () => {
 
   it("renders truncated address with monospace font", () => {
     render(<AddressDisplay value={ACCOUNT} />)
-    expect(screen.getByText("GAAZ…CWWN")).toBeInTheDocument()
+    expect(screen.getByText("GCHS…AAJM")).toBeInTheDocument()
   })
 
   it("has the full value as accessible label", () => {
@@ -136,10 +136,13 @@ describe("AddressDisplay", () => {
 
   it("copies the complete identifier on copy button click", async () => {
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime })
+    const clipboardWrite = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockResolvedValue(undefined)
     render(<AddressDisplay value={ACCOUNT} />)
 
     await user.click(screen.getByRole("button", { name: "Copy account" }))
-    expect(writeText).toHaveBeenCalledWith(ACCOUNT)
+    expect(clipboardWrite).toHaveBeenCalledWith(ACCOUNT)
   })
 
   it("hides copy button when copyable is false", () => {
@@ -154,24 +157,18 @@ describe("AddressDisplay", () => {
         explorerLink
         network="testnet"
         copyable={false}
-      />,
+      />
     )
     const link = screen.getByRole("link")
     expect(link).toHaveAttribute(
       "href",
-      `https://stellar.expert/explorer/testnet/account/${ACCOUNT}`,
+      `https://stellar.expert/explorer/testnet/account/${ACCOUNT}`
     )
     expect(link).toHaveAttribute("target", "_blank")
   })
 
   it("does not render broken explorer link for invalid values", () => {
-    render(
-      <AddressDisplay
-        value="invalid"
-        explorerLink
-        copyable={false}
-      />,
-    )
+    render(<AddressDisplay value="invalid" explorerLink copyable={false} />)
     expect(screen.queryByRole("link")).not.toBeInTheDocument()
   })
 
@@ -183,18 +180,18 @@ describe("AddressDisplay", () => {
         explorerLink
         network="testnet"
         copyable={false}
-      />,
+      />
     )
     const link = screen.getByRole("link")
     expect(link).toHaveAttribute(
       "href",
-      `https://stellar.expert/explorer/testnet/contract/${CONTRACT}`,
+      `https://stellar.expert/explorer/testnet/contract/${CONTRACT}`
     )
   })
 
   it("supports custom visible chars", () => {
     render(<AddressDisplay value={ACCOUNT} visibleChars={6} copyable={false} />)
-    expect(screen.getByText("GAAZI4…OCCWN")).toBeInTheDocument()
+    expect(screen.getByText("GCHSTH…7YAAJM")).toBeInTheDocument()
   })
 
   it("has no accessibility violations", async () => {
@@ -235,12 +232,12 @@ describe("HashDisplay", () => {
         explorerLink
         network="testnet"
         copyable={false}
-      />,
+      />
     )
     const link = screen.getByRole("link")
     expect(link).toHaveAttribute(
       "href",
-      `https://stellar.expert/explorer/testnet/tx/${TX_HASH}`,
+      `https://stellar.expert/explorer/testnet/tx/${TX_HASH}`
     )
   })
 

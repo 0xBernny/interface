@@ -74,7 +74,7 @@ function StatLabel({
   className,
   children,
   ...props
-}: ComponentProps<"span"> & { uppercase?: boolean }) {
+}: Omit<ComponentProps<"span">, "ref"> & { uppercase?: boolean }) {
   return (
     <Text
       size="2xs"
@@ -90,7 +90,7 @@ function StatLabel({
   )
 }
 
-type StatValueProps = ComponentProps<"span"> & {
+type StatValueProps = Omit<ComponentProps<"span">, "role"> & {
   role?: NumericRole
   size?: ComponentProps<typeof NumericText>["size"]
   weight?: ComponentProps<typeof NumericText>["weight"]
@@ -109,7 +109,7 @@ function StatValue({
   ...props
 }: StatValueProps) {
   if (isLoading) {
-    return <Skeleton className="h-5 w-20" data-slot="stat-value" />
+    return <Skeleton className="h-5 w-20" />
   }
 
   if (unavailable) {
@@ -155,7 +155,7 @@ const DELTA_ROLE: Record<DeltaTone, NumericRole> = {
   neutral: "neutral",
 }
 
-type StatDeltaProps = ComponentProps<"span"> & {
+type StatDeltaProps = Omit<ComponentProps<"span">, "role"> & {
   tone?: DeltaTone
 }
 
@@ -167,7 +167,7 @@ function StatDelta({
 }: StatDeltaProps) {
   return (
     <NumericText
-      role={DELTA_ROLE[tone]}
+      role={DELTA_ROLE[tone] ?? undefined}
       size="2xs"
       data-slot="stat-delta"
       className={className}
@@ -215,4 +215,10 @@ function StatGroup({
 }
 
 export { Stat, StatLabel, StatValue, StatDelta, StatGroup, statGroupVariants }
-export type { StatProps, StatValueProps, StatDeltaProps, StatGroupProps, DeltaTone }
+export type {
+  StatProps,
+  StatValueProps,
+  StatDeltaProps,
+  StatGroupProps,
+  DeltaTone,
+}

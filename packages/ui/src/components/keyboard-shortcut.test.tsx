@@ -11,7 +11,7 @@ describe("KeyboardShortcut", () => {
 
   it("renders single key", () => {
     render(<KeyboardShortcut keys={["Enter"]} />)
-    expect(screen.getByRole("doc-noteref")).toBeInTheDocument()
+    expect(screen.getByLabelText("Enter")).toBeInTheDocument()
   })
 
   it("renders multiple keys with plus separator", () => {
@@ -22,7 +22,7 @@ describe("KeyboardShortcut", () => {
 
   it("provides accessible label with all keys", () => {
     render(<KeyboardShortcut keys={["Mod", "Alt", "K"]} />)
-    const kbd = screen.getByRole("doc-noteref")
+    const kbd = screen.getByLabelText(/Ctrl .* Alt .* K/)
     expect(kbd).toHaveAttribute("aria-label")
   })
 
@@ -33,7 +33,9 @@ describe("KeyboardShortcut", () => {
   })
 
   it("supports presentation variants", () => {
-    const { rerender, container } = render(<KeyboardShortcut keys={["Mod", "K"]} presentation="compact" />)
+    const { rerender, container } = render(
+      <KeyboardShortcut keys={["Mod", "K"]} presentation="compact" />
+    )
     let kbd = container.querySelector("kbd")
     expect(kbd?.className).toContain("gap-0.5")
 
@@ -43,14 +45,16 @@ describe("KeyboardShortcut", () => {
   })
 
   it("accepts custom className", () => {
-    const { container } = render(<KeyboardShortcut keys={["K"]} className="custom-class" />)
+    const { container } = render(
+      <KeyboardShortcut keys={["K"]} className="custom-class" />
+    )
     const kbd = container.querySelector("kbd")
     expect(kbd?.className).toContain("custom-class")
   })
 
   it("normalizes modifiers for readability", () => {
     render(<KeyboardShortcut keys={["mod", "shift", "enter"]} platform="mac" />)
-    const kbd = screen.getByRole("doc-noteref")
+    const kbd = screen.getByLabelText("⌘ + ⇧ + ⏎")
     expect(kbd).toBeInTheDocument()
   })
 })

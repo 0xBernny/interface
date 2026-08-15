@@ -15,7 +15,12 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
-import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@workspace/ui/components/empty"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@workspace/ui/components/empty"
 import { Kbd, KbdGroup } from "@workspace/ui/components/kbd"
 import { ScrollArea } from "@workspace/ui/components/scroll-area"
 import { cn } from "@workspace/ui/lib/utils"
@@ -90,16 +95,21 @@ export function CommandMenu({
         items: group.items.filter((item) =>
           [item.label, item.description]
             .filter(Boolean)
-            .some((value) => value!.toLocaleLowerCase().includes(normalizedQuery)),
+            .some((value) =>
+              value!.toLocaleLowerCase().includes(normalizedQuery)
+            )
         ),
       }))
       .filter((group) => group.items.length > 0)
   }, [groups, normalizedQuery])
   const allItems = React.useMemo(
     () => groups.flatMap((group) => group.items),
-    [groups],
+    [groups]
   )
-
+  const filteredItems = React.useMemo(
+    () => filteredGroups.flatMap((group) => group.items),
+    [filteredGroups]
+  )
   const handleOpenChange = (nextOpen: boolean) => {
     onOpenChange(nextOpen)
     if (!nextOpen && query) {
@@ -113,8 +123,6 @@ export function CommandMenu({
     handleOpenChange(false)
   }
 
-  let itemIndex = 0
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -127,19 +135,21 @@ export function CommandMenu({
 
         <Combobox
           inline
-          items={groups}
-          filteredItems={filteredGroups}
+          items={allItems}
+          filteredItems={filteredItems}
           filter={null}
-          autoHighlight
+          autoHighlight={false}
           inputValue={query}
           onInputValueChange={(value) => onQueryChange(String(value))}
           itemToStringLabel={(item: CommandMenuItem) => item.label}
           value={null}
-          onValueChange={() => undefined}
-          inputRef={inputRef}
+          onValueChange={(item) => {
+            if (item) handleItemSelect(item as CommandMenuItem)
+          }}
         >
           <div className="flex items-center border-b border-border px-1">
             <ComboboxInput
+              ref={inputRef}
               aria-label="Search commands"
               placeholder={placeholder}
               className="flex-1"
@@ -149,23 +159,17 @@ export function CommandMenu({
           <ScrollArea className="max-h-80" tone="overlay">
             <ComboboxList className="space-y-3 p-2">
               {filteredGroups.map((group) => {
-                const groupItems = group.items.map((item) => {
-                  const currentIndex = itemIndex
-                  itemIndex += 1
-                  return { item, index: currentIndex }
-                })
-
                 return (
-                  <ComboboxGroup key={group.id}>
-                    {group.label && <ComboboxGroupLabel>{group.label}</ComboboxGroupLabel>}
+                  <ComboboxGroup key={group.id} items={group.items}>
+                    {group.label && (
+                      <ComboboxGroupLabel>{group.label}</ComboboxGroupLabel>
+                    )}
                     <div className="space-y-0.5">
-                      {groupItems.map(({ item, index }) => (
+                      {group.items.map((item) => (
                         <ComboboxItem
                           key={item.id}
                           value={item}
-                          index={index}
                           disabled={item.disabled}
-                          onClick={() => handleItemSelect(item)}
                         >
                           {item.icon && (
                             <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground [&_svg]:size-4">
@@ -173,7 +177,9 @@ export function CommandMenu({
                             </span>
                           )}
                           <span className="min-w-0 flex-1">
-                            <span className="block truncate font-medium">{item.label}</span>
+                            <span className="block truncate font-medium">
+                              {item.label}
+                            </span>
                             {item.description && (
                               <span className="block truncate text-xs text-muted-foreground">
                                 {item.description}
@@ -192,7 +198,9 @@ export function CommandMenu({
                   <EmptyHeader>
                     <EmptyTitle>{emptyTitle}</EmptyTitle>
                     <EmptyDescription>
-                      {normalizedQuery ? emptyDescription : "No commands are available yet."}
+                      {normalizedQuery
+                        ? emptyDescription
+                        : "No commands are available yet."}
                     </EmptyDescription>
                   </EmptyHeader>
                 </Empty>

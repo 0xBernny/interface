@@ -36,7 +36,10 @@ export interface FormError {
   fieldLabel?: string
 }
 
-export interface FormErrorSummaryProps extends React.ComponentProps<"div"> {
+export interface FormErrorSummaryProps extends Omit<
+  React.ComponentProps<"div">,
+  "title"
+> {
   /**
    * Array of validation errors. Each error must reference a valid field `id`
    * so the summary can link to and focus the corresponding control.
@@ -192,7 +195,7 @@ export function FormErrorSummary({
       aria-labelledby="form-error-summary-title"
       tabIndex={-1}
       className={cn(
-        "rounded-lg border border-destructive/30 bg-destructive/10 p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40",
+        "rounded-lg border border-destructive/30 bg-destructive/10 p-4 focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:outline-none",
         className
       )}
       {...props}
@@ -203,7 +206,7 @@ export function FormErrorSummary({
           <div>
             <h2
               id="form-error-summary-title"
-              className="text-13 font-semibold leading-snug text-destructive"
+              className="text-13 leading-snug font-semibold text-destructive"
             >
               {resolvedTitle}
             </h2>
@@ -228,7 +231,7 @@ export function FormErrorSummary({
                     className={cn(
                       "inline-flex items-start gap-1.5 text-xs leading-relaxed text-destructive underline underline-offset-2",
                       "transition-colors hover:text-destructive/80",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2"
+                      "focus-visible:ring-2 focus-visible:ring-destructive/40 focus-visible:ring-offset-2 focus-visible:outline-none"
                     )}
                   >
                     <span className="mt-0.5 inline-block size-1 shrink-0 rounded-full bg-destructive" />

@@ -49,15 +49,13 @@ function MarketRow({
     >
       <span
         title={market.name}
-        className={`font-medium truncate ${isActive ? "text-foreground" : "text-foreground/80"}`}
+        className={`truncate font-medium ${isActive ? "text-foreground" : "text-foreground/80"}`}
       >
         {market.name}
       </span>
       <div className="flex items-center gap-3 text-right">
         <span className="font-mono text-xs text-foreground">
-          {price > 0
-            ? formatUsd(price, { decimals: 4 })
-            : "—"}
+          {price > 0 ? formatUsd(price, { decimals: 4 }) : "—"}
         </span>
         <span
           className={`w-16 font-mono text-xs ${
@@ -92,13 +90,15 @@ export function MarketSelector({ symbol, onSelect }: Props) {
     search.trim() === ""
       ? true
       : m.name.toLowerCase().includes(search.toLowerCase()) ||
-        m.indexTokenAddress.toLowerCase().includes(search.toLowerCase()),
+        m.indexTokenAddress.toLowerCase().includes(search.toLowerCase())
   )
 
   useEffect(() => {
     if (!open) return
 
-    const currentIndex = filtered.findIndex((m) => m.indexTokenAddress === symbol)
+    const currentIndex = filtered.findIndex(
+      (m) => m.indexTokenAddress === symbol
+    )
     setActiveIndex(Math.max(0, currentIndex))
   }, [filtered, open, symbol])
 
@@ -106,7 +106,10 @@ export function MarketSelector({ symbol, onSelect }: Props) {
     if (!open) return
 
     function handleClick(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false)
       }
     }
@@ -199,7 +202,7 @@ export function MarketSelector({ symbol, onSelect }: Props) {
         className="flex items-center gap-1.5 rounded border border-border bg-background px-2 py-1 transition-colors hover:bg-accent"
       >
         <span className="text-sm font-semibold text-foreground">
-          {activeMarket?.name ?? symbol || "Select Market"}
+          {(activeMarket?.name ?? symbol) || "Select Market"}
         </span>
         <svg
           width="12"
@@ -228,9 +231,13 @@ export function MarketSelector({ symbol, onSelect }: Props) {
       )}
 
       {open && (
-        <div className="absolute inset-inline-start-0 top-full z-50 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg">
+        <div className="inset-inline-start-0 absolute top-full z-50 mt-1 w-64 rounded-md border border-border bg-popover shadow-lg">
           <div className="p-2">
-            <label htmlFor={`${comboboxId}-input`} className="sr-only" id={`${comboboxId}-label`}>
+            <label
+              htmlFor={`${comboboxId}-input`}
+              className="sr-only"
+              id={`${comboboxId}-label`}
+            >
               Search markets
             </label>
             <input
@@ -240,19 +247,30 @@ export function MarketSelector({ symbol, onSelect }: Props) {
               aria-labelledby={`${comboboxId}-label`}
               aria-expanded={open}
               aria-controls={listboxId}
-              aria-activedescendant={filtered[activeIndex]?.address ? `${comboboxId}-option-${filtered[activeIndex]?.address}` : undefined}
+              aria-activedescendant={
+                filtered[activeIndex]?.address
+                  ? `${comboboxId}-option-${filtered[activeIndex]?.address}`
+                  : undefined
+              }
               aria-autocomplete="list"
               autoFocus
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleInputKeyDown}
               placeholder="Search markets..."
-              className="w-full rounded bg-background px-2.5 py-1.5 text-xs text-foreground outline-none ring-1 ring-border placeholder:text-muted-foreground focus:ring-primary"
+              className="w-full rounded bg-background px-2.5 py-1.5 text-xs text-foreground ring-1 ring-border outline-none placeholder:text-muted-foreground focus:ring-primary"
             />
           </div>
-          <ul className="max-h-72 overflow-y-auto px-1 pb-1" role="listbox" id={listboxId} aria-labelledby={`${comboboxId}-label`}>
+          <ul
+            className="max-h-72 overflow-y-auto px-1 pb-1"
+            role="listbox"
+            id={listboxId}
+            aria-labelledby={`${comboboxId}-label`}
+          >
             {filtered.length === 0 ? (
-              <li className="px-3 py-4 text-center text-xs text-muted-foreground">No markets found</li>
+              <li className="px-3 py-4 text-center text-xs text-muted-foreground">
+                No markets found
+              </li>
             ) : (
               filtered.map((market, index) => (
                 <MarketRow
