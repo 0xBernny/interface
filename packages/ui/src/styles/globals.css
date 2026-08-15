@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/archivo";
+@import "@fontsource/space-mono/400.css";
+@import "@fontsource/space-mono/700.css";
 
 @custom-variant dark (&:is(.dark *));
 @source "../../../apps/**/*.{ts,tsx}";
@@ -167,6 +170,146 @@
     --gutter-page-sm: 1rem;          /* 16px — mobile */
     --gutter-page-md: 1.5rem;        /* 24px — tablet */
     --gutter-page-lg: 2rem;          /* 32px — desktop */
+}
+
+/*
+ * GMX reference palette and landing theme (GF3).
+ *
+ * Source material for the GrantFox 3 theme revamp — a faithful translation of
+ * GMX's landing theme (gmx-io/gmx-interface @ e27759a, `landing/`) into Tailwind
+ * v4 tokens. Namespaced `gmx-*` so it can never collide with semantic tokens;
+ * the `.dark` theme and the landing page consume these, they are not consumed
+ * directly by app components. Full reference, rationale, and the GMX→SO4 mapping
+ * table: docs/gf_3/001_theme_update.md.
+ *
+ * Fonts: GMX uses the paid TTHoves family, which cannot be redistributed. The
+ * approved OFL stand-in is Archivo (400/500); Space Mono is the same font GMX
+ * uses for code. See 001_theme_update.md §1.1 for the licensed-TTHoves upgrade
+ * path (drop files in apps/web/public/fonts/tthoves/, prepend "TTHoves" to
+ * --font-landing-sans).
+ *
+ * Declared `@theme static` so the full palette is always emitted on `:root` —
+ * the default `@theme` prunes unused variables, and this set is reference
+ * material consumed by `var(--color-gmx-*)` in raw CSS as well as utilities.
+ */
+@theme static {
+    --color-gmx-slate-950: oklch(0.1545 0.0191 283.94);  /* #0B0B14 */
+    --color-gmx-slate-900: oklch(0.1493 0.0216 278.91);  /* #090A14 — page bg */
+    --color-gmx-slate-800: oklch(0.2157 0.0294 280.68);  /* #171827 — cards */
+    --color-gmx-slate-700: oklch(0.2510 0.0360 278.84);  /* #1E2033 */
+    --color-gmx-slate-650: oklch(0.2817 0.0443 277.70);  /* #24273F */
+    --color-gmx-slate-600: oklch(0.3862 0.0663 278.34);  /* #3C4067 — borders */
+    --color-gmx-slate-500: oklch(0.7242 0.0478 281.04);  /* #A0A3C4 — muted text */
+    --color-gmx-slate-400: oklch(0.8145 0.0364 282.07);  /* #BEC0DA — secondary text */
+    --color-gmx-light-150: oklch(0.9705 0.0054 274.97);  /* #F4F5F9 — light band */
+    --color-gmx-blue-100: oklch(0.8136 0.0838 261.37);   /* #A4C3F9 */
+    --color-gmx-blue-300: oklch(0.6651 0.1789 275.83);   /* #7885ff — hover accent */
+    --color-gmx-blue-400: oklch(0.5099 0.2688 268.08);   /* #2D42FC — brand/CTA */
+    --color-gmx-stroke-primary: oklch(0.3591 0.0539 277.68);  /* #363A59 */
+    --color-gmx-surface-primary: oklch(0.1959 0.0264 276.95); /* #121421 */
+
+    --font-landing-sans: "Archivo Variable", "Geist Variable", sans-serif;
+    --font-landing-code: "Space Mono", "Geist Mono Variable", monospace;
+
+    /* GMX line-heights — headings tighter than 1.0 is the signature look */
+    --leading-heading-lg: 0.98;
+    --leading-heading-md: 1.08;
+    --leading-body-sm: 1.36;
+    --leading-body-md: 1.44;
+
+    /* Tweet/testimonial marquee (SocialSection) */
+    --animate-scroll: scroll 60s linear infinite;
+    @keyframes scroll {
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(-50%); }
+    }
+}
+
+/*
+ * GMX landing typography and button components (GF3).
+ *
+ * Verbatim translations of GMX's `fontComponentsPlugin` classes to 16px-root
+ * rems (GMX runs a 10px root; SO4 does not — see 001_theme_update.md §2).
+ * Landing-scoped: use on the landing route, not in app components, which keep
+ * the DS-060 text-* roles above.
+ */
+@utility text-heading-1 {
+    font-size: 3.125rem;           /* 50px */
+    font-weight: 500;
+    line-height: var(--leading-heading-lg);
+    letter-spacing: -2.6px;
+    @media (min-width: 640px) {
+        font-size: 6.25rem;        /* 100px */
+        letter-spacing: -5.2px;
+    }
+}
+@utility text-heading-2 {
+    font-size: 2.5rem;             /* 40px */
+    font-weight: 500;
+    line-height: var(--leading-heading-lg);
+    letter-spacing: -2.08px;
+    @media (min-width: 640px) {
+        font-size: 5rem;           /* 80px */
+        letter-spacing: -4.16px;
+    }
+}
+@utility text-heading-3 {
+    font-size: 2rem;               /* 32px */
+    font-weight: 500;
+    line-height: var(--leading-heading-md);
+    letter-spacing: -0.96px;
+}
+@utility text-heading-4 {
+    font-size: 1.5rem;             /* 24px */
+    font-weight: 500;
+    line-height: var(--leading-heading-md);
+    letter-spacing: -0.96px;
+}
+@utility text-subheadline {
+    font-size: 0.875rem;           /* 14px */
+    font-weight: 500;
+    line-height: var(--leading-body-sm);
+    letter-spacing: 0.028px;
+    color: var(--color-gmx-slate-400);
+}
+@utility text-description {
+    font-size: 1rem;               /* 16px */
+    font-weight: 400;
+    line-height: var(--leading-body-sm);
+    letter-spacing: 0.028px;
+    color: var(--color-gmx-slate-400);
+}
+@utility btn-landing {
+    background-color: var(--color-gmx-blue-400);
+    color: #fff;
+    font-weight: 500;
+    transition-property: color, background-color, border-color;
+    transition-duration: 180ms;
+    @media (hover: hover) {
+        &:hover {
+            background: linear-gradient(0deg, rgba(9, 10, 21, 0.1) 0%, rgba(9, 10, 21, 0.1) 100%),
+                var(--color-gmx-blue-400);
+        }
+        &:active {
+            background: linear-gradient(0deg, rgba(9, 10, 21, 0.2) 0%, rgba(9, 10, 21, 0.2) 100%),
+                var(--color-gmx-blue-400);
+        }
+    }
+}
+/* GMX's 0.5px hairline separators (border-1/2 in their v3 config) */
+@utility border-hairline {
+    border-width: 0.5px;
+}
+/* Marquee helpers (GMX customUtilsPlugin) */
+@utility animate-pause {
+    animation-play-state: paused;
+}
+@utility scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 :root {

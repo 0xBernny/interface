@@ -124,7 +124,6 @@ then review the diffs in `e2e/design-system-visual.spec.ts-snapshots/` in your P
 
 When you add a new component to `packages/ui`, add it to the gallery in the same PR — see [`packages/ui/CONTRIBUTING.md`](./packages/ui/CONTRIBUTING.md) for the full checklist.
 
-<<<<<<< HEAD
 ## Separators and dividers
 
 Borders are the cheapest way to make a layout look organised and the fastest way to make it look noisy. Linear's calm hierarchy comes from *space* and *surface* doing the grouping, with lines reserved for the few places where a relationship genuinely needs marking. [`packages/ui/src/components/separator.tsx`](./packages/ui/src/components/separator.tsx) (DS-080) exists so those few places look the same everywhere.
@@ -142,7 +141,6 @@ Borders are the cheapest way to make a layout look organised and the fastest way
 **Labelled dividers.** `<Divider label="or" />` names a break instead of just drawing one — grouped form sections, "or" between auth methods, date breaks in a feed. The rules are decorative and the label is ordinary text, so assistive technology reads the words rather than the geometry. Label contrast comes from `text-text-secondary`, which holds up in light, dark, and high-contrast themes.
 
 Existing page borders were left alone in DS-080; migrate them opportunistically when you're already touching the markup.
-=======
 ## Right-to-left (RTL) support
 
 ### Logical CSS properties
@@ -182,7 +180,10 @@ The component gallery at `/gallery` includes an RTL/LTR toggle button (top-right
 - Numeric financial values preserve readable direction
 
 The visual regression suite (`e2e/design-system-visual.spec.ts`) captures gallery screenshots in both directions across all themes and viewports. Run `bun run test:e2e -- design-system-visual` to verify, or `bun run test:e2e -- design-system-visual --update-snapshots` to update baselines after an intentional change.
->>>>>>> e242e90 (Audit layouts for RTL and logical CSS properties)
+
+## GMX reference palette and landing theme (GF3)
+
+`packages/ui/src/styles/globals.css` carries a namespaced `--color-gmx-*` palette, landing font stacks (`--font-landing-sans` = Archivo, the OFL stand-in for GMX's paid TTHoves; `--font-landing-code` = Space Mono), landing typography/button utilities (`text-heading-1…4`, `text-subheadline`, `text-description`, `btn-landing`), and helpers (`border-hairline`, `scrollbar-hide`, `animate-pause`, `--animate-scroll`). These are **source material for the GrantFox 3 theme revamp**, not tokens for general app use — app components keep using the semantic tokens above; only the dark theme (GF3-001) and the landing route consume the `gmx-*` set. The full GMX token reference, licensing notes, and the GMX→SO4 mapping table live in [`docs/gf_3/001_theme_update.md`](./docs/gf_3/001_theme_update.md); the landing spec in [`docs/gf_3/002_landing_page.md`](./docs/gf_3/002_landing_page.md).
 
 ## Audit history
 
