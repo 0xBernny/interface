@@ -147,7 +147,7 @@ function DropdownMenuGroupLabel({
     <MenuPrimitive.GroupLabel
       data-slot="dropdown-menu-group-label"
       className={cn(
-        "px-2 py-1.5 text-[0.625rem] font-medium text-muted-foreground",
+        "px-2 py-1.5 text-10 font-medium text-muted-foreground",
         className
       )}
       {...props}
@@ -176,7 +176,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "ms-auto text-[0.625rem] tracking-widest text-muted-foreground",
+        "ms-auto text-10 tracking-widest text-muted-foreground",
         className
       )}
       {...props}

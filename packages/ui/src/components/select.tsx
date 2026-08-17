@@ -120,7 +120,7 @@ function SelectGroupLabel({
     <SelectPrimitive.GroupLabel
       data-slot="select-group-label"
       className={cn(
-        "px-2 py-1.5 text-[0.625rem] font-medium text-muted-foreground",
+        "px-2 py-1.5 text-10 font-medium text-muted-foreground",
         className
       )}
       {...props}

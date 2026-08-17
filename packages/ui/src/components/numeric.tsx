@@ -105,10 +105,10 @@ const numericTextVariants = cva("font-mono tabular-nums slashed-zero", {
       muted: "text-muted-foreground",
     },
     size: {
-      "2xs": "text-[0.625rem] leading-4",
-      xs: "text-[0.6875rem] leading-4",
+      "2xs": "text-10 leading-4",
+      xs: "text-11 leading-4",
       sm: "text-xs leading-5",
-      md: "text-[0.8125rem] leading-5",
+      md: "text-13 leading-5",
       base: "text-sm leading-5",
       lg: "text-base leading-6",
     },

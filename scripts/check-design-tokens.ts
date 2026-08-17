@@ -43,6 +43,8 @@ const ALLOWLIST: Record<string, string> = {
     "Uses #000 as a mask-image radial-gradient stop (an opacity/luminance value, not a visible color) — plain CSS gradient functions can't take a Tailwind color token here.",
   "apps/web/src/features/trade/components/chart/TVChartContainer.tsx":
     "Configures the lightweight-charts library's imperative JS API (chart series colors, price-line colors), which requires literal color strings — there is no Tailwind-class equivalent for a third-party canvas-rendering library's config object.",
+  "apps/web/src/features/trade/lib/chart-theme.ts":
+    "sRGB fallback mirrors of the globals.css tokens, plus a canvas-based color parser sentinel. lightweight-charts parses colors itself and only understands hex/rgb/hsl/named values, so these cannot be oklch() token references; they are needed for SSR, unit tests, and first paint before the stylesheet applies.",
 }
 
 interface Violation {
