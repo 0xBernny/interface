@@ -13,7 +13,7 @@ import { ReferralsPage } from "../features/referrals/components/referrals-page";
 // into the axe run config.
 // Always aim to fix critical and serious violations rather than waiving them.
 
-function renderWithRouter(component: React.ComponentType) {
+function renderWithRouter(component: React.FunctionComponent) {
   const rootRoute = createRootRoute();
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,

@@ -19,7 +19,7 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 function getBySlot(container: HTMLElement, slot: string): HTMLElement {
-  const el = container.querySelector(
+  const el = container.querySelector<HTMLElement>(
     `[data-slot="${slot}"]`
   )
   if (!el) throw new Error(`No element with data-slot="${slot}" found`)

@@ -5,7 +5,9 @@ import { ErrorBoundary } from "./ErrorBoundary"
 
 afterEach(cleanup)
 
-function Thrower({ message = "boom" }: { message?: string }) {
+// Annotated `never` because a function that only throws otherwise infers
+// `void`, which TypeScript rejects as a JSX component type.
+function Thrower({ message = "boom" }: { message?: string }): never {
   throw new Error(message)
 }
 

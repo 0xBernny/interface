@@ -41,7 +41,7 @@ describe("StakeDialog", () => {
     const input = screen.getByPlaceholderText("0.00")
     await user.type(input, "100")
 
-    const submitBtn = screen.getByRole("button", { name: "Stake SO4", exact: true })
+    const submitBtn = screen.getByRole("button", { name: "Stake SO4" })
     expect(submitBtn).not.toBeDisabled()
 
     await user.click(submitBtn)
@@ -67,7 +67,7 @@ describe("StakeDialog", () => {
     // Click the 2x multiplier
     await user.click(screen.getByRole("button", { name: "2x" }))
 
-    const submitBtn = screen.getByRole("button", { name: "Stake SO4", exact: true })
+    const submitBtn = screen.getByRole("button", { name: "Stake SO4" })
     await user.click(submitBtn)
 
     expect(mockMutateAsync).toHaveBeenCalledWith({

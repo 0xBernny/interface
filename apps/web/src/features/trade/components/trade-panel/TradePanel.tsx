@@ -58,8 +58,10 @@ export function TradePanel({ trade }: TradePanelProps) {
   } = trade
 
   const entryPrice = getMidPrice(toTokenAddress)
+  // Collateral is configured per market and side, so it can be unset; an
+  // unknown key prices at 0, which is the right "no collateral selected" value.
   const collateralUsd =
-    parseFloat(fromAmount || "0") * getMidPrice(collateralAddress)
+    parseFloat(fromAmount || "0") * getMidPrice(collateralAddress ?? "")
   const sizeUsd = tradeFlags.isSwap
     ? collateralUsd
     : sizeFromCollateralAndLeverage(collateralUsd, leverage)

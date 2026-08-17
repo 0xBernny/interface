@@ -10,7 +10,6 @@ import { DensityProvider } from "@workspace/ui/components/density-provider"
 import appCss from "@workspace/ui/globals.css?url"
 import { AppProviders } from "../app/providers"
 import { RouteAnnouncer } from "../shared/components/RouteAnnouncer"
-import { useTheme } from "../ui/theme-provider"
 
 // Update this to your production domain before going live.
 const SITE_URL = "https://so4.market"

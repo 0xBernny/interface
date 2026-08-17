@@ -21,7 +21,7 @@ import type {
 // Helper to create typed document nodes
 // ─────────────────────────────────────────────────────────────────────────────
 
-type TypedDocumentNode<TResult, TVariables> = {
+export type TypedDocumentNode<TResult, TVariables> = {
   kind: "Document"
   loc?: { source: { body: string } }
   __apiType?: (variables: TVariables) => TResult

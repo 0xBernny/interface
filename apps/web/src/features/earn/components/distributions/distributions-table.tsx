@@ -1,16 +1,4 @@
 import { Badge } from "@workspace/ui/components/badge"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { EmptyState } from "@workspace/ui/components/states"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmptyRow,
-  TableHead,
-  TableHeadRow,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
 import type { BadgeVariant } from "../../lib/badges"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -53,16 +41,7 @@ const STATUS_LABEL: Record<DistributionStatus, string> = {
 // ── Sub-components ───────────────────────────────────────────────────────────
 
 function StatusBadge({ status }: { status: DistributionStatus }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex h-5 items-center rounded-full border px-2 text-10 font-medium",
-        STATUS_STYLES[status],
-      )}
-    >
-      {STATUS_LABEL[status]}
-    </span>
-  )
+  return <Badge variant={STATUS_VARIANT[status]}>{STATUS_LABEL[status]}</Badge>
 }
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -110,15 +89,10 @@ export function DistributionsTable({ distributions, onClaim }: DistributionsTabl
                 <td className="px-5 py-3.5 font-mono">{row.token}</td>
                 <td className="px-5 py-3.5">
                   {row.status === "claim" ? (
-                    <button
-                      type="button"
-                      onClick={() => onClaim?.(row.epoch)}
-                      className={cn(
-                        "inline-flex h-5 cursor-pointer items-center rounded-full border px-2 text-10 font-medium",
-                        STATUS_STYLES.claim,
-                      )}
-                    >
-                      Claim
+                    <button type="button" onClick={() => onClaim?.(row.epoch)}>
+                      <Badge variant={STATUS_VARIANT.claim} className="cursor-pointer">
+                        Claim
+                      </Badge>
                     </button>
                   ) : (
                     <StatusBadge status={row.status} />

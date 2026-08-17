@@ -7,6 +7,12 @@ import { cleanup } from "@testing-library/react"
 
 expect.extend(axeMatchers)
 
+// jsdom implements the layout-free subset of the DOM, so scrollIntoView is
+// absent even though every real browser (and the DOM lib types) provide it.
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => {}
+}
+
 afterEach(() => {
   cleanup()
 })

@@ -1,30 +1,11 @@
 import { useState } from "react"
-import { Card, CardContent, CardHeader } from "@workspace/ui/components/card"
-import { LoadingButton } from "@workspace/ui/components/loading-button"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Stat } from "@workspace/ui/components/stat"
+import { Button } from "@workspace/ui/components/button"
+import { Card } from "@workspace/ui/components/card"
 import { EmptyState } from "@workspace/ui/components/states"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmptyRow,
-  TableHead,
-  TableHeadRow,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
-import { Heading, Text } from "@workspace/ui/components/text"
 import { useAffiliateStats, useDistributions } from "../../hooks/use-referrals-data"
 import { claimDistribution } from "../../lib/referrals"
 import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { formatToken, formatUsd } from "@/shared/lib/format"
-
-const SCHEDULE_FACTS = [
-  { label: "Distribution cycle", value: "Weekly (Thu)" },
-  { label: "Payment token", value: "USDC" },
-  { label: "Claim window", value: "No expiry" },
-]
 
 function LockIcon() {
   return (

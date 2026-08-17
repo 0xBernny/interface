@@ -26,6 +26,7 @@ import {
   Networks,
   SorobanDataBuilder,
   rpc as StellarRpc,
+  Transaction,
   TransactionBuilder,
   xdr,
 } from "@stellar/stellar-sdk"
@@ -130,9 +131,12 @@ describe("assembleTx — assembled transaction fields and footprint", () => {
     expect(typeof xdrStr).toBe("string")
     expect(xdrStr.length).toBeGreaterThan(0)
 
-    // Re-parsing confirms the assembled XDR is a valid transaction
+    // Re-parsing confirms the assembled XDR is a valid transaction.
+    // fromXDR widens to Transaction | FeeBumpTransaction; only the former
+    // carries `source`, and a plain Transaction is what we built.
     const reparsed = TransactionBuilder.fromXDR(xdrStr, Networks.TESTNET)
-    expect(reparsed.source).toBe(SOURCE_PUBLIC)
+    expect(reparsed).toBeInstanceOf(Transaction)
+    expect((reparsed as Transaction).source).toBe(SOURCE_PUBLIC)
   })
 
   it("accepts a raw (unparsed) simulation response directly", () => {

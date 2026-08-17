@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react"
 import { cn } from "@workspace/ui/lib/utils"
-import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent } from "@workspace/ui/components/card"
+import { Card } from "@workspace/ui/components/card"
 import {
   Dialog,
   DialogContent,
@@ -12,8 +11,6 @@ import {
 } from "@workspace/ui/components/dialog"
 import { Input } from "@workspace/ui/components/input"
 import { LoadingButton } from "@workspace/ui/components/loading-button"
-import { NumericText } from "@workspace/ui/components/numeric"
-import { Stat } from "@workspace/ui/components/stat"
 import {
   Table,
   TableBody,
@@ -28,7 +25,6 @@ import { usePoolsApy } from "../../hooks/use-earn-data"
 import { depositGLV, depositGM } from "../../lib/earn"
 import { useMarketPoolAmounts } from "../../hooks/useMarketPoolAmounts"
 import { useGLVVaultData, useGMPoolData, useStakingInfo } from "../../queries"
-import { POOL_KIND_BADGE } from "../../lib/badges"
 import { formatPct, formatToken, formatUsd } from "@/shared/lib/format"
 import { fromSorobanAmount } from "@/shared/lib/bignum"
 import { TokenIcon } from "@/shared/components/TokenIcon"

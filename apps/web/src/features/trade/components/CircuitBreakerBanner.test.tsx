@@ -103,7 +103,7 @@ describe("CircuitBreakerBanner", () => {
       error: null,
     } as never)
 
-    const { container, rerender } = render(<CircuitBreakerBanner symbol="ETH" />)
+    const { container } = render(<CircuitBreakerBanner symbol="ETH" />)
     expect(screen.getByText("Execution frozen")).toBeInTheDocument()
 
     const dismissBtn = screen.getByRole("button", { name: /Dismiss/ })

@@ -24,7 +24,7 @@ vi.mock("@workspace/ui/components/tabs", () => ({
     <button
       role="tab"
       data-tab-value={value}
-      aria-selected={String((rest as { "data-state"?: string })["data-state"] === "active")}
+      aria-selected={(rest as { "data-state"?: string })["data-state"] === "active"}
       {...rest}
     >
       {children}

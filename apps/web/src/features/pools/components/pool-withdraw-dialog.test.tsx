@@ -129,7 +129,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "5.0")
 
     expect(input).toHaveValue("5.0")
@@ -142,7 +142,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const maxButton = screen.getByText("MAX")
     await user.click(maxButton)
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     expect(input.value).not.toBe("")
   })
 
@@ -157,7 +157,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "5.0")
 
     const submitButton = screen.getByText("Queue Withdrawal")
@@ -168,7 +168,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "5.0")
 
     await user.click(screen.getByText("Queue Withdrawal"))
@@ -183,7 +183,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "1.12345678")
 
     await waitFor(() => {
@@ -197,7 +197,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "11.0")
 
     await waitFor(() => {
@@ -209,7 +209,7 @@ describe("PoolTransactionDialog — withdraw mode (#329)", () => {
     const user = userEvent.setup()
     renderDialog()
 
-    const input = screen.getByRole("textbox")
+    const input = screen.getByRole<HTMLInputElement>("textbox")
     await user.type(input, "5.0")
 
     const submitButton = screen.getByText("Queue Withdrawal")

@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { render, screen, within } from "@testing-library/react"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { axe } from "vitest-axe"
 
@@ -290,7 +290,7 @@ describe("AppearanceSettingsPanel", () => {
   describe("Visual Styling", () => {
     it("highlights selected option", async () => {
       const user = userEvent.setup()
-      const { container } = renderWithTheme(<AppearanceSettingsPanel />)
+      renderWithTheme(<AppearanceSettingsPanel />)
 
       const lightLabel = screen.getByLabelText(/Light/i).closest("label")
       await user.click(screen.getByLabelText(/Light/i))

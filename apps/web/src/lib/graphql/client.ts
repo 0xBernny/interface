@@ -11,7 +11,7 @@
  *   const data = await executeGraphQLQuery(GET_MARKETS, {})
  */
 
-import type { TypedDocumentNode } from "@graphql-typed-document-node/core"
+import type { TypedDocumentNode } from "@/lib/graphql/queries"
 import { INDEXER_CONFIG } from "@/app/config/indexer"
 
 // ─────────────────────────────────────────────────────────────────────────────

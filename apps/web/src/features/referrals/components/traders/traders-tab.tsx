@@ -29,12 +29,6 @@ function fmtDate(iso: string) {
   }).format(new Date(iso))
 }
 
-const DISCOUNT_TIER_VOLUME: Record<string, string> = {
-  Bronze: "Any volume",
-  Silver: "$2.5K+ / mo",
-  Gold: "$25K+ / mo",
-}
-
 type JoinCodeFormProps = {
   onSuccess: () => void
 }

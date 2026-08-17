@@ -55,7 +55,7 @@ export function PoolTransactionDialog({
   onClose,
   onQueued,
 }: PoolTransactionDialogProps) {
-  const toastIdRef = useRef<string | number | null>(null)
+  const toastIdRef = useRef<string | null>(null)
   const [longAmount, setLongAmount] = useState("")
   const [shortAmount, setShortAmount] = useState("")
   const [gmAmount, setGmAmount] = useState("")

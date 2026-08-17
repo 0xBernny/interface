@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
+import type * as ReactModule from "react"
 // ---------------------------------------------------------------------------
 // Import subjects AFTER the mock is registered
 // ---------------------------------------------------------------------------
@@ -55,7 +56,7 @@ const TITLE_ID = "mock-dialog-title"
 const DESC_ID = "mock-dialog-desc"
 
 vi.mock("@workspace/ui/components/dialog", () => {
-  const React = require("react") as ReactModule
+  const React = require("react") as typeof ReactModule
 
   function Dialog({
     open,

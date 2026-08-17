@@ -108,7 +108,6 @@ export function GmPoolRow({ market, variant, onMetricsChange }: GmPoolRowProps) 
   const userGmBalance = data?.userGmBalance ?? 0n
   const hasUserGm = userGmBalance > 0n
   const hasFailures = (data?.failures.length ?? 0) > 0
-  const failureTitle = hasFailures ? `Unavailable reads: ${data?.failures.join(", ")}` : undefined
   const tvlLabel = formatCompactUsd(tvlUsd)
   const tvlTitle = formatUsd(tvlUsd)
   const openInterestLabel = formatCompactUsd(openInterestUsd)

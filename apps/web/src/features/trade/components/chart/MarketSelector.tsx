@@ -1,7 +1,13 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
+// Aliased so the DOM globals of the same name stay available for the native
+// `document.addEventListener` handlers below.
 import { useTokenPrices } from "../../hooks/useTokenPrices"
 import { usePriceDelta24h } from "../../hooks/usePriceDelta24h"
 import { useMarkets } from "../../hooks/useMarkets"
+import type {
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+} from "react"
 import type { Market } from "../../hooks/useMarkets"
 import { formatUsd } from "@/shared/lib/format"
 
@@ -27,7 +33,7 @@ function MarketRow({
   const isPositive = (delta?.deltaPercentage ?? 0) > 0
   const isNegative = (delta?.deltaPercentage ?? 0) < 0
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLLIElement>) => {
+  const handleKeyDown = (event: ReactKeyboardEvent<HTMLLIElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault()
       onSelect()
@@ -142,7 +148,7 @@ export function MarketSelector({ symbol, onSelect }: Props) {
     })
   }
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === "ArrowDown") {
       event.preventDefault()
       if (!open) {
@@ -184,7 +190,7 @@ export function MarketSelector({ symbol, onSelect }: Props) {
     })
   }
 
-  const handleClear = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleClear = (event: ReactMouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
     onSelect("")
     setSearch("")

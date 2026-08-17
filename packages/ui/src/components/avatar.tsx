@@ -93,17 +93,6 @@ const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     const visibleChildren = max ? childArray.slice(0, max) : childArray
     const hiddenCount = max ? childArray.length - max : 0
 
-    const sizeMap: Record<string, number> = {
-      xs: 20,
-      sm: 24,
-      md: 32,
-      lg: 40,
-      xl: 48,
-      "2xl": 64,
-    }
-
-    const avatarSize = sizeMap[size as keyof typeof sizeMap] || 32
-
     return (
       <div
         ref={ref}

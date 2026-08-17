@@ -76,8 +76,9 @@ function toContractEvent(raw: StellarRpc.Api.EventResponse): ContractEvent {
     ledger: raw.ledger,
     ledgerClosedAt: raw.ledgerClosedAt,
     txHash: raw.txHash,
-    // The SDK sets contractId as a Contract instance when present
-    contractId: raw.contractId?.contractId().toString("hex") ?? "",
+    // The SDK sets contractId as a Contract instance when present;
+    // `contractId()` already returns the C… string form.
+    contractId: raw.contractId?.contractId() ?? "",
     topics: raw.topic,
     value: raw.value,
   }
