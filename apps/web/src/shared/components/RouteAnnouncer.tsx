@@ -80,7 +80,7 @@ function focusMainRegion(targetId: string): string {
   }
 
   return (
-    heading?.textContent?.trim() ||
+    heading?.textContent.trim() ||
     document.title.trim() ||
     "New page"
   )

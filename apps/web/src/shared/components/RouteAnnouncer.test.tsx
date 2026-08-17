@@ -57,7 +57,7 @@ function renderApp() {
 function announcement() {
   return document
     .querySelector("[data-slot='live-region']")
-    ?.textContent?.replace(/\u200B/g, "")
+    ?.textContent.replace(/\u200B/g, "")
 }
 
 describe("RouteAnnouncer", () => {

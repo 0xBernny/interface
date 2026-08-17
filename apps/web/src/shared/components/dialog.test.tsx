@@ -21,10 +21,6 @@ import userEvent from "@testing-library/user-event"
 
 // Module-level context that mock Dialog / DialogClose share
 import React from "react"
-
-// ---------------------------------------------------------------------------
-// Import subjects AFTER the mock is registered
-// ---------------------------------------------------------------------------
 import {
   Dialog,
   DialogClose,
@@ -34,6 +30,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@workspace/ui/components/dialog"
+// ---------------------------------------------------------------------------
+// Import subjects AFTER the mock is registered
+// ---------------------------------------------------------------------------
 
 import { ConnectButton } from "@/ui/connect-button"
 
@@ -56,7 +55,7 @@ const TITLE_ID = "mock-dialog-title"
 const DESC_ID = "mock-dialog-desc"
 
 vi.mock("@workspace/ui/components/dialog", () => {
-  const React = require("react") as typeof import("react")
+  const React = require("react") as ReactModule
 
   function Dialog({
     open,

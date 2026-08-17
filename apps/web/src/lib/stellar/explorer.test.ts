@@ -9,6 +9,11 @@
  * unnecessary in practice.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import type {
+  explorerAccountUrl as ExplorerAccountUrl,
+  explorerContractUrl as ExplorerContractUrl,
+  explorerTxUrl as ExplorerTxUrl,
+} from "./explorer"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fixtures
