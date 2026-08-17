@@ -27,8 +27,9 @@ SO4 is a unified-liquidity perpetuals DEX built on Stellar/Soroban. Deep order b
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Available Scripts](#available-scripts)
+- [Testing Guide](#testing-guide)
 - [Architecture](#architecture)
-- [Contributing](#contributing)
+- [Contributing](#contributing) — see also [`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`AGENTS.md`](./AGENTS.md)
 - [License](#license)
 
 ---
@@ -141,11 +142,22 @@ bun install
 
 ### Full local stack (contracts + indexer + web)
 
-If you need the indexer and contracts running against the web app, follow the
-[Local Full-Stack Integration Guide](./docs/local-full-stack.md). It documents
-prerequisites, deploy/bootstrap, manifest sync, indexer start, smoke flow,
-GraphQL verification, UI verification, troubleshooting, and the definition of
-done. Run `bun run check:integration` before pushing to mirror the CI matrix.
+If you need the indexer and contracts running against the web app:
+
+```bash
+# Generate indexer types and build (src/types is gitignored)
+bun run --cwd apps/s03-indexer codegen
+bun run --cwd apps/s03-indexer build
+
+# Sync the contract manifest from a local contracts checkout
+SO4_CONTRACTS_REPO=/path/to/contracts \
+  bun run --cwd apps/s03-indexer sync:contracts:local
+
+# Start the indexer stack (requires Docker)
+bun run --cwd apps/s03-indexer start
+```
+
+Run `bun run check:integration` before pushing to mirror the CI matrix.
 
 ### Running the development server
 
@@ -186,21 +198,32 @@ Run any of these from the **repository root**:
 From a clean checkout, install workspace dependencies once:
 
 ```bash
-bun install
+bun install --frozen-lockfile
 ```
 
-Run the focused test suites from the repository root:
+Run every unit suite from the repository root:
+
+```bash
+bun run test          # all workspaces
+bun run test:e2e      # Playwright
+```
+
+Or a single workspace:
 
 ```bash
 bun run --cwd packages/contracts test
-bun run --cwd apps/web test
-bun run test:e2e
+bun run --cwd packages/ui test
+bun run --cwd apps/s03-indexer test
 ```
 
-Generate the CI coverage reports locally with `bun run test:coverage`. The
-baseline gates are intentionally below current coverage: web requires 65% lines
-and functions; contracts require 85% lines, 65% functions, 85% branches, and
-80% statements. Reports are written to each package's `coverage/` directory.
+Generate the CI coverage reports locally with `bun run test:coverage`.
+`packages/contracts` gates at 85% lines, 85% branches, 80% statements, and 65%
+functions. Reports are written to each package's `coverage/` directory.
+
+> **Note:** `apps/web` has an extensive suite under `src/**/*.test.tsx` that is
+> not yet wired into `turbo test`. Run it directly with
+> `bunx vitest run --cwd apps/web` — some suites are currently failing and are
+> being fixed before the package is added to the CI test task.
 
 The end-to-end suite uses Playwright. On a fresh machine, Playwright may need
 browser binaries or OS-level system dependencies before `bun run test:e2e` can
@@ -243,70 +266,36 @@ The theme provider writes `dark` or `light` as a class on `<html>`. A blocking i
 
 ## Contributing
 
-Contributions are welcome. Please follow the steps below.
+Contributions are welcome. **Read [`CONTRIBUTING.md`](./CONTRIBUTING.md) before
+opening a pull request** — it covers setup, the quality gate every change must
+pass, commit conventions, and the project-specific gotchas that cause most CI
+failures.
 
-### 1. Fork and clone
-
-```bash
-git clone https://github.com/SO4-Markets/so4-monorepo.git
-cd so4-monorepo
-bun install
-```
-
-### 2. Create a branch
-
-Use a short, descriptive name:
+The short version: before you commit, all of these must pass from the repo root.
 
 ```bash
-git checkout -b feat/order-book-component
-git checkout -b fix/chart-theme-flash
-git checkout -b chore/upgrade-tanstack-query
+bun lint
+bun typecheck
+bun run check:tokens
+bun run test
+bun run test:coverage
+bun run build
 ```
 
-### 3. Make your changes
+Never disable a check, skip a test, or lower a threshold to make the pipeline
+green — fix the underlying cause instead.
 
-- Follow the existing feature-module structure (`components/`, `hooks/`, `lib/`, `data/`).
-- Keep components focused — one responsibility per file.
-- Use Tailwind utility classes; avoid inline styles.
-- Run `bun format` before committing.
+### Using an AI coding agent?
 
-### 4. Commit style
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-feat: add limit order confirmation dialog
-fix: resolve chart flicker on theme toggle
-chore: upgrade lightweight-charts to 5.3
-docs: document contract integration stubs
-refactor: extract oracle normalisation into shared util
-```
-
-### 5. Open a pull request
-
-Push your branch and open a PR against `main`. Include:
-
-- **What** changed and **why**.
-- Screenshots or recordings for UI changes.
-- Notes on any contract-integration assumptions.
-
-### Code style
-
-| Rule | Detail |
-|---|---|
-| Formatter | Prettier (`bun format`) — config in `.prettierrc` |
-| Linter | ESLint with `@tanstack/eslint-config` |
-| Imports | Absolute workspace imports (`@workspace/ui/...`) preferred over deep relative paths |
-| Comments | Only for non-obvious intent — avoid restating what the code already says |
+[`AGENTS.md`](./AGENTS.md) is the binding operating contract for AI agents in
+this repository, enforcing the same gate. Point your tool at it.
+([`CLAUDE.md`](./CLAUDE.md) forwards to it for Claude Code.)
 
 ### Reporting issues
 
-Open an issue on GitHub with:
-
-- A clear title and description.
-- Steps to reproduce (for bugs).
-- The expected vs actual behaviour.
-- Browser / OS / Bun version if relevant.
+Open an issue on GitHub with a clear title, steps to reproduce, expected vs
+actual behaviour, and the failing command's output. For suspected security
+vulnerabilities, contact the maintainers privately instead of filing publicly.
 
 ---
 
