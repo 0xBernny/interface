@@ -1,21 +1,22 @@
 import { useState } from "react"
-import { Icon } from "@workspace/ui/components/icon"
 import {
   Home01Icon,
   Search01Icon,
   Settings01Icon,
 } from "@hugeicons/core-free-icons"
+import { Icon } from "@workspace/ui/components/icon"
 
 import { Button } from "@workspace/ui/components/button"
-import { CommandMenu, type CommandMenuGroup } from "@workspace/ui/components/command-menu"
+import { CommandMenu  } from "@workspace/ui/components/command-menu"
 import { Kbd } from "@workspace/ui/components/kbd"
+import type {CommandMenuGroup} from "@workspace/ui/components/command-menu";
 
 export function CommandMenuGallery() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [lastAction, setLastAction] = useState("No command selected")
 
-  const groups: CommandMenuGroup[] = [
+  const groups: Array<CommandMenuGroup> = [
     {
       id: "navigation",
       label: "Navigation",

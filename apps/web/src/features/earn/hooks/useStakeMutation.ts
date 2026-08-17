@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
-import { useWalletStore } from "@/features/wallet/store/wallet-store"
 import { stakeSO4, unstakeSO4 } from "../../lib/earn"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
 
 export function useStakeMutation() {
   const { address } = useWalletStore()

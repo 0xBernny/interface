@@ -1,8 +1,8 @@
-import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
 import { cn } from "@workspace/ui/lib/utils"
+import type * as React from "react"
 
 // ---------------------------------------------------------------------------
 // VisuallyHidden (DS-077) — screen-reader-only content

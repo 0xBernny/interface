@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { useDirection } from "@/ui/direction-provider"
 import { AppShell } from "@workspace/ui/components/app-shell"
 import { Avatar, AvatarGroup } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
@@ -18,6 +17,7 @@ import { Spinner } from "@workspace/ui/components/spinner"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
 import { VisuallyHidden } from "@workspace/ui/components/visually-hidden"
+import { useDirection } from "@/ui/direction-provider"
 
 const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const
 const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const

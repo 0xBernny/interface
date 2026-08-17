@@ -6,10 +6,10 @@
  */
 
 import { useAccountOrders } from "./useAccountOrders"
-import { useWalletStore } from "@/features/wallet/store/wallet-store"
-import { INDEXER_CONFIG } from "@/app/config/indexer"
 import { useOrders } from "./useOrders"
 import type { Order as ContractOrder } from "./useOrders"
+import { useWalletStore } from "@/features/wallet/store/wallet-store"
+import { INDEXER_CONFIG } from "@/app/config/indexer"
 
 export type OrderWithIndexer = ContractOrder & {
   frozenTimestamp?: Date | null
@@ -44,7 +44,7 @@ export function useOrdersWithIndexer() {
   }
   
   // Map indexed orders to the expected format
-  const enhancedOrders: OrderWithIndexer[] = indexedOrders
+  const enhancedOrders: Array<OrderWithIndexer> = indexedOrders
     .filter(o => o.status === "created" || o.status === "updated" || o.status === "frozen")
     .map((indexedOrder) => {
       const sizeUsd = parseFloat(indexedOrder.sizeDeltaUsd ?? "0") / 1e30

@@ -14,7 +14,7 @@ tokens) and the issues in [`grantforx_issues.md`](./grantforx_issues.md).
 ## Page anatomy
 
 GMX renders these sections in this exact order:
-
+500NigerianDevs$$
 ```
 HeaderMenu          fixed top nav, dark
 HeroSection         dark — animated headline, CTA, live stats, feature grid

@@ -5,9 +5,9 @@ import { axe } from "vitest-axe"
 import {
   AddressDisplay,
   HashDisplay,
-  truncate,
-  isValidIdentifier,
   explorerUrl,
+  isValidIdentifier,
+  truncate,
 } from "./address-display"
 
 const ACCOUNT = "GCHSTH45PP3LUDHR4PVTXR4GRYF7S24NYTZQONAEPKSOOTWGNV7YAAJM"

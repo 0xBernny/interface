@@ -6,7 +6,7 @@ export type MarketItem = {
 }
 
 type Props = {
-  markets: MarketItem[]
+  markets: Array<MarketItem>
   activeMarketId?: string
   onSelect: (marketId: string) => void
 }

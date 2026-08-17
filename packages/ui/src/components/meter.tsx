@@ -110,7 +110,7 @@ interface AllocationSegment {
 
 const MIN_SEGMENT_PCT = 1
 
-function normalizeSegments(segments: AllocationSegment[]): Array<{
+function normalizeSegments(segments: Array<AllocationSegment>): Array<{
   label: string
   value: number
   pct: number
@@ -168,7 +168,7 @@ const SEGMENT_COLORS = [
 ]
 
 interface AllocationBarProps extends ComponentProps<"div"> {
-  segments: AllocationSegment[]
+  segments: Array<AllocationSegment>
   size?: "sm" | "md" | "lg"
   showLegend?: boolean
 }
@@ -198,7 +198,7 @@ function AllocationBar({
       <div
         className={cn(
           "flex w-full overflow-hidden rounded-full",
-          allocationSizeMap[size ?? "md"]
+          allocationSizeMap[size]
         )}
         role="img"
         aria-label={`Allocation: ${normalized

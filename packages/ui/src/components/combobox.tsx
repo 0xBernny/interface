@@ -4,7 +4,7 @@ import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Input } from "@workspace/ui/components/input"
 import { cn } from "@workspace/ui/lib/utils"
 
-function Combobox<Value>(props: ComboboxPrimitive.Root.Props<Value>) {
+function Combobox<TValue>(props: ComboboxPrimitive.Root.Props<TValue>) {
   return <ComboboxPrimitive.Root data-slot="combobox" {...props} />
 }
 

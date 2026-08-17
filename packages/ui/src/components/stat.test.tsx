@@ -3,10 +3,10 @@ import { render, screen } from "@testing-library/react"
 import { axe } from "vitest-axe"
 import {
   Stat,
-  StatLabel,
-  StatValue,
   StatDelta,
   StatGroup,
+  StatLabel,
+  StatValue,
 } from "./stat"
 
 describe("Stat", () => {

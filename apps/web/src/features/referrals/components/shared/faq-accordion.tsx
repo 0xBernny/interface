@@ -2,9 +2,10 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-  type HeadingLevel,
+  AccordionTrigger
+  
 } from "@workspace/ui/components/accordion"
+import type {HeadingLevel} from "@workspace/ui/components/accordion";
 
 export type FaqItem = {
   q: string

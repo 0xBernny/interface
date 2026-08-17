@@ -8,7 +8,7 @@ import { TokenIcon } from "@/shared/components/TokenIcon"
 
 export type OpportunityCardProps = {
   name: string
-  tokens: string[]
+  tokens: Array<string>
   apy: number
   tvlUsd: number
   isAvailable?: boolean

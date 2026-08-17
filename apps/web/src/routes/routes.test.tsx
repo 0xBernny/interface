@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, screen, waitFor } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ThemeProvider } from "@/ui/theme-provider"
@@ -34,7 +34,7 @@ vi.mock("@tanstack/react-router", () => {
     return (opts: Record<string, unknown>) => opts as { component: React.ComponentType }
   }
   function createRootRoute(opts?: Record<string, unknown>) {
-    return (opts ?? {}) as Record<string, unknown>
+    return (opts ?? {})
   }
   return {
     createFileRoute,

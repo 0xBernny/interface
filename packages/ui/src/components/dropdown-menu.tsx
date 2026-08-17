@@ -4,8 +4,8 @@ import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
 import { CheckmarkCircle01Icon, RadioButtonIcon } from "@hugeicons/core-free-icons"
-import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
+import { Icon } from "./icon"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />

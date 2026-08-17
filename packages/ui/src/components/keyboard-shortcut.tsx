@@ -21,7 +21,7 @@ const keyboardShortcutVariants = cva(
 
 type KeyboardShortcutProps = React.ComponentProps<"kbd"> &
   VariantProps<typeof keyboardShortcutVariants> & {
-    keys?: string[]
+    keys?: Array<string>
     platform?: Platform
   }
 
@@ -29,7 +29,7 @@ function normalizeModifier(mod: string, platform?: Platform): string {
   const normalized = mod.toLowerCase()
   const mac = platform === "mac" || (typeof navigator !== "undefined" && /Mac|iPhone|iPad|iPod/.test(navigator.platform))
 
-  const modMap: Record<string, Record<string, string>> = {
+  const modMap: Partial<Record<string, Record<string, string>>> = {
     mod: {
       mac: "⌘",
       windows: "Ctrl",
@@ -72,9 +72,10 @@ function normalizeModifier(mod: string, platform?: Platform): string {
     },
   }
 
-  if (modMap[normalized]) {
-    const currentPlatform = mac ? "mac" : navigator.platform?.includes("Win") ? "windows" : "linux"
-    return modMap[normalized][currentPlatform]
+  const platformMap = modMap[normalized]
+  if (platformMap) {
+    const currentPlatform = mac ? "mac" : navigator.platform.includes("Win") ? "windows" : "linux"
+    return platformMap[currentPlatform]
   }
 
   return mod.charAt(0).toUpperCase() + mod.slice(1)

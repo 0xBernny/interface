@@ -1,8 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { Alert01Icon, Cancel01Icon, InformationCircleIcon, ReloadIcon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { cn } from "@workspace/ui/lib/utils"
-import { Cancel01Icon, InformationCircleIcon, Tick02Icon, Alert01Icon, ReloadIcon } from "@hugeicons/core-free-icons"
 import { Icon } from "./icon"
 
 export type ToastVariant = "info" | "success" | "warning" | "error" | "transaction-progress"
@@ -27,9 +27,9 @@ function nextId() {
   return `toast-${++_counter}`
 }
 
-type ToastListener = (toasts: ToastItem[]) => void
+type ToastListener = (toasts: Array<ToastItem>) => void
 const listeners = new Set<ToastListener>()
-let toasts: ToastItem[] = []
+let toasts: Array<ToastItem> = []
 
 function emit() {
   listeners.forEach(l => l([...toasts]))
@@ -39,7 +39,7 @@ export const toast = {
   show: (item: Omit<ToastItem, "id" | "duration"> & { id?: string, duration?: number }) => {
     const id = item.id || nextId()
     const duration = item.duration ?? 4000
-    const newItem = { ...item, id, duration } as ToastItem
+    const newItem = { ...item, id, duration }
     const existingIdx = toasts.findIndex(t => t.id === id)
     if (existingIdx >= 0) {
       toasts[existingIdx] = newItem
@@ -71,10 +71,10 @@ export const toast = {
 }
 
 export function useToast() {
-  const [currentToasts, setCurrentToasts] = React.useState<ToastItem[]>(toasts)
+  const [currentToasts, setCurrentToasts] = React.useState<Array<ToastItem>>(toasts)
 
   React.useEffect(() => {
-    const listener = (newToasts: ToastItem[]) => setCurrentToasts(newToasts)
+    const listener = (newToasts: Array<ToastItem>) => setCurrentToasts(newToasts)
     listeners.add(listener)
     return () => {
       listeners.delete(listener)

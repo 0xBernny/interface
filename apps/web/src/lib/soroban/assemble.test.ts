@@ -20,16 +20,16 @@
 
 import { describe, expect, it } from "vitest"
 import {
+  Account,
+  Contract,
   Keypair,
   Networks,
-  TransactionBuilder,
-  Contract,
-  Account,
   SorobanDataBuilder,
   rpc as StellarRpc,
+  TransactionBuilder,
   xdr,
 } from "@stellar/stellar-sdk"
-import { assembleTx, assembleAndBuild } from "./assemble"
+import { assembleAndBuild, assembleTx } from "./assemble"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Fixtures
@@ -206,7 +206,7 @@ describe("assembleTx — malformed simulation input", () => {
       latestLedger: 12345,
       error: "Budget exceeded: cpu instructions limit 100, used 9999",
       events: [],
-    } as StellarRpc.Api.RawSimulateTransactionResponse)
+    })
 
     expect(() => assembleTx(tx, errorSim)).toThrow("Simulation failed")
     expect(() => assembleTx(tx, errorSim)).toThrow("Budget exceeded")
@@ -221,7 +221,7 @@ describe("assembleTx — malformed simulation input", () => {
       latestLedger: 1,
       error: errorMessage,
       events: [],
-    } as StellarRpc.Api.RawSimulateTransactionResponse)
+    })
 
     expect(() => assembleTx(tx, errorSim)).toThrow(errorMessage)
   })
@@ -271,7 +271,7 @@ describe("assembleAndBuild", () => {
       latestLedger: 1,
       error: "contract trap",
       events: [],
-    } as StellarRpc.Api.RawSimulateTransactionResponse)
+    })
 
     expect(() => assembleAndBuild(tx, errorSim)).toThrow("Simulation failed")
   })

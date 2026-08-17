@@ -268,7 +268,7 @@ type FormatRelativeTimeOpts = {
   style?: "long" | "short" | "narrow"
 }
 
-const RELATIVE_UNIT_LIMITS: [number, RelativeTimeUnit][] = [
+const RELATIVE_UNIT_LIMITS: Array<[number, RelativeTimeUnit]> = [
   [60, "second"],
   [3600, "minute"],
   [86400, "hour"],

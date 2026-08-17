@@ -2,9 +2,10 @@
 
 import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
-import { cva, type VariantProps } from "class-variance-authority"
-
+import {  cva } from "class-variance-authority"
 import { cn } from "@workspace/ui/lib/utils"
+import type {VariantProps} from "class-variance-authority";
+
 
 /* ────────────────────────────────────────────────────────────────────────────
  * Toolbar Context
@@ -14,8 +15,8 @@ interface ToolbarContextValue {
   orientation: "horizontal" | "vertical"
   rovingTabIndex: number
   setRovingTabIndex: (index: number) => void
-  items: React.RefObject<HTMLElement>[]
-  registerItem: (ref: React.RefObject<HTMLElement>) => () => void
+  items: Array<React.RefObject<HTMLElement | null>>
+  registerItem: (ref: React.RefObject<HTMLElement | null>) => () => void
 }
 
 const ToolbarContext = React.createContext<ToolbarContextValue | null>(null)
@@ -42,11 +43,11 @@ interface ToolbarRootProps extends React.ComponentPropsWithoutRef<"div"> {
 const ToolbarRoot = React.forwardRef<HTMLDivElement, ToolbarRootProps>(
   ({ className, orientation = "horizontal", children, ...props }, ref) => {
     const [rovingTabIndex, setRovingTabIndex] = React.useState(-1)
-    const itemsRef = React.useRef<React.RefObject<HTMLElement>[]>([])
+    const itemsRef = React.useRef<Array<React.RefObject<HTMLElement | null>>>([])
     const [initialized, setInitialized] = React.useState(false)
 
     const registerItem = React.useCallback(
-      (itemRef: React.RefObject<HTMLElement>) => {
+      (itemRef: React.RefObject<HTMLElement | null>) => {
         itemsRef.current.push(itemRef)
         return () => {
           itemsRef.current = itemsRef.current.filter((ref) => ref !== itemRef)
@@ -203,7 +204,7 @@ const ToolbarButton = React.forwardRef<HTMLButtonElement, ToolbarButtonProps>(
 
     // Register this button and get its index
     React.useEffect(() => {
-      const unregister = registerItem(buttonRef as React.RefObject<HTMLElement>)
+      const unregister = registerItem(buttonRef)
       const index = items.findIndex((item) => item === buttonRef)
       setLocalIndex(index)
       return unregister
@@ -320,7 +321,7 @@ const ToolbarLink = React.forwardRef<HTMLAnchorElement, ToolbarLinkProps>(
     const [localIndex, setLocalIndex] = React.useState<number>(-1)
 
     React.useEffect(() => {
-      const unregister = registerItem(linkRef as React.RefObject<HTMLElement>)
+      const unregister = registerItem(linkRef)
       const index = items.findIndex((item) => item === linkRef)
       setLocalIndex(index)
       return unregister

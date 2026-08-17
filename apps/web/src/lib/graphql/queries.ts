@@ -6,15 +6,15 @@
  */
 
 import type {
-  Position,
-  Order,
-  Market,
   Deposit,
-  Withdrawal,
-  TraderReferral,
   FeeClaim,
+  Market,
+  Order,
   PoolBalanceSnapshot,
+  Position,
   PositionChange,
+  TraderReferral,
+  Withdrawal,
 } from "./types"
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ function gql<TResult, TVariables = Record<string, never>>(
   return {
     kind: "Document",
     loc: { source: { body: query } },
-  } as TypedDocumentNode<TResult, TVariables>
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

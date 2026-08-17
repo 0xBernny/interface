@@ -3,12 +3,13 @@ import { cleanup, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { CommandMenu, type CommandMenuGroup } from "@workspace/ui/components/command-menu"
+import { CommandMenu  } from "@workspace/ui/components/command-menu"
+import type {CommandMenuGroup} from "@workspace/ui/components/command-menu";
 
 const openBilling = vi.fn()
 const openSettings = vi.fn()
 
-const groups: CommandMenuGroup[] = [
+const groups: Array<CommandMenuGroup> = [
   {
     id: "workspace",
     label: "Workspace",

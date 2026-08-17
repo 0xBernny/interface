@@ -138,11 +138,11 @@ describe("useAnnouncer", () => {
     const { container } = render(<Harness />)
 
     await user.click(screen.getByRole("button", { name: "Submit" }))
-    const first = getRegion(container).textContent ?? ""
+    const first = getRegion(container).textContent
     expect(strip(first)).toBe("Order submitted")
 
     await user.click(screen.getByRole("button", { name: "Submit" }))
-    const second = getRegion(container).textContent ?? ""
+    const second = getRegion(container).textContent
     expect(strip(second)).toBe("Order submitted")
     // Same words, different text node — which is what makes a screen reader
     // speak the message a second time.
@@ -155,7 +155,7 @@ describe("useAnnouncer", () => {
 
     await user.click(screen.getByRole("button", { name: "Submit" }))
     await user.click(screen.getByRole("button", { name: "Clear" }))
-    expect(strip(getRegion(container).textContent ?? "")).toBe("")
+    expect(strip(getRegion(container).textContent)).toBe("")
   })
 
   it("has no accessibility violations", async () => {

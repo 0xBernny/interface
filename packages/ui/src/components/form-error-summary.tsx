@@ -44,7 +44,7 @@ export interface FormErrorSummaryProps extends Omit<
    * Array of validation errors. Each error must reference a valid field `id`
    * so the summary can link to and focus the corresponding control.
    */
-  errors: FormError[]
+  errors: Array<FormError>
   /**
    * Summary heading. Defaults to "There are {count} errors with your submission".
    */
@@ -179,9 +179,7 @@ export function FormErrorSummary({
       // Focus the field
       field.focus()
       // Scroll into view with the field centered vertically for better visibility
-      if (field.scrollIntoView) {
-        field.scrollIntoView({ behavior: "smooth", block: "center" })
-      }
+      field.scrollIntoView({ behavior: "smooth", block: "center" })
     }
   }
 

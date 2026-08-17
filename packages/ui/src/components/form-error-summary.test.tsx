@@ -1,12 +1,13 @@
-import { describe, it, expect, vi } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { axe } from "vitest-axe"
 
-import { FormErrorSummary, type FormError } from "./form-error-summary"
+import {  FormErrorSummary } from "./form-error-summary"
+import type {FormError} from "./form-error-summary";
 
 describe("FormErrorSummary", () => {
-  const mockErrors: FormError[] = [
+  const mockErrors: Array<FormError> = [
     { id: "email", message: "Invalid email address", fieldLabel: "Email" },
     { id: "password", message: "Must be at least 8 characters", fieldLabel: "Password" },
     { id: "username", message: "Username is required" },
@@ -46,7 +47,7 @@ describe("FormErrorSummary", () => {
     })
 
     it("uses singular form for single error", () => {
-      const singleError: FormError[] = [{ id: "email", message: "Invalid email" }]
+      const singleError: Array<FormError> = [{ id: "email", message: "Invalid email" }]
       render(<FormErrorSummary errors={singleError} />)
       expect(screen.getByText(/There is 1 error with your submission/i)).toBeInTheDocument()
     })

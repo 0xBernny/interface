@@ -3,8 +3,8 @@
 import * as React from "react"
 
 import { ChevronDownIcon } from "@hugeicons/core-free-icons"
-import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
+import { Icon } from "./icon"
 
 type AccordionType = "single" | "multiple"
 

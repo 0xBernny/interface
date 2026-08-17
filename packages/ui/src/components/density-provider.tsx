@@ -21,9 +21,9 @@ export function DensityProvider({
   const [density, setDensityState] = React.useState<Density>(defaultDensity)
 
   React.useEffect(() => {
-    const saved = localStorage.getItem("interface-density") as Density
+    const saved = localStorage.getItem("interface-density")
     if (saved && ["compact", "default", "comfortable"].includes(saved)) {
-      setDensityState(saved)
+      setDensityState(saved as Density)
     }
   }, [])
 

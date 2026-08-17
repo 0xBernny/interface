@@ -169,7 +169,7 @@ export function MarketSelector({ symbol, onSelect }: Props) {
 
     if (event.key === "Enter") {
       event.preventDefault()
-      const market = filtered[activeIndex]
+      const market = filtered.at(activeIndex)
       if (market) selectMarket(market)
     }
   }

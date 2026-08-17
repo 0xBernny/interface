@@ -4,8 +4,8 @@ import * as React from "react"
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
 
 import { MinusSignIcon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { Icon } from "./icon"
 import { cn } from "@workspace/ui/lib/utils"
+import { Icon } from "./icon"
 
 function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
   return (

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { render, screen } from "@testing-library/react"
 import { axe } from "vitest-axe"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card"
 
 describe("Card", () => {
   it("renders with default variant", () => {

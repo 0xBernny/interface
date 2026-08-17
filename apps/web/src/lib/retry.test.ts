@@ -51,7 +51,7 @@ async function driveRetry<T>(promise: Promise<T>): Promise<T> {
   let rejectedError: unknown
 
   promise.then(
-    (v) => { settled = true; resolvedValue = v as T },
+    (v) => { settled = true; resolvedValue = v },
     (e) => { settled = true; rejectedError = e },
   )
 
@@ -311,7 +311,7 @@ describe("shouldRetry predicate", () => {
   })
 
   it("receives the current attempt number (1-indexed)", async () => {
-    const calls: number[] = []
+    const calls: Array<number> = []
     const fn = vi.fn()
       .mockRejectedValueOnce(new Error("e"))
       .mockRejectedValueOnce(new Error("e"))

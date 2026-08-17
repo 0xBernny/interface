@@ -1,18 +1,18 @@
 import { Link } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
 import { ThemeToggle } from "./theme-toggle"
-import { ConnectButton } from "@/features/wallet/components/ConnectButton"
 import {
-  SiteLogo,
   HamburgerButton,
-  useMobileMenu,
-  navOuterClass,
+  SiteLogo,
   containerClass,
-  desktopLinkClass,
   desktopActiveLinkClass,
-  mobileLinkClass,
+  desktopLinkClass,
   mobileActiveLinkClass,
+  mobileLinkClass,
+  navOuterClass,
+  useMobileMenu,
 } from "./nav/primitives"
+import { ConnectButton } from "@/features/wallet/components/ConnectButton"
 
 const LANDING_LINKS = [
   { label: "Trade", href: "/trade" },

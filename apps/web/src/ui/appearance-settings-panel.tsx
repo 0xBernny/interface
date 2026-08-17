@@ -3,7 +3,8 @@
 import * as React from "react"
 import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/radio-group"
 import { cn } from "@workspace/ui/lib/utils"
-import { useTheme, type Theme } from "./theme-provider"
+import {  useTheme } from "./theme-provider"
+import type {Theme} from "./theme-provider";
 
 interface ThemeOption {
   value: Theme
@@ -11,7 +12,7 @@ interface ThemeOption {
   description: string
 }
 
-const THEME_OPTIONS: ThemeOption[] = [
+const THEME_OPTIONS: Array<ThemeOption> = [
   {
     value: "light",
     label: "Light",

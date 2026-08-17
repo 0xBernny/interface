@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { render, screen } from "@testing-library/react"
 import { axe } from "vitest-axe"
-import { Meter, AllocationBar, normalizeSegments } from "./meter"
+import { AllocationBar, Meter, normalizeSegments } from "./meter"
 
 describe("Meter", () => {
   it("renders with correct ARIA attributes", () => {

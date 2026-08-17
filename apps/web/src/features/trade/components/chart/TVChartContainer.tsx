@@ -5,12 +5,12 @@ import { VisuallyHidden } from "@workspace/ui/components/visually-hidden"
 import { LiveRegion, useAnnouncer } from "@workspace/ui/components/live-region"
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableHeadRow,
-  TableHead,
-  TableRow,
   TableCell,
+  TableHead,
+  TableHeadRow,
+  TableHeader,
+  TableRow,
 } from "@workspace/ui/components/table"
 import { useOracleCandles } from "../../hooks/useOracleCandles"
 import { useLiveBar } from "../../hooks/useLiveBar"
@@ -21,9 +21,9 @@ import {
   getChartPalette,
   positionLineColor,
 } from "../../lib/chart-theme"
-import { formatUsd } from "@/shared/lib/format"
 import type {CandlestickData, IChartApi, IPriceLine, ISeriesApi, UTCTimestamp} from "lightweight-charts";
 import type { OhlcBar } from "../../lib/oracle"
+import { formatUsd } from "@/shared/lib/format"
 
 type ChartLine = {
   id: string

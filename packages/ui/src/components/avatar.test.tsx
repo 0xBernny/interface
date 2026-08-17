@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { fireEvent, render, screen } from "@testing-library/react"
 import { axe } from "vitest-axe"
-import { Avatar, AvatarImage, AvatarFallback, AvatarGroup } from "./avatar"
+import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "./avatar"
 
 describe("Avatar", () => {
   it("renders with fallback when no image src", () => {
@@ -25,7 +25,7 @@ describe("Avatar", () => {
     const { rerender } = render(
       <Avatar src="invalid.jpg" alt="User" fallback="AB" />
     )
-    const img = screen.getByRole("img", { name: "User" }) as HTMLImageElement
+    const img = screen.getByRole("img", { name: "User" })
     expect(img).toBeInTheDocument()
 
     fireEvent.error(img)

@@ -1,16 +1,16 @@
 import { describe, expect, it } from "vitest"
 import {
-  formatToken,
-  formatUsd,
-  formatPct,
-  formatCompact,
-  formatSmall,
   formatAddress,
-  formatTxHash,
+  formatCompact,
   formatDate,
-  formatTime,
   formatDateTime,
+  formatPct,
   formatRelativeTime,
+  formatSmall,
+  formatTime,
+  formatToken,
+  formatTxHash,
+  formatUsd,
 } from "./format"
 
 // ─── Shared fallback ─────────────────────────────────────────────────────────

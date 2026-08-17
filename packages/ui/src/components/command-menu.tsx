@@ -30,7 +30,7 @@ export type CommandMenuItem = {
   label: string
   description?: string
   icon?: React.ReactNode
-  shortcut?: string | readonly string[]
+  shortcut?: string | ReadonlyArray<string>
   disabled?: boolean
   onSelect: () => void
 }
@@ -38,7 +38,7 @@ export type CommandMenuItem = {
 export type CommandMenuGroup = {
   id: string
   label?: string
-  items: readonly CommandMenuItem[]
+  items: ReadonlyArray<CommandMenuItem>
 }
 
 export type CommandMenuProps = {
@@ -46,7 +46,7 @@ export type CommandMenuProps = {
   onOpenChange: (open: boolean) => void
   query: string
   onQueryChange: (query: string) => void
-  groups: readonly CommandMenuGroup[]
+  groups: ReadonlyArray<CommandMenuGroup>
   triggerRef?: React.RefObject<HTMLElement | null>
   title?: string
   description?: string
@@ -144,7 +144,7 @@ export function CommandMenu({
           itemToStringLabel={(item: CommandMenuItem) => item.label}
           value={null}
           onValueChange={(item) => {
-            if (item) handleItemSelect(item as CommandMenuItem)
+            if (item) handleItemSelect(item)
           }}
         >
           <div className="flex items-center border-b border-border px-1">

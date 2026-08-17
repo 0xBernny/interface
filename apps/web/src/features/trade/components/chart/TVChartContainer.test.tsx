@@ -49,7 +49,7 @@ class ObserverStub {
   unobserve = vi.fn()
   disconnect = vi.fn()
 }
-globalThis.ResizeObserver = ObserverStub as unknown as typeof ResizeObserver
+globalThis.ResizeObserver = ObserverStub
 globalThis.MutationObserver = ObserverStub as unknown as typeof MutationObserver
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -197,7 +197,7 @@ describe("TVChartContainer", () => {
       (c) => c.textContent && /\d/.test(c.textContent),
     )
 
-    const times = timeCells.map((c) => new Date(c.textContent!).getTime())
+    const times = timeCells.map((c) => new Date(c.textContent).getTime())
     for (let i = 1; i < times.length; i++) {
       expect(times[i]).toBeGreaterThanOrEqual(times[i - 1])
     }
@@ -261,7 +261,7 @@ describe("TVChartContainer", () => {
     rerender(<TVChartContainer {...defaultProps} />)
 
     const region = screen.getByRole("status")
-    const textAfterFirst = region.textContent ?? ""
+    const textAfterFirst = region.textContent
     expect(textAfterFirst).toMatch(/BTC/)
 
     // Second live bar within 5 seconds — no new announcement
@@ -284,7 +284,7 @@ describe("TVChartContainer", () => {
     rerender(<TVChartContainer {...defaultProps} />)
 
     const region = screen.getByRole("status")
-    const textAfterFirst = region.textContent ?? ""
+    const textAfterFirst = region.textContent
 
     // Advance past 5s throttle
     vi.advanceTimersByTime(6000)

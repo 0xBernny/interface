@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
-import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ApplyReferralCodePrompt } from "./ApplyReferralCodePrompt"
 import * as referralLib from "@/features/referrals/lib/referrals"
@@ -80,7 +80,7 @@ describe("ApplyReferralCodePrompt", () => {
     vi.mocked(contractLib.readStoredReferralCode).mockReturnValueOnce(null)
 
     renderComponent("GTEST")
-    const input = screen.getByPlaceholderText("e.g. MYCODE123") as HTMLInputElement
+    const input = screen.getByPlaceholderText("e.g. MYCODE123")
     fireEvent.change(input, { target: { value: "mycode" } })
     expect(input.value).toBe("MYCODE")
   })
@@ -94,7 +94,7 @@ describe("ApplyReferralCodePrompt", () => {
     vi.mocked(referralLib.markReferralPromptComplete).mockReturnValueOnce(undefined)
 
     renderComponent("GTEST")
-    const input = screen.getByPlaceholderText("e.g. MYCODE123") as HTMLInputElement
+    const input = screen.getByPlaceholderText("e.g. MYCODE123")
     const button = screen.getByRole("button", { name: /Apply/ })
 
     fireEvent.change(input, { target: { value: "  mycode  " } })
@@ -212,7 +212,7 @@ describe("ApplyReferralCodePrompt", () => {
     vi.mocked(referralLib.hasCompletedReferralPrompt).mockReturnValueOnce(false)
 
     renderComponent("GTEST")
-    const input = screen.getByPlaceholderText("e.g. MYCODE123") as HTMLInputElement
+    const input = screen.getByPlaceholderText("e.g. MYCODE123")
     expect(input.value).toBe("STORED")
   })
 })
