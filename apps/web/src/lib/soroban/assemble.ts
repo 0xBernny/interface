@@ -99,8 +99,7 @@ export function assembleTx(
   }
 
   // Extract minResourceFee — present on success and restore responses.
-  const minResourceFee: string =
-    (parsed).minResourceFee ?? "0"
+  const minResourceFee: string = parsed.minResourceFee
 
   const builder = StellarRpc.assembleTransaction(raw, simulation)
 
