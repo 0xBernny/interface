@@ -30,8 +30,11 @@ jobs:
         run: bun install
 
       # The official Stellar CLI ships as a native binary, not an npm package.
+      # This action derives the version to download from its own ref, so it has
+      # to be pinned to a release tag — a branch ref like @main resolves to a
+      # nonexistent "vmain" download.
       - name: Install Stellar CLI
-        uses: stellar/stellar-cli@main
+        uses: stellar/stellar-cli@v27.1.0
 
       # Contract IDs live in packages/contracts/contracts.json, so no secrets
       # or environment wiring are needed here.
