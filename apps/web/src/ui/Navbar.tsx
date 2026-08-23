@@ -88,7 +88,7 @@ export function Navbar({ variant }: Props) {
           {!isApp && (
             <Button
               variant="default"
-              className="hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
+              className="btn-landing hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
             >
               Launch app
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -135,7 +135,7 @@ export function Navbar({ variant }: Props) {
                 ))}
           </ul>
           {!isApp && (
-            <Button variant="default" className="mt-3 w-full gap-2">
+            <Button variant="default" className="btn-landing mt-3 w-full gap-2">
               Launch app →
             </Button>
           )}

@@ -393,6 +393,88 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
+/*
+ * Dark theme (GF3-001) — GMX-derived.
+ *
+ * Re-introduces `.dark` (previously absent, so dark mode fell back to the
+ * light values above). Surfaces, text roles, border, primary/ring, and accent
+ * are sourced straight from the GMX reference palette per the mapping table
+ * in docs/gf_3/001_theme_update.md §8.2 — trading-state foreground colors
+ * (long/short/liquidation/success/warning/danger/neutral) are intentionally
+ * NOT GMX concepts and are left untouched, inherited from :root. Only their
+ * `subtle`/`border` fill pairs are re-lightened here so a badge still reads
+ * as a distinct tint against the new slate-800/900 surfaces instead of
+ * blending into them (the :root pairs were tuned for a white canvas).
+ */
+.dark {
+    --background: var(--color-gmx-slate-900);
+    --foreground: oklch(1 0 0);
+    --card: var(--color-gmx-slate-800);
+    --card-foreground: oklch(1 0 0);
+    --popover: var(--color-gmx-slate-800);
+    --popover-foreground: oklch(1 0 0);
+    --primary: var(--color-gmx-blue-400);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: var(--color-gmx-slate-700);
+    --secondary-foreground: oklch(1 0 0);
+    --muted: var(--color-gmx-slate-700);
+    --muted-foreground: var(--color-gmx-slate-400);
+    --accent: var(--color-gmx-blue-300);
+    --accent-foreground: oklch(1 0 0);
+    --destructive-foreground: oklch(1 0 0);
+    --border: var(--color-gmx-stroke-primary);
+    --input: var(--color-gmx-stroke-primary);
+    --ring: var(--color-gmx-blue-400);
+
+    --surface-canvas: var(--color-gmx-slate-900);
+    --surface-sunken: var(--color-gmx-slate-950);
+    --surface-raised: var(--color-gmx-slate-800);
+    --surface-overlay: var(--color-gmx-slate-800);
+    --surface-interactive: var(--color-gmx-slate-650);
+
+    --text-primary: oklch(1 0 0);
+    --text-secondary: var(--color-gmx-slate-400);
+    --text-tertiary: var(--color-gmx-slate-500);
+    --text-inverse: oklch(1 0 0);
+    --text-link: var(--color-gmx-blue-400);
+
+    --info: var(--color-gmx-blue-400);
+    --sidebar-primary: var(--color-gmx-blue-400);
+
+    --sidebar: var(--color-gmx-slate-800);
+    --sidebar-foreground: oklch(1 0 0);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: var(--color-gmx-slate-650);
+    --sidebar-accent-foreground: oklch(1 0 0);
+    --sidebar-border: var(--color-gmx-stroke-primary);
+    --sidebar-ring: var(--color-gmx-blue-400);
+
+    --chart-surface: var(--color-gmx-slate-800);
+    --chart-text: var(--color-gmx-slate-400);
+    --chart-grid: var(--color-gmx-stroke-primary);
+    --chart-crosshair: var(--color-gmx-slate-500);
+    --chart-crosshair-label: var(--color-gmx-slate-700);
+    --chart-border: var(--color-gmx-stroke-primary);
+
+    /* Trading-state subtle/border — rebalanced, see file comment above */
+    --long-subtle: oklch(0.26 0.07 163.225);
+    --long-border: oklch(0.42 0.12 163.225);
+    --short-subtle: oklch(0.26 0.07 27.325);
+    --short-border: oklch(0.42 0.12 27.325);
+    --liquidation-subtle: oklch(0.26 0.07 75.834);
+    --liquidation-border: oklch(0.42 0.12 75.834);
+    --success-subtle: oklch(0.26 0.07 163.225);
+    --success-border: oklch(0.42 0.12 163.225);
+    --warning-subtle: oklch(0.26 0.07 75.834);
+    --warning-border: oklch(0.42 0.12 75.834);
+    --info-subtle: oklch(0.26 0.09 268.08);
+    --info-border: oklch(0.42 0.16 268.08);
+    --danger-subtle: oklch(0.26 0.07 27.325);
+    --danger-border: oklch(0.42 0.12 27.325);
+    --neutral-subtle: oklch(0.28 0 0);
+    --neutral-border: oklch(0.40 0 0);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

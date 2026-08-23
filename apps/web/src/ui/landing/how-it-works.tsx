@@ -65,14 +65,11 @@ export function HowItWorks() {
             <span className="inline-block h-px w-4 bg-primary" />
             Flow
           </div>
-          <h2
-            className="font-trading font-medium leading-[1.04] tracking-[-0.025em] text-foreground"
-            style={{ fontSize: "clamp(34px, 3.4vw, 46px)" }}
-          >
+          <h2 className="text-heading-2 text-foreground">
             From wallet to fill in{" "}
             <span className="italic font-normal text-primary">three steps.</span>
           </h2>
-          <p className="mt-4 max-w-[560px] text-base leading-[1.55] text-muted-foreground">
+          <p className="mt-4 max-w-[560px] text-description">
             No KYC, no email, no signup form. Connect a wallet and the orderbook is
             open — your collateral never leaves your control.
           </p>
@@ -84,10 +81,8 @@ export function HowItWorks() {
               <div className="font-mono-num text-11 uppercase tracking-[0.18em] text-primary">
                 {num}
               </div>
-              <h3 className="mt-7 text-22 font-medium tracking-[-0.02em] text-foreground">
-                {title}
-              </h3>
-              <p className="mt-3 text-sm leading-[1.55] text-muted-foreground">{body}</p>
+              <h3 className="text-heading-4 mt-7 text-foreground">{title}</h3>
+              <p className="mt-3 text-description">{body}</p>
               <Terminal lines={lines} />
             </div>
           ))}

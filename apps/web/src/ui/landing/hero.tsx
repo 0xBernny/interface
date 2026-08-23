@@ -253,10 +253,7 @@ export function Hero() {
             Mainnet · v1.4 · Lagos UTC+1
           </span>
 
-          <h1
-            className="font-trading mt-[22px] font-medium leading-none tracking-[-0.035em] text-foreground"
-            style={{ fontSize: "clamp(48px, 5.6vw, 78px)" }}
-          >
+          <h1 className="text-heading-1 mt-[22px] text-foreground">
             <span className="block">perpetual</span>
             <span className="block">
               markets,{" "}
@@ -265,14 +262,14 @@ export function Hero() {
             <span className="block">on-chain.</span>
           </h1>
 
-          <p className="mt-[22px] max-w-[520px] text-17 leading-[1.55] text-muted-foreground">
+          <p className="mt-[22px] max-w-[520px] text-subheadline">
             A unified-liquidity perp DEX. Deep books, sub-second matching, and
             self-custodied risk — built for traders who care where their fills
             come from.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Button variant="default" className="h-12 gap-2 px-5 text-sm font-medium">
+            <Button variant="default" className="btn-landing h-12 gap-2 px-5 text-sm">
               Start trading <span>→</span>
             </Button>
             <Button variant="outline" className="h-12 px-5 text-sm font-medium">

@@ -101,14 +101,11 @@ export function Markets() {
               <span className="inline-block h-px w-4 bg-primary" />
               Markets
             </div>
-            <h2
-              className="font-trading font-medium leading-[1.04] tracking-[-0.025em] text-foreground"
-              style={{ fontSize: "clamp(34px, 3.4vw, 46px)" }}
-            >
+            <h2 className="text-heading-2 text-foreground">
               184 perpetuals.{" "}
               <span className="italic font-normal text-primary">One book.</span>
             </h2>
-            <p className="mt-4 max-w-[520px] text-base leading-[1.55] text-muted-foreground">
+            <p className="mt-4 max-w-[520px] text-description">
               Crypto, FX, rates, and commodity perps — all settled in USDC, all
               backed by the same unified liquidity layer.
             </p>

@@ -185,6 +185,12 @@ The visual regression suite (`e2e/design-system-visual.spec.ts`) captures galler
 
 `packages/ui/src/styles/globals.css` carries a namespaced `--color-gmx-*` palette, landing font stacks (`--font-landing-sans` = Archivo, the OFL stand-in for GMX's paid TTHoves; `--font-landing-code` = Space Mono), landing typography/button utilities (`text-heading-1…4`, `text-subheadline`, `text-description`, `btn-landing`), and helpers (`border-hairline`, `scrollbar-hide`, `animate-pause`, `--animate-scroll`). These are **source material for the GrantFox 3 theme revamp**, not tokens for general app use — app components keep using the semantic tokens above; only the dark theme (GF3-001) and the landing route consume the `gmx-*` set. The full GMX token reference, licensing notes, and the GMX→SO4 mapping table live in [`docs/gf_3/001_theme_update.md`](./docs/gf_3/001_theme_update.md); the landing spec in [`docs/gf_3/002_landing_page.md`](./docs/gf_3/002_landing_page.md).
 
+### Dark theme (GF3-001)
+
+`.dark` in `globals.css` had been removed at some point, so toggling to dark mode silently fell back to the light values above. GF3-001 (re)introduces it, this time derived from the GMX reference palette instead of an arbitrary dark scale — surfaces, text roles, `border`/`input`, `primary`/`ring`, and `accent` all resolve to a `--color-gmx-*` value per the mapping table in [`001_theme_update.md` §8.2](./docs/gf_3/001_theme_update.md#82-layer-2--semantic-dark-theme-what-gf3-001-applies). Trading-state colors (`long`/`short`/`liquidation`, `success`/`warning`/`danger`, `neutral`) are not GMX concepts, so their foreground values are untouched — only their `subtle`/`border` fill pairs are re-lightened in `.dark`, because the `:root` pairs were tuned to sit on a white page and read as almost-black on the new slate-800/900 surfaces. `--info` is the one status color that does move, to `--color-gmx-blue-400`, since "informational blue" is the same concept as GMX's brand blue. The light theme (`:root`) is unchanged.
+
+The landing route (`apps/web/src/routes/index.tsx`) forces this `.dark` scope on its own root element regardless of the user's theme setting — GMX's landing has no light variant — by adding the `dark` class directly rather than touching `<html>`, so the override never leaks into `/trade`, `/pools`, `/earn`, `/referrals`, or `/faucet`.
+
 ## Audit history
 
 - **DS-050** (this pass): found and fixed 268 arbitrary-value violations (229 arbitrary font sizes, 38 raw hex colors, 1 arbitrary radius) across ~40 files. Of these:

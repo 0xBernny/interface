@@ -540,6 +540,48 @@ export function GalleryPage() {
           </div>
         </div>
       </Section>
+
+      <Section title="Landing Typography (GMX)">
+        {/* GMX's landing is dark-only (docs/gf_3/001_theme_update.md §7), so
+            this swatch forces the `.dark` token scope the same way the
+            landing route itself does, independent of the gallery's own
+            theme toggle. */}
+        <div className="dark space-y-6 bg-background p-6">
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-heading-1</p>
+            <h1 className="text-heading-1 text-foreground">Perpetual markets.</h1>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-heading-2</p>
+            <h2 className="text-heading-2 text-foreground">Built for traders.</h2>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-heading-3</p>
+            <h3 className="text-heading-3 text-foreground">Card titles</h3>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-heading-4</p>
+            <h4 className="text-heading-4 text-foreground">Small card titles</h4>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-subheadline</p>
+            <p className="text-subheadline">Supporting copy under a call to action.</p>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">text-description</p>
+            <p className="text-description max-w-md">
+              Body copy on a dark card surface, set in Archivo at 16px with GMX's
+              tracking and line height.
+            </p>
+          </div>
+          <div>
+            <p className="mb-2 text-13 text-muted-foreground">btn-landing</p>
+            <Button variant="default" className="btn-landing h-10 px-5 text-sm">
+              Launch trading app
+            </Button>
+          </div>
+        </div>
+      </Section>
     </main>
   )
 }
