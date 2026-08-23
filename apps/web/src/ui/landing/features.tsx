@@ -81,15 +81,12 @@ export function Features() {
             <span className="inline-block h-px w-4 bg-primary" />
             Engine
           </div>
-          <h2
-            className="font-trading font-medium leading-[1.04] tracking-[-0.025em] text-foreground"
-            style={{ fontSize: "clamp(34px, 3.4vw, 46px)" }}
-          >
+          <h2 className="text-heading-2 text-foreground">
             Built for traders{" "}
             <span className="italic font-normal text-primary">who care</span>{" "}
             where their fills come from.
           </h2>
-          <p className="mt-4 max-w-[560px] text-base leading-[1.55] text-muted-foreground">
+          <p className="mt-4 max-w-[560px] text-description">
             so4 runs a unified liquidity layer — one pool backs every market,
             with deterministic settlement on every fill. No hidden routes, no
             opaque MM rebates.
@@ -106,10 +103,8 @@ export function Features() {
               <div className="mb-5 inline-flex h-9 w-9 items-center justify-center border border-primary/20 bg-primary/8 text-primary">
                 {icon}
               </div>
-              <h3 className="mb-2.5 text-lg font-medium tracking-[-0.015em] text-foreground">
-                {title}
-              </h3>
-              <p className="text-sm leading-[1.55] text-muted-foreground">{body}</p>
+              <h3 className="text-heading-4 mb-2.5 text-foreground">{title}</h3>
+              <p className="text-description">{body}</p>
               <div className="mt-5 flex items-baseline justify-between border-t border-border pt-4 font-mono-num">
                 <span className="text-10-5 uppercase tracking-[0.12em] text-muted-foreground/60">
                   {statKey}

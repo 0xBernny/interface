@@ -144,7 +144,7 @@ export function Footer() {
         {/* ds-allow: text-[16.4vw] is fluid viewport-relative display type
             (scales the whole wordmark with page width) — not a fixed size
             a px-based token scale can represent. */}
-        <div className="font-trading relative select-none overflow-hidden border-t border-border py-7 text-[16.4vw] font-semibold leading-[0.82] tracking-[-0.06em] text-foreground">
+        <div className="relative select-none overflow-hidden border-t border-border py-7 text-[16.4vw] font-semibold leading-[0.82] tracking-[-0.06em] text-foreground">
           <div className="flex items-start gap-[0.06em] whitespace-nowrap">
             <span>so4.market</span>
             {/* ds-allow: text-[0.18em] is intentionally relative to the

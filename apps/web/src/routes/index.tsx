@@ -16,7 +16,10 @@ export const Route = createFileRoute("/")({ component: LandingPage })
 
 function LandingPage() {
   return (
-    <div className="font-trading min-h-svh bg-background text-foreground antialiased">
+    // GMX's landing is dark-only — force the `.dark` token scope on this
+    // subtree regardless of the user's theme setting (docs/gf_3/001_theme_update.md §7),
+    // without touching <html> so /trade, /pools, etc. keep honoring it.
+    <div className="dark font-landing-sans min-h-svh bg-background text-foreground antialiased">
       <Navbar variant="landing" />
       <Hero />
       <Stats />

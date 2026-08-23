@@ -34,15 +34,12 @@ export function Infrastructure() {
             <span className="inline-block h-px w-4 bg-primary" />
             Infrastructure
           </div>
-          <h2
-            className="font-trading font-medium leading-[1.04] tracking-[-0.025em] text-foreground"
-            style={{ fontSize: "clamp(34px, 3.4vw, 46px)" }}
-          >
+          <h2 className="text-heading-2 text-foreground">
             An{" "}
             <span className="italic font-normal text-primary">app-specific chain</span>{" "}
             with one job: settle perps.
           </h2>
-          <p className="mt-4 max-w-[560px] text-base leading-[1.55] text-muted-foreground">
+          <p className="mt-4 max-w-[560px] text-description">
             so4 runs on a custom L1 tuned for orderbook throughput. We don't share
             blockspace with NFT mints or memecoin launches — your fill is the only
             thing in the queue.
