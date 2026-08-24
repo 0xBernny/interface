@@ -1,19 +1,57 @@
 const FOOTER_COLS = [
   {
     heading: "Product",
-    links: ["Trade", "Earn", "Vaults", "Stats", "Leaderboard"],
+    links: [
+      { label: "Trade", href: "/trade" },
+      { label: "Earn", href: "/earn" },
+      { label: "Vaults", href: "/pools" },
+      { label: "Stats", href: "#" },
+      { label: "Leaderboard", href: "#" },
+    ],
   },
   {
     heading: "Developers",
-    links: ["Documentation", "API reference", "SDK", "Contracts", "Bug bounty"],
+    links: [
+      { label: "Documentation", href: "https://docs.so4.market" },
+      {
+        label: "API reference",
+        href: "https://docs.so4.market/reference/graphql",
+      },
+      {
+        label: "SDK",
+        href: "https://docs.so4.market/developers/contract-clients",
+      },
+      {
+        label: "Contracts",
+        href: "https://docs.so4.market/reference/contracts",
+      },
+      {
+        label: "Bug bounty",
+        href: "https://docs.so4.market/resources/security",
+      },
+    ],
   },
   {
     heading: "Support",
-    links: ["FAQ", "Status", "Feedback", "Audits"],
+    links: [
+      { label: "FAQ", href: "https://docs.so4.market/resources/faq" },
+      { label: "Status", href: "#" },
+      {
+        label: "Feedback",
+        href: "https://github.com/SO4-Markets/interface/issues",
+      },
+      { label: "Audits", href: "https://docs.so4.market/resources/security" },
+    ],
   },
   {
     heading: "About",
-    links: ["Blog", "Brand kit", "Litepaper", "Terms", "Privacy"],
+    links: [
+      { label: "Blog", href: "#" },
+      { label: "Brand kit", href: "#" },
+      { label: "Litepaper", href: "#" },
+      { label: "Terms", href: "https://docs.so4.market/resources/terms" },
+      { label: "Privacy", href: "#" },
+    ],
   },
 ]
 
@@ -22,7 +60,14 @@ function SocialLinks() {
     {
       label: "X",
       icon: (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M18 6 6 18M6 6l12 12" />
         </svg>
       ),
@@ -30,7 +75,14 @@ function SocialLinks() {
     {
       label: "Discord",
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
           <circle cx="8" cy="12" r="1" />
           <circle cx="16" cy="12" r="1" />
           <path d="M5 7s2-2 7-2 7 2 7 2 2 5 2 9-3 5-3 5l-1-2s-2 1-5 1-5-1-5-1l-1 2s-3-1-3-5 2-9 2-9z" />
@@ -40,7 +92,14 @@ function SocialLinks() {
     {
       label: "Telegram",
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
           <path d="m22 3-10 18-3-8-8-3 21-7z" />
         </svg>
       ),
@@ -48,7 +107,14 @@ function SocialLinks() {
     {
       label: "Mirror",
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
           <circle cx="6" cy="12" r="3" />
           <circle cx="18" cy="12" r="3" />
         </svg>
@@ -57,7 +123,14 @@ function SocialLinks() {
     {
       label: "GitHub",
       icon: (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        >
           <circle cx="12" cy="12" r="10" />
           <path d="M9 18v-2c-3 .5-3.5-1.3-3.5-1.3M15 21v-3.5a3 3 0 0 0-1-2.3c3-.3 5-1.5 5-5a3.8 3.8 0 0 0-1-2.7 3.7 3.7 0 0 0-.1-2.7s-1 0-3 1.3a10 10 0 0 0-5 0c-2-1.3-3-1.3-3-1.3a3.7 3.7 0 0 0-.1 2.7 3.8 3.8 0 0 0-1 2.7c0 3.5 2 4.7 5 5a3 3 0 0 0-1 2.3V21" />
         </svg>
@@ -126,12 +199,12 @@ export function Footer() {
               </h5>
               <ul className="space-y-0.5">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <a
-                      href="#"
+                      href={link.href}
                       className="block py-1 text-12-5 text-muted-foreground transition-colors hover:text-primary"
                     >
-                      {link}
+                      {link.label}
                     </a>
                   </li>
                 ))}
@@ -162,9 +235,10 @@ export function Footer() {
           <span className="flex items-center gap-2">
             <span
               className="inline-block h-[5px] w-[5px] rounded-full bg-emerald-400"
-              style={{ 
-                animation: "pulseDot var(--duration-slow) var(--ease-smooth) infinite",
-                animationDuration: "2s" 
+              style={{
+                animation:
+                  "pulseDot var(--duration-slow) var(--ease-smooth) infinite",
+                animationDuration: "2s",
               }}
             />
             Mainnet · block 84,218,402

@@ -6,6 +6,17 @@ content issue in [`dx_issues.md`](./dx_issues.md). Companion to
 
 **Questions?** Reach out to the maintainer at [t.me/ibrahimijai](https://t.me/ibrahimijai).
 
+> **Implementation status (2026-08-24):** `/concepts/risk`,
+> `/concepts/funding-and-fees`, `/concepts/liquidation`, `/reference/glossary`,
+> `/resources/terms`, `/resources/faq`, `/resources/roadmap`, and
+> `/resources/changelog` are implemented and reachable from the sidebar. All other
+> pages in §2 are explicitly deferred because their prerequisite DX1 content or
+> generated-reference issues have not landed. The three intended reader journeys
+> therefore cannot yet be walked end to end: trader onboarding stops before
+> quickstart/trading, liquidity-provider onboarding stops before pools, and the
+> integrator journey stops before local setup and contract clients. This is the
+> audited built state, not a claim that deferred paths exist.
+
 ---
 
 ## 1. Who we are writing for

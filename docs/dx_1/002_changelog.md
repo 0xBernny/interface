@@ -12,6 +12,12 @@ release, and how they are published in the app. Companion to
 
 **Questions?** Reach out to the maintainer at [t.me/ibrahimijai](https://t.me/ibrahimijai).
 
+> **Implementation note (2026-08-24):** The DX1 resource batch adds an unreleased
+> `docs` entry and `/resources/changelog`, which points to the canonical product
+> history. The parser, release command, feeds, and `/changelog` application route
+> described below remain deferred to DX-002 and its dependent issues; they were not
+> recreated as part of documentation close-out work.
+
 ---
 
 ## 1. Why the changelog lives in `apps/web`

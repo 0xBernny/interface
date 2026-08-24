@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install 
+        run: bun install
 
       - name: Lint
         run: bun lint
@@ -44,6 +44,12 @@ jobs:
 
       - name: Design token check
         run: bun run check:tokens
+
+      - name: Documentation content check
+        run: bun run check:content
+
+      - name: Documentation link and FAQ drift checks
+        run: bun run check:links && bun run --cwd apps/docs check:faq
 
       - name: Test
         run: bun run test

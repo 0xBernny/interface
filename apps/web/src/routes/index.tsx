@@ -9,6 +9,7 @@ import { Features } from "../ui/landing/features"
 import { Markets } from "../ui/landing/markets"
 import { HowItWorks } from "../ui/landing/how-it-works"
 import { Infrastructure } from "../ui/landing/infrastructure"
+import { LandingFaq } from "../ui/landing/faq"
 import { FinalCTA } from "../ui/landing/final-cta"
 import { Footer } from "../ui/landing/footer"
 
@@ -27,6 +28,7 @@ function LandingPage() {
       <Markets />
       <HowItWorks />
       <Infrastructure />
+      <LandingFaq />
       <FinalCTA />
       <Footer />
     </div>

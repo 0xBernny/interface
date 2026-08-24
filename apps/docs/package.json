@@ -1,0 +1,24 @@
+{
+  "name": "docs",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run scripts/build.ts",
+    "dev": "bun run scripts/build.ts",
+    "lint": "bun run check:content",
+    "format": "prettier --write \"content/**/*.mdx\" \"scripts/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:coverage": "bun test --coverage",
+    "check:content": "bun run scripts/check-content.ts",
+    "check:links": "bun run scripts/check-links.ts",
+    "generate:faq": "bun run scripts/generate-faq.ts",
+    "check:faq": "bun run scripts/generate-faq.ts --check"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3"
+  }
+}
