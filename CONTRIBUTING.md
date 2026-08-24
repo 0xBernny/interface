@@ -40,11 +40,26 @@ remove comments, commits, and contributions that are abusive or off-topic.
 | Node.js | >= 20 | Required by some tooling |
 | [Stellar CLI](https://github.com/stellar/stellar-cli) | 27.x | Only needed to regenerate contract bindings |
 
+**Fork first.** Only maintainers can push branches to `SO4-Markets/interface`.
+Everyone else works from a personal fork and opens a pull request across forks.
+If you clone this repository directly, everything works right up until you push,
+which fails with `remote: Permission to SO4-Markets/interface.git denied`.
+
+Fork the repository on GitHub (the **Fork** button, top right), then:
+
 ```bash
-git clone https://github.com/SO4-Markets/interface.git
+# Clone your fork, not this repository
+git clone https://github.com/<your-username>/interface.git
 cd interface
+
+# Point `upstream` at this repository so you can keep your fork current
+git remote add upstream https://github.com/SO4-Markets/interface.git
+
 bun install --frozen-lockfile
 ```
+
+`origin` is now your fork (you can push to it) and `upstream` is this repository
+(you pull from it). Verify with `git remote -v`.
 
 Use `--frozen-lockfile`. It installs exactly what `bun.lock` pins and fails loudly
 if `package.json` and the lockfile disagree, which is what CI does. A plain
@@ -117,13 +132,23 @@ do not lower the threshold.
 
 ### 1. Branch
 
-Branch off `main` with a descriptive name:
+Sync your fork, then branch off `main` with a descriptive name:
 
 ```bash
-git checkout -b feat/order-book-component
-git checkout -b fix/chart-theme-flash
-git checkout -b chore/upgrade-tanstack-query
+git fetch upstream
+git checkout -b feat/order-book-component upstream/main
 ```
+
+Name branches for what they do:
+
+```
+feat/order-book-component
+fix/chart-theme-flash
+chore/upgrade-tanstack-query
+```
+
+Branching off `upstream/main` rather than your fork's `main` keeps you current
+even when your fork has drifted behind.
 
 ### 2. Make focused changes
 
@@ -160,6 +185,23 @@ bun lint && bun typecheck && bun run test && bun run build
 
 This is not paranoia — it is how a whole class of "passes locally, fails in CI"
 bugs in this repo were found. See [Project-specific gotchas](#project-specific-gotchas).
+
+### 6. Push to your fork and open the PR
+
+```bash
+git push -u origin feat/order-book-component
+```
+
+Push to `origin` — your fork. GitHub then shows a "Compare & pull request"
+banner on both your fork and this repository; either opens a PR against
+`SO4-Markets/interface` `main`. See [Pull requests](#pull-requests).
+
+If the push is rejected with `Permission to SO4-Markets/interface.git denied`,
+`origin` still points at this repository rather than your fork. Fix it with:
+
+```bash
+git remote set-url origin https://github.com/<your-username>/interface.git
+```
 
 ---
 
@@ -211,7 +253,8 @@ Keep commits logically scoped. Unrelated changes belong in separate commits.
 
 ## Pull requests
 
-Open your PR against `main` with:
+Open your PR from your fork's branch against `SO4-Markets/interface` `main`,
+with:
 
 - **What** changed and **why**.
 - **How you verified it** — which gate commands you ran, and their result.
@@ -227,8 +270,12 @@ A PR is ready for review when:
 - [ ] No check was disabled, skipped, or weakened to achieve green.
 - [ ] Commits follow Conventional Commits.
 
-Maintainers may ask for changes. Push follow-up commits rather than
+Maintainers may ask for changes. Push follow-up commits to the same branch on
+your fork — the PR updates automatically. Push follow-up commits rather than
 force-pushing over review history, unless asked to rebase.
+
+Leave **Allow edits by maintainers** ticked (it is on by default) so a
+maintainer can rebase or touch up your branch without a round trip.
 
 ---
 
