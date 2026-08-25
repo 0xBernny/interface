@@ -228,6 +228,21 @@ and open separate PRs for unrelated cleanups you spot along the way.
 
 ---
 
+## Changelog entries
+
+Each pull request that introduces a user-visible change must include a changelog
+entry file in `.changelog/unreleased/`. See [`.changelog/unreleased/README.md`](./.changelog/unreleased/README.md)
+for the format and naming convention.
+
+**When to include an entry:**
+
+- ✅ Any user-visible change (new feature, bug fix, breaking change, UI change, docs)
+- ❌ Internal refactors, test additions, CI/build changes, or non-user-facing work
+
+Run `bun run changelog:validate` before committing to catch formatting errors.
+
+---
+
 ## Commit conventions
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/):

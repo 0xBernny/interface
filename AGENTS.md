@@ -156,7 +156,22 @@ Violating these silently breaks the build for everyone.
 
 ---
 
-## 6. Commits and pull requests
+## 6. Changelog entries
+
+Each pull request that introduces a user-visible change must include a changelog
+entry file in `.changelog/unreleased/` following the format in
+[`.changelog/unreleased/README.md`](./.changelog/unreleased/README.md).
+
+**When to include an entry:**
+
+- ✅ Any user-visible change (new feature, bug fix, breaking change, UI change, docs)
+- ❌ Internal refactors, test additions, CI/build changes, or non-user-facing work
+
+Validate entries with `bun run changelog:validate`.
+
+---
+
+## 7. Commits and pull requests
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
 `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, `perf`, `build`, `ci`.
@@ -170,6 +185,7 @@ Before opening a PR, confirm:
 - [ ] Nothing disabled, skipped, or weakened to get green (§2)
 - [ ] Root cause fixed, regression test added (§3)
 - [ ] Clean-room verified, if dependencies or build config changed (§4)
+- [ ] Changelog entry added, if this is a user-visible change (§6)
 - [ ] Conventional Commit messages
 - [ ] PR states what changed, why, and how it was verified
 
@@ -179,7 +195,7 @@ work; publishing is not. When in doubt, do the work and ask before pushing.
 
 ---
 
-## 7. Honesty
+## 8. Honesty
 
 This is the rule that makes the rest meaningful.
 
