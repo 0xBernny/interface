@@ -10,7 +10,12 @@
     },
     {
       "label": "Reference",
-      "pages": ["reference/data-store", "reference/synthetics-reader", "reference/glossary"]
+      "pages": [
+        "reference/data-store",
+        "reference/synthetics-reader",
+        "reference/order-vault",
+        "reference/glossary"
+      ]
     },
     {
       "label": "Resources",
