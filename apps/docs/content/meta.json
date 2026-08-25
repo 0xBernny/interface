@@ -1,6 +1,15 @@
 {
   "sections": [
     {
+      "label": "Developers",
+      "pages": [
+        "developers/indexer",
+        "developers/contract-clients",
+        "developers/reading-data",
+        "developers/writing-transactions"
+      ]
+    },
+    {
       "label": "Concepts",
       "pages": [
         "concepts/risk",
