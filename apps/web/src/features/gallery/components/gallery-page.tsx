@@ -3,6 +3,7 @@ import { AppShell } from "@workspace/ui/components/app-shell"
 import { Avatar, AvatarGroup } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Callout } from "@workspace/ui/components/callout"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
 import { Input } from "@workspace/ui/components/input"
 import { KeyboardShortcut } from "@workspace/ui/components/keyboard-shortcut"
@@ -396,6 +397,30 @@ export function GalleryPage() {
           <KeyboardShortcut keys={["Mod", "Shift", "P"]} platform="mac" />
           <KeyboardShortcut keys={["Ctrl", "Alt", "Delete"]} platform="windows" />
           <KeyboardShortcut keys={["Mod", "S"]} presentation="grouped" />
+        </div>
+      </Section>
+
+      <Section title="Callout">
+        <div className="space-y-4 max-w-lg">
+          <Callout variant="note">
+            This is a note. It provides supplementary information about the
+            current topic.
+          </Callout>
+          <Callout variant="tip" title="Pro tip">
+            This is a tip. It highlights best practices or helpful shortcuts.
+          </Callout>
+          <Callout variant="warning">
+            <p>This is a warning. It alerts the reader to potential issues.</p>
+            <pre className="mt-2 rounded-md bg-black/5 p-3 text-xs"><code>const result = await sdk.simulate(tx)</code></pre>
+            <ul className="mt-2 list-disc pl-4">
+              <li>Always simulate before submitting</li>
+              <li>Check the result for errors</li>
+            </ul>
+          </Callout>
+          <Callout variant="caution" title="Caution">
+            This is a caution. It warns about irreversible actions or critical
+            information.
+          </Callout>
         </div>
       </Section>
 
