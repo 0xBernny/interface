@@ -40,7 +40,8 @@
         "resources/terms",
         "resources/faq",
         "resources/roadmap",
-        "resources/changelog"
+        "resources/changelog",
+        "resources/security"
       ]
     }
   ]
