@@ -14,6 +14,7 @@
         "reference/data-store",
         "reference/synthetics-reader",
         "reference/order-vault",
+        "reference/graphql.generated",
         "reference/glossary"
       ]
     },
