@@ -3,6 +3,8 @@
     {
       "label": "Developers",
       "pages": [
+        "developers/architecture",
+        "developers/local-setup",
         "developers/indexer",
         "developers/contract-clients",
         "developers/reading-data",
@@ -17,7 +19,7 @@
         "concepts/liquidation"
       ]
     },
-    { "label": "Reference", "pages": ["reference/glossary"] },
+    { "label": "Reference", "pages": ["reference/contracts.generated", "reference/exchange-router", "reference/glossary"] },
     {
       "label": "Resources",
       "pages": [
