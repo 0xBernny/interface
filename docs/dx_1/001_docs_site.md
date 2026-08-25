@@ -14,6 +14,15 @@ issue index in [`dx_issues.md`](./dx_issues.md).
 
 **Questions?** Reach out to the maintainer at [t.me/ibrahimijai](https://t.me/ibrahimijai).
 
+> **Implementation note (2026-08-24):** DX-097–DX-100 introduced a dependency-light
+> static documentation workspace while the wider DX1 foundation remains deferred.
+> It keeps the specified `apps/docs/content` boundary, typed frontmatter checks,
+> explicit navigation, link validation, printable HTML, and generated FAQ data.
+> TanStack Start, runtime MDX compilation, Pagefind, syntax highlighting, Mermaid,
+> generated reference pages, deployment configuration, and the complete docs chrome
+> remain deferred because their prerequisite issues have not landed. This note records
+> the built state rather than presenting the target architecture below as complete.
+
 ---
 
 ## 1. Why a separate app

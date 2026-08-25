@@ -1,0 +1,22 @@
+{
+  "sections": [
+    {
+      "label": "Concepts",
+      "pages": [
+        "concepts/risk",
+        "concepts/funding-and-fees",
+        "concepts/liquidation"
+      ]
+    },
+    { "label": "Reference", "pages": ["reference/glossary"] },
+    {
+      "label": "Resources",
+      "pages": [
+        "resources/terms",
+        "resources/faq",
+        "resources/roadmap",
+        "resources/changelog"
+      ]
+    }
+  ]
+}

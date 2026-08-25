@@ -5,7 +5,7 @@ test.use({ viewport: { width: 390, height: 844 } })
 test("faq accordion opens via keyboard and is wired to its panel", async ({ page }) => {
   await page.goto("/")
   await page.waitForLoadState("networkidle")
-  const trigger = page.getByRole("button", { name: /good place to earn yield/i })
+  const trigger = page.getByRole("button", { name: /what is so4/i })
   await expect(trigger).toHaveAttribute("aria-expanded", "false")
   const controls = await trigger.getAttribute("aria-controls")
   expect(controls).toBeTruthy()
