@@ -6,46 +6,60 @@ import {
 } from "@workspace/ui/components/accordion"
 import type { ReactNode } from "react"
 
-// TODO(GF3-003): real copy — same shape as GMX (first answer bulleted,
-// second numbered), SO4-specific wording.
+// Same shape as GMX (first answer bulleted, second numbered). Every claim
+// here is checked against what the app actually does — see README.md and
+// the linked routes — rather than adapted from GMX's own answers, since SO4
+// is a different protocol with a different feature set.
 const FAQS: Array<{ id: string; question: string; answer: ReactNode }> = [
   {
     id: "yield",
-    question: "What makes so4 one of the best places to earn yield on my crypto?",
+    question: "What makes SO4 a good place to earn yield on my crypto?",
     answer: (
       <ul className="list-disc space-y-1 pl-5">
-        <li>TODO(GF3-003): reason one</li>
-        <li>TODO(GF3-003): reason two</li>
-        <li>TODO(GF3-003): reason three</li>
+        <li>Provide liquidity to the GM pools and earn trading fees and funding, paid in real time.</li>
+        <li>Stake SO4 for GLV exposure — a diversified position across every pool, one token.</li>
+        <li>No lockups: withdraw whenever the pool has capacity, same block.</li>
       </ul>
     ),
   },
   {
     id: "get-started",
-    question: "How do I get started on so4?",
+    question: "How do I get started on SO4?",
     answer: (
       <ol className="list-decimal space-y-1 pl-5">
-        <li>TODO(GF3-003): step one</li>
-        <li>TODO(GF3-003): step two</li>
-        <li>TODO(GF3-003): step three</li>
+        <li>Connect a Stellar wallet — no signup, no email.</li>
+        <li>Open Trade and pick BTC, ETH, or XLM to go long or short.</li>
+        <li>Or open Earn to deposit into a pool instead of trading directly.</li>
       </ol>
     ),
   },
   {
     id: "cost-efficiency",
-    question: "What makes so4 more cost-efficient than other perpetual platforms?",
-    answer: <p>TODO(GF3-003): answer copy.</p>,
+    question: "What makes SO4 cost-efficient compared to other perpetual platforms?",
+    answer: (
+      <p>
+        Every position is filled against a single unified pool instead of a fragmented order book,
+        so fills don&apos;t depend on order book depth. Fees go to the liquidity that backs your
+        trade, not to a separate market maker spread.
+      </p>
+    ),
   },
   {
     id: "integrate",
-    question: "Can I build on top of so4 or integrate it into my DeFi app?",
+    question: "Can I build on top of SO4 or integrate it into my DeFi app?",
     answer: (
       <p>
-        TODO(GF3-003): answer copy, with a link to{" "}
-        <a href="#" className="text-gmx-blue-400 underline-offset-4 hover:underline">
-          developer docs
-        </a>
-        .
+        SO4 runs on public Soroban contracts — ExchangeRouter, DataStore, SyntheticsReader, and
+        OrderVault. There&apos;s no published SDK or integration docs yet; check the{" "}
+        <a
+          href="https://github.com/SO4-Markets/interface"
+          target="_blank"
+          rel="noreferrer"
+          className="text-gmx-blue-400 underline-offset-4 hover:underline"
+        >
+          source
+        </a>{" "}
+        in the meantime.
       </p>
     ),
   },

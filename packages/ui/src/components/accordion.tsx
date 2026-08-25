@@ -239,6 +239,11 @@ function AccordionContent({
       role="region"
       aria-labelledby={triggerId}
       aria-hidden={!open}
+      // `aria-hidden` alone hides the panel from assistive tech but doesn't
+      // remove focusable descendants (a link/button) from the tab order —
+      // WCAG 4.1.2 fails when a hidden region can still receive focus.
+      // `inert` does both natively: not focusable, not in the AT tree.
+      inert={!open}
       data-slot="accordion-content"
       data-state={open ? "open" : "closed"}
       className={cn(

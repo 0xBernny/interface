@@ -13,31 +13,25 @@ function Stat({ label, value }: { label: string; value: string }) {
   )
 }
 
-function VolumeStat({ value }: { value: string }) {
-  return (
-    <a
-      href="#"
-      target="_blank"
-      rel="noreferrer"
-      className="group"
-    >
-      <div className="flex items-center gap-1 text-12 text-gmx-slate-400 transition-colors duration-180 group-hover:text-gmx-blue-300 sm:text-14">
-        Total volume
-        <span className="transition-transform duration-180 group-hover:translate-x-0.5">→</span>
-      </div>
-      <div className="mt-1 text-30 font-medium tracking-tight text-white sm:text-40">{value}</div>
-    </a>
-  )
-}
+// GMX's "Total volume" stat links out to a Dune analytics dashboard. SO4
+// has no equivalent analytics page to link to, so this renders as a plain
+// stat like the other two rather than a hover-link affordance that goes
+// nowhere real.
+// TODO(GF3-003): make this a real link once SO4 has an analytics/stats page.
 
 export function HeroSection() {
   const stats = useLandingStats()
 
   return (
     <section className="relative overflow-hidden bg-gmx-slate-900">
-      {/* TODO(GF3-003): replace with the real chain-constellation background animation */}
+      {/* GMX's hero has an animated chain-constellation canvas behind an
+          off-center glow (upper-right of the headline, per
+          docs/gf_3/screenshots/hero-desktop.png) — the canvas animation
+          itself isn't recreated (no asset/JS budget for it here), but the
+          glow's position now matches the reference instead of the centered
+          placeholder GF3-002 shipped. */}
       <div
-        className="absolute inset-x-0 top-0 h-160 bg-[radial-gradient(circle_at_50%_20%,var(--color-gmx-slate-700),transparent_60%)] sm:h-215"
+        className="absolute inset-x-0 top-0 h-160 bg-[radial-gradient(circle_at_75%_15%,var(--color-gmx-slate-700),transparent_55%)] sm:h-215"
         aria-hidden="true"
       />
 
@@ -58,8 +52,8 @@ export function HeroSection() {
             </Link>
 
             <p className="text-subheadline sm:w-56.5">
-              Decentralised permissionless on-chain exchange with deep liquidity and low costs, live
-              since 2026.
+              Decentralised permissionless on-chain exchange with deep liquidity and low costs,
+              built on Stellar Soroban.
             </p>
           </div>
 
@@ -69,7 +63,10 @@ export function HeroSection() {
               label="Open interest"
               value={stats.openInterest === null ? "-" : shortFormatUsd(stats.openInterest)}
             />
-            <VolumeStat value={stats.totalVolume === null ? "-" : shortFormatUsd(stats.totalVolume)} />
+            <Stat
+              label="Total volume"
+              value={stats.totalVolume === null ? "-" : shortFormatUsd(stats.totalVolume)}
+            />
           </div>
         </div>
       </div>

@@ -5,9 +5,29 @@ import { IconBox } from "./icon-box"
 
 const CHIPS = ["No deposits required", "Trade from your wallet", "No loss of fund ownership"]
 
+// The three markets SO4 actually lists (README.md): BTC, ETH, XLM. Each
+// asset's identity color is fixed by convention (Bitcoin orange, Ethereum
+// lavender, Stellar blue) — not a UI decoration, so it can't be sourced
+// from the design-token palette.
+const ASSET_MARKS = [
+  { symbol: "BTC", from: "#F7931A", to: "#B36B0F" }, // ds-allow: Bitcoin brand color, not a UI token
+  { symbol: "ETH", from: "#8296FF", to: "#3C4CB0" }, // ds-allow: Ethereum brand color, not a UI token
+  { symbol: "XLM", from: "#14B6E7", to: "#0B6E93" }, // ds-allow: Stellar brand color, not a UI token
+]
+
+// Both decorative — each sits beside a card heading that already names the
+// feature, so the icon adds nothing a screen reader needs to announce.
 function GearsIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <circle cx="9" cy="9" r="3" />
       <circle cx="17" cy="17" r="2.5" />
       <path d="M9 3v2m0 8v2m6-6h-2M5 9H3m4.24-4.24L5.83 3.34m6.34 6.34 1.41-1.41" />
@@ -17,7 +37,15 @@ function GearsIcon() {
 
 function ShieldIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      aria-hidden="true"
+    >
       <path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z" />
     </svg>
   )
@@ -26,6 +54,12 @@ function ShieldIcon() {
 export function FeatureGrid() {
   return (
     <div className="grid grid-cols-1 gap-6 py-20 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-3 lg:py-30">
+      {/* Visually part of the hero (no visible section title, matching
+          GMX), but the card h3s below need an h2 ancestor to keep the
+          heading outline valid — Lighthouse's heading-order audit failed
+          without this, since h1 → h3 skips a level. */}
+      <h2 className="sr-only">Why trade on SO4</h2>
+
       {/* Guaranteed liquidity */}
       <div className="rounded-20 border border-hairline border-gmx-slate-600 bg-gmx-slate-800 p-9">
         <IconBox>
@@ -35,7 +69,7 @@ export function FeatureGrid() {
           <p className="text-12 uppercase tracking-[0.864px] text-gmx-slate-500">Trade with confidence</p>
           <h3 className="mt-2 text-heading-4 text-white">Guaranteed liquidity</h3>
           <p className="mt-3 text-description">
-            Benefit from up to 100x leverage and guaranteed on-chain liquidity that&apos;s not dependent
+            Benefit from up to 50x leverage and guaranteed on-chain liquidity that&apos;s not dependent
             on order book depth.
           </p>
         </div>
@@ -48,18 +82,59 @@ export function FeatureGrid() {
         </IconBox>
         <div className="mt-9">
           <h3 className="text-heading-4 text-white">Stay safe from liquidations</h3>
-          <p className="mt-3 text-16 text-white/70">
-            Avoid price wicks with transparent, sub-second Chainlink price feeds tailor-made for so4.
+          {/* white/70 on this blue card measured 3.86:1 (Lighthouse
+              color-contrast audit) against the WCAG AA 4.5:1 minimum;
+              white/85 clears it with margin. */}
+          <p className="mt-3 text-16 text-white/85">
+            Avoid price wicks with live price feeds, sourced from Binance and backed by a GMX oracle
+            fallback.
           </p>
         </div>
-        {/* TODO(GF3-003): replace with the real protection-shield illustration */}
-        <div className="mt-6 aspect-square w-3/5 rounded-full bg-white/10" aria-hidden="true" />
+        {/* Decorative shield-and-pulse mark, not a data illustration —
+            aria-hidden is correct here. */}
+        <svg
+          className="mt-6 w-3/5"
+          viewBox="0 0 120 120"
+          fill="none"
+          aria-hidden="true"
+          width="120"
+          height="120"
+        >
+          <path
+            d="M60 8 L104 26 V56 C104 84 86 104 60 114 C34 104 16 84 16 56 V26 Z"
+            fill="white"
+            fillOpacity="0.08"
+            stroke="white"
+            strokeOpacity="0.25"
+            strokeWidth="1.5"
+          />
+          <path
+            d="M60 30 L86 42 V58 C86 76 76 89 60 96 C44 89 34 76 34 58 V42 Z"
+            fill="white"
+            fillOpacity="0.1"
+          />
+          <path
+            d="M48 60 L57 69 L74 50"
+            stroke="white"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
 
       {/* Support for numerous assets — spans 2 rows */}
       <div className="rounded-20 border border-hairline border-gmx-slate-600 bg-gmx-slate-800 p-9 lg:row-span-2">
         <IconBox>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            aria-hidden="true"
+          >
             <rect x="3" y="3" width="7" height="7" rx="2" />
             <rect x="14" y="3" width="7" height="7" rx="2" />
             <rect x="3" y="14" width="7" height="7" rx="2" />
@@ -70,10 +145,17 @@ export function FeatureGrid() {
           <h3 className="text-heading-4 text-white">Support for numerous assets</h3>
           <p className="mt-3 text-description">Use your preferred token to pay and collateralize positions.</p>
         </div>
-        {/* TODO(GF3-003): replace with the real chain-icon cluster illustration */}
-        <div className="mt-6 flex flex-wrap gap-2" aria-hidden="true">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <span key={i} className="size-8 rounded-full bg-gmx-slate-650" />
+        {/* Three asset marks (BTC · ETH · XLM) — matches the markets SO4
+            actually lists (README.md), not a generic multi-chain claim. */}
+        <div className="mt-6 flex flex-wrap gap-2" role="img" aria-label="Supported assets: Bitcoin, Ethereum, Stellar Lumens">
+          {ASSET_MARKS.map(({ symbol, from, to }) => (
+            <span
+              key={symbol}
+              className="flex size-10 items-center justify-center rounded-full text-11 font-semibold text-white"
+              style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+            >
+              {symbol}
+            </span>
           ))}
         </div>
       </div>
@@ -112,7 +194,8 @@ export function FeatureGrid() {
       <div className="relative overflow-hidden rounded-20 bg-linear-to-br from-gmx-slate-800 to-gmx-slate-650 p-9 sm:col-span-2">
         <h3 className="text-heading-4 max-w-[420px] text-white">Seamless trading</h3>
         <p className="mt-3 max-w-[420px] text-description">
-          Enjoy a frictionless trading experience with One-Click Trading and Express Trading.
+          Market, limit, and trigger orders with live position tracking — no wallet pop-up per
+          click, sub-second chart updates, and instant fills against the pool.
         </p>
         <Link to="/trade" className="btn-landing mt-6 inline-flex rounded-8 px-4 py-2.5 text-14">
           Trade now
