@@ -26,6 +26,7 @@
         "reference/contracts.generated",
         "reference/exchange-router",
         "reference/tokens.generated",
+        "reference/errors",
         "reference/glossary"
       ]
     },

@@ -8,6 +8,7 @@ await $`bun run ${join(appRoot, "scripts/check-content.ts")}`
 await $`bun run ${join(appRoot, "scripts/check-links.ts")}`
 await $`bun run ${join(appRoot, "scripts/generate-faq.ts")} --check`
 await $`bun run ${join(appRoot, "../../scripts/generate-design-tokens.ts")} --check`
+await $`bun run ${join(appRoot, "../../scripts/generate-errors-reference.ts")} --check`
 
 const pages = await loadPages()
 const outputRoot = join(appRoot, ".output/public")

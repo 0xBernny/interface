@@ -22,6 +22,8 @@
     "check:links": "bun run --cwd apps/docs check:links",
     "generate:design-tokens": "bun run scripts/generate-design-tokens.ts",
     "check:design-tokens:generated": "bun run scripts/generate-design-tokens.ts --check",
+    "generate:errors": "bun run scripts/generate-errors-reference.ts",
+    "check:errors:generated": "bun run scripts/generate-errors-reference.ts --check",
     "changelog:validate": "bun run scripts/changelog/validate.ts",
     "changelog:release": "bun run scripts/changelog/release.ts"
   },
