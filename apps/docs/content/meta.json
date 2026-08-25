@@ -8,7 +8,8 @@
         "developers/indexer",
         "developers/contract-clients",
         "developers/reading-data",
-        "developers/writing-transactions"
+        "developers/writing-transactions",
+        "developers/design-system"
       ]
     },
     {
@@ -19,14 +20,28 @@
         "concepts/liquidation"
       ]
     },
-    { "label": "Reference", "pages": ["reference/contracts.generated", "reference/exchange-router", "reference/glossary"] },
+    {
+      "label": "Guides",
+      "pages": ["guides/troubleshooting"]
+    },
+    {
+      "label": "Reference",
+      "pages": [
+        "reference/contracts.generated",
+        "reference/exchange-router",
+        "reference/tokens.generated",
+        "reference/errors",
+        "reference/glossary"
+      ]
+    },
     {
       "label": "Resources",
       "pages": [
         "resources/terms",
         "resources/faq",
         "resources/roadmap",
-        "resources/changelog"
+        "resources/changelog",
+        "resources/security"
       ]
     }
   ]
