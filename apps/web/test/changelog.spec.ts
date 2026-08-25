@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - Responsive Layout", () => {
   test.beforeEach(async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe("Changelog - Responsive Layout", () => {
     page,
     context,
   }) => {
-    await context.setOfflineMode(false)
+    await context.setOffline(false)
     await page.setViewportSize({ width: 360, height: 800 })
 
     // Add touch device simulation

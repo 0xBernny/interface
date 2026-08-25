@@ -1,8 +1,7 @@
 import { Badge } from "@workspace/ui/components/badge"
-import { Button } from "@workspace/ui/components/button"
-import type { ChangelogEntry as IChangelogEntry } from "../types"
-import { typeToVariant, typeLabel } from "../utils"
+import { typeLabel, typeToVariant } from "../utils"
 import { HighlightedText } from "./HighlightedText"
+import type { ChangelogEntry as IChangelogEntry } from "../types"
 
 interface ChangelogEntryProps {
   entry: IChangelogEntry
@@ -32,21 +31,14 @@ export function ChangelogEntry({ entry, highlight }: ChangelogEntryProps) {
       {/* Right side: PR link - touch target 44×44 */}
       {entry.pr && (
         <div className="mt-2 sm:mt-0 sm:ml-4 shrink-0">
-          <Button
-            variant="link"
-            size="sm"
-            className="h-11 min-w-11 px-3 text-info hover:text-info/80 transition-colors"
-            asChild
+          <a
+            href={`https://github.com/SO4-Markets/interface/pull/${entry.pr}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-11 min-w-11 items-center justify-center px-3 text-xs/relaxed font-medium text-info transition-colors hover:text-info/80"
           >
-            <a
-              href={`https://github.com/SO4-Markets/interface/pull/${entry.pr}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center"
-            >
-              #{entry.pr}
-            </a>
-          </Button>
+            #{entry.pr}
+          </a>
         </div>
       )}
     </div>

@@ -9,7 +9,8 @@
         "developers/contract-clients",
         "developers/reading-data",
         "developers/writing-transactions",
-        "developers/design-system"
+        "developers/design-system",
+        "developers/json-feed"
       ]
     },
     {
@@ -22,7 +23,9 @@
     },
     {
       "label": "Guides",
-      "pages": ["guides/troubleshooting"]
+      "pages": [
+        "guides/troubleshooting"
+      ]
     },
     {
       "label": "Reference",
