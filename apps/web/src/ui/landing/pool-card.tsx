@@ -18,7 +18,7 @@ function CoinIcon() {
 
 export function PoolCard({ name, description, apr }: PoolCardData) {
   return (
-    <div className="group relative flex h-[200px] w-full flex-col justify-between overflow-hidden rounded-20 bg-gmx-slate-800 p-6 transition-transform duration-180 hover:-translate-y-1 lg:h-[380px] lg:w-96 lg:p-9">
+    <div className="group relative flex h-50 w-full flex-1 flex-col justify-between overflow-hidden rounded-20 bg-gmx-slate-800 p-6 transition-transform duration-180 hover:-translate-y-1 lg:h-95 lg:max-w-96 lg:p-9">
       {/* TODO(GF3-003): replace with the real gradient cover + parallax lines + coin illustration */}
       <div
         className="absolute inset-0 bg-[radial-gradient(circle_at_100%_100%,var(--color-gmx-blue-400)/0.15,transparent_60%)] transition-transform duration-300 group-hover:scale-105"

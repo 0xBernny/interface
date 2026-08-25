@@ -1,5 +1,5 @@
+import { useEffect, useRef } from "react"
 import { Link } from "@tanstack/react-router"
-import { Button } from "@workspace/ui/components/button"
 import {
   HamburgerButton,
   SiteLogo,
@@ -20,27 +20,74 @@ const SOCIALS = [
   { label: "GitHub", href: "#" },
 ]
 
+// "Open app" navigates, so it is a link styled as a button rather than a
+// <button> — using Base UI's Button with render={<Link/>} strips native
+// button semantics and warns about it.
 function OpenAppButton({ className }: { className?: string }) {
   return (
-    <Button
-      render={<Link to="/trade" />}
-      variant="default"
-      className={`btn-landing rounded-8 px-4 py-2.5 text-14 ${className ?? ""}`}
+    <Link
+      to="/trade"
+      className={`btn-landing inline-flex items-center justify-center rounded-8 px-4 py-2.5 text-14 ${className ?? ""}`}
     >
       Open app
-    </Button>
+    </Link>
   )
 }
 
 export function HeaderMenu() {
   const { open, toggle, close } = useMobileMenu()
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  // The mobile menu is a full-screen overlay, so it needs the two things
+  // an overlay owes a keyboard/screen-reader user beyond Escape-to-close
+  // (which useMobileMenu already handles): the page behind it must not
+  // scroll, and Tab must not walk out of it into that inert content.
+  useEffect(() => {
+    if (!open) return
+
+    const { body } = document
+    const previousOverflow = body.style.overflow
+    body.style.overflow = "hidden"
+
+    const panel = panelRef.current
+    panel?.querySelector<HTMLElement>("a, button")?.focus()
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || !panel) return
+
+      const focusables = panel.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusables.length === 0) return
+
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+      body.style.overflow = previousOverflow
+    }
+  }, [open])
 
   return (
     <header className="fixed top-0 z-30 w-full bg-gmx-slate-900">
       <div className="mx-auto flex h-auto max-w-300 items-center justify-between px-4 py-3 sm:px-10 sm:py-4">
-        <a href="/" className="flex h-5 items-center sm:h-6">
+        {/* SiteLogo renders its own <a href="/"> — do not wrap it in
+            another anchor (nested <a> is invalid HTML and breaks
+            hydration for the whole route). */}
+        <div className="flex h-5 items-center sm:h-6">
           <SiteLogo variant="landing" />
-        </a>
+        </div>
 
         {/* Desktop nav */}
         <ul className="hidden items-center gap-5.5 sm:flex">
@@ -72,7 +119,13 @@ export function HeaderMenu() {
 
       {/* Mobile full-screen menu */}
       {open && (
-        <div className="fixed inset-0 top-16 z-20 flex flex-col bg-gmx-slate-900 sm:hidden">
+        <div
+          ref={panelRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site menu"
+          className="fixed inset-0 top-16 z-20 flex flex-col bg-gmx-slate-900 sm:hidden"
+        >
           <ul className="flex flex-1 flex-col overflow-y-auto px-4">
             {NAV_LINKS.map(({ label, to }) => (
               <li key={label} className="border-t border-hairline border-gmx-slate-600">

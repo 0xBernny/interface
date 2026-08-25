@@ -46,15 +46,22 @@ export function HeroSection() {
           Trade <AnimatedTitle /> from your wallet
         </h1>
 
-        <div className="mt-7 flex flex-col gap-6 border-b border-hairline border-gmx-slate-600 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-9">
-          <Link to="/trade" className="btn-landing flex w-full items-center justify-center rounded-8 px-6 py-3 text-14 sm:w-[200px]">
-            Trade now
-          </Link>
+        {/* The CTA + subheadline + 3-stat group only fit on one line once
+            there is desktop room for them, so the row is deferred to `lg`.
+            Between 640 and 1023 the stats sit on their own line instead of
+            being squeezed into a third column (which wrapped every stat
+            label onto three lines at 768). */}
+        <div className="mt-7 flex flex-col gap-6 border-b border-hairline border-gmx-slate-600 pb-7 lg:flex-row lg:items-end lg:justify-between lg:pb-9">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:gap-9">
+            <Link to="/trade" className="btn-landing flex w-full items-center justify-center rounded-8 px-6 py-3 text-14 sm:w-50">
+              Trade now
+            </Link>
 
-          <p className="text-subheadline sm:w-[226px]">
-            Decentralised permissionless on-chain exchange with deep liquidity and low costs, live
-            since 2026.
-          </p>
+            <p className="text-subheadline sm:w-56.5">
+              Decentralised permissionless on-chain exchange with deep liquidity and low costs, live
+              since 2026.
+            </p>
+          </div>
 
           <div className="flex gap-9 sm:gap-15">
             <Stat label="Traders" value={stats.traders === null ? "-" : shortFormat(stats.traders)} />

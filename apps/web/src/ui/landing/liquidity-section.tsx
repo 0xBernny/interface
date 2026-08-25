@@ -29,7 +29,7 @@ export function LiquiditySection() {
           </Link>
         </div>
 
-        <div className="mt-9 flex flex-col gap-4 lg:flex-row">
+        <div className="mt-9 flex flex-col gap-4 sm:flex-row">
           {POOLS.map((pool) => (
             <PoolCard key={pool.name} {...pool} />
           ))}

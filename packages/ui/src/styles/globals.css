@@ -354,24 +354,6 @@
         display: none;
     }
 }
-/*
- * FAQ accordion expand/collapse (FaqItem), GMX-style: a CSS grid-rows
- * transition (0fr -> 1fr) rather than measuring content height in JS.
- * The row applies `grid-template-rows` per open/closed state; the direct
- * child needs `overflow: hidden` (via `overflow-hidden`) to clip during
- * the transition.
- */
-@utility faq-row-closed {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 180ms ease-in-out;
-}
-@utility faq-row-open {
-    display: grid;
-    grid-template-rows: 1fr;
-    transition: grid-template-rows 180ms ease-in-out;
-}
-
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);

@@ -49,7 +49,17 @@ export function RoadmapSection() {
           </a>
         </div>
 
-        <div className="mt-9 flex gap-6 overflow-x-scroll scrollbar-hide">
+        {/* tabIndex makes the horizontal scroller reachable by keyboard —
+            a scroll container is only arrow-key scrollable once focused,
+            and without this the roadmap is unreachable without a pointer.
+            role/aria-label give it a name in the a11y tree now that it is
+            a focus stop. */}
+        <div
+          className="mt-9 flex gap-6 overflow-x-scroll scrollbar-hide focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gmx-blue-400"
+          tabIndex={0}
+          role="group"
+          aria-label="Roadmap timeline, scrollable horizontally"
+        >
           {QUARTERS.map((q) => (
             <Quarter key={q.label} {...q} />
           ))}
