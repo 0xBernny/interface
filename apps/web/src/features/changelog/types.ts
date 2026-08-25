@@ -13,7 +13,9 @@ export type ChangelogArea =
 
 export interface ChangelogEntry {
   type: ChangelogEntryType
-  area: ChangelogArea
+  // Pre-tooling and hand-written historical entries have no area; the parser
+  // (scripts/changelog/parse.ts) emits null for them.
+  area: ChangelogArea | null
   text: string
   pr: number | null
   breaking: boolean

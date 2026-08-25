@@ -1,7 +1,9 @@
-import { Button } from "@workspace/ui/components/button"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { Icon } from "@workspace/ui/components/icon"
 import { useState } from "react"
+import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Badge } from "@workspace/ui/components/badge"
+import { Button } from "@workspace/ui/components/button"
+import { Divider } from "@workspace/ui/components/separator"
+import { Icon } from "@workspace/ui/components/icon"
 import { createAnchor, formatDate } from "../utils"
 import { ChangelogEntry } from "./ChangelogEntry"
 import type { Release } from "../types"
@@ -24,21 +26,36 @@ export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectio
   }
 
   return (
+    // Yanked releases keep their permanent anchor but render muted — the
+    // YANKED badge stays at full emphasis so withdrawal is unmistakable.
     <section
       id={anchor.slice(1)}
-      className="mb-8 sm:mb-12 pb-8 sm:pb-12 border-b border-border last:border-b-0 last:mb-0 last:pb-0"
+      aria-label={`Version ${release.version}${release.yanked ? " (yanked)" : ""}`}
+      className={
+        release.yanked
+          ? "mb-8 sm:mb-12 pb-8 sm:pb-12 opacity-60 last:mb-0 last:pb-0"
+          : "mb-8 sm:mb-12 pb-8 sm:pb-12 last:border-b-0 last:mb-0 last:pb-0 border-b border-border"
+      }
     >
       {/* Release header: responsive layout */}
       <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
         {/* Version and date: stack on mobile, inline on desktop */}
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 sm:gap-4">
           <div className="flex flex-col gap-1">
-            {/* h2 for release - proper heading hierarchy */}
-            <h2 className="text-page-title font-bold text-foreground break-words">
-              {release.version}
-            </h2>
+            <div className="flex flex-wrap items-center gap-2">
+              {/* h2 for release - proper heading hierarchy */}
+              <h2 className="text-page-title font-bold text-foreground break-words">
+                {release.version}
+              </h2>
+              {release.yanked && (
+                <Badge variant="danger" size="sm">
+                  YANKED
+                </Badge>
+              )}
+            </div>
             <p className="text-body-sm text-text-secondary">
-              {formatDate(release.date)}
+              {/* Shared DS-072 locale helper — identical format for everyone. */}
+              <time dateTime={release.date}>{formatDate(release.date)}</time>
             </p>
           </div>
 
@@ -58,8 +75,8 @@ export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectio
           </Button>
         </div>
 
-        {/* Version separator */}
-        <hr className="border-t border-border" />
+        {/* Version separator (DS-080) */}
+        <Divider tone="default" />
       </div>
 
       {/* Entries list */}
