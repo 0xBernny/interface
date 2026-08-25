@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from "react"
 
-// TODO(GF3-003): swap the rotation copy for SO4-specific markets (keep GMX's
-// first/last per the spec — final wording lands with GF3-003).
+// SO4 markets: the hero sentence is the fixed "Trade [word] from your
+// wallet" — every rotating word needs to read naturally in that slot. GMX's
+// own list ("with 100x leverage" / "100+ crypto tokens" / "from 7
+// blockchains") makes claims that would be false for SO4 today (a
+// Stellar-native, still-in-development protocol per README.md), so the
+// middle words are swapped for what SO4 actually offers.
 const ROTATING_WORDS = [
-  "with 100x leverage",
-  "100+ crypto tokens",
-  "multiple asset classes",
-  "deep liquid markets",
-  "from 7 blockchains",
+  "with up to 50x leverage",
+  "BTC, ETH and XLM perps",
+  "with self-custodied risk",
+  "on Stellar Soroban",
+  "with deep liquid markets",
 ]
 
 const HOLD_MS = 2500

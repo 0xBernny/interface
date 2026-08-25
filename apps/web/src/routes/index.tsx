@@ -21,14 +21,19 @@ function LandingPage() {
     // without touching <html> so /trade, /pools, etc. keep honoring it.
     <div className="dark font-landing-sans min-h-svh bg-background text-foreground antialiased">
       <HeaderMenu />
-      <HeroSection />
-      <LaunchSection />
-      <LiquiditySection />
-      <SponsorsSection />
-      <ProgramCards />
-      <FaqSection />
-      <RoadmapSection />
-      <SocialSection />
+      {/* Lighthouse flagged "Document does not have a main landmark" — every
+          section below is the page's actual content, HeaderMenu is the only
+          non-main landmark. */}
+      <main>
+        <HeroSection />
+        <LaunchSection />
+        <LiquiditySection />
+        <SponsorsSection />
+        <ProgramCards />
+        <FaqSection />
+        <RoadmapSection />
+        <SocialSection />
+      </main>
     </div>
   )
 }

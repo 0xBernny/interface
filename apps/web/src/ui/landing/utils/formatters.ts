@@ -1,4 +1,6 @@
-// TODO(GF3-003): verify against real indexer-scale numbers once wired up.
+// Formatting only — covered by formatters.test.ts against representative
+// magnitudes; will need a second look once the indexer exposes real numbers
+// and their actual scale is known.
 
 /** 230000 -> "230K", 5_200_000 -> "5.2M", 1_400_000_000 -> "1.4B" */
 export function shortFormat(value: number): string {
