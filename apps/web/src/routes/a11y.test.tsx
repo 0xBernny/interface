@@ -5,6 +5,9 @@ import { RouterProvider, createMemoryHistory, createRootRoute, createRoute, crea
 import { FaucetPage } from "../features/faucet/components/faucet-page";
 import { TradePage } from "../features/trade/components/TradePage";
 import { ReferralsPage } from "../features/referrals/components/referrals-page";
+import { ChangelogPage } from "../features/changelog/components/ChangelogPage";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 
 // A11y Triage Guide:
 // If an accessibility violation occurs, you can triage it by inspecting the violation details.
@@ -26,6 +29,31 @@ function renderWithRouter(component: React.FunctionComponent) {
   
   return render(<RouterProvider router={router} />);
 }
+
+const mockChangelogData = {
+  releases: [
+    {
+      version: "0.4.0",
+      date: "2026-08-24",
+      yanked: false,
+      entries: [
+        {
+          type: "added" as const,
+          area: "trade" as const,
+          text: "Trigger orders on the trade panel.",
+          pr: 512,
+          breaking: false,
+        },
+      ],
+    },
+  ],
+};
+
+const server = setupServer(
+  http.get("/changelog.json", () => {
+    return HttpResponse.json(mockChangelogData);
+  })
+);
 
 describe("Accessibility Smoke Checks", () => {
   it("Faucet page has no critical/serious violations in disconnected state", async () => {
@@ -56,5 +84,55 @@ describe("Accessibility Smoke Checks", () => {
       v => v.impact === "critical" || v.impact === "serious"
     );
     expect(seriousViolations).toEqual([]);
+  });
+
+  describe("Changelog accessibility", () => {
+    beforeAll(() => server.listen());
+    afterEach(() => server.resetHandlers());
+    afterAll(() => server.close());
+
+    it("has no critical/serious violations in default state (loaded)", async () => {
+      const { container } = renderWithRouter(ChangelogPage);
+      // Wait for loading
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const results = await axe(container);
+      
+      const seriousViolations = results.violations.filter(
+        v => v.impact === "critical" || v.impact === "serious"
+      );
+      expect(seriousViolations).toEqual([]);
+    });
+
+    it("has no critical/serious violations in error state", async () => {
+      server.use(
+        http.get("/changelog.json", () => HttpResponse.error())
+      );
+      
+      const { container } = renderWithRouter(ChangelogPage);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const results = await axe(container);
+      
+      const seriousViolations = results.violations.filter(
+        v => v.impact === "critical" || v.impact === "serious"
+      );
+      expect(seriousViolations).toEqual([]);
+    });
+
+    it("has no critical/serious violations in empty state", async () => {
+      server.use(
+        http.get("/changelog.json", () =>
+          HttpResponse.json({ releases: [] })
+        )
+      );
+      
+      const { container } = renderWithRouter(ChangelogPage);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const results = await axe(container);
+      
+      const seriousViolations = results.violations.filter(
+        v => v.impact === "critical" || v.impact === "serious"
+      );
+      expect(seriousViolations).toEqual([]);
+    });
   });
 });
