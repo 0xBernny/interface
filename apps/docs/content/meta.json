@@ -8,7 +8,10 @@
         "concepts/liquidation"
       ]
     },
-    { "label": "Reference", "pages": ["reference/glossary"] },
+    {
+      "label": "Reference",
+      "pages": ["reference/data-store", "reference/glossary"]
+    },
     {
       "label": "Resources",
       "pages": [
