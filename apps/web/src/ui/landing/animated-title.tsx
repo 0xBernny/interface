@@ -15,7 +15,12 @@ const TRANSITION_MS = 250
 
 export function AnimatedTitle() {
   const [index, setIndex] = useState(0)
-  const [entering, setEntering] = useState(true)
+  // "in" plays on every word change except the very first mount (no
+  // entrance animation needed before the reader has seen anything yet —
+  // this also keeps first paint deterministic for visual-regression tests,
+  // since Playwright's animation freeze can't reliably override an inline
+  // `style.animation` referencing a custom property).
+  const [phase, setPhase] = useState<"idle" | "out" | "in">("idle")
   const reducedMotionRef = useRef(false)
 
   useEffect(() => {
@@ -26,10 +31,10 @@ export function AnimatedTitle() {
     if (reducedMotionRef.current) return
 
     const holdTimer = setInterval(() => {
-      setEntering(false)
+      setPhase("out")
       const outTimer = setTimeout(() => {
         setIndex((i) => (i + 1) % ROTATING_WORDS.length)
-        setEntering(true)
+        setPhase("in")
       }, TRANSITION_MS)
       return () => clearTimeout(outTimer)
     }, HOLD_MS)
@@ -43,11 +48,12 @@ export function AnimatedTitle() {
         key={index}
         className="inline-block text-gmx-blue-400"
         style={{
-          animation: reducedMotionRef.current
-            ? "none"
-            : entering
-              ? "var(--animate-title-in)"
-              : "var(--animate-title-out)",
+          animation:
+            reducedMotionRef.current || phase === "idle"
+              ? "none"
+              : phase === "in"
+                ? "var(--animate-title-in)"
+                : "var(--animate-title-out)",
         }}
       >
         {ROTATING_WORDS[index]}

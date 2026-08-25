@@ -34,11 +34,14 @@ export function HeroSection() {
   const stats = useLandingStats()
 
   return (
-    <section className="relative flex h-[640px] flex-col justify-end overflow-hidden bg-gmx-slate-900 px-4 py-15 sm:h-[860px] sm:px-10 sm:py-20">
+    <section className="relative overflow-hidden bg-gmx-slate-900">
       {/* TODO(GF3-003): replace with the real chain-constellation background animation */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,var(--color-gmx-slate-700),transparent_60%)]" aria-hidden="true" />
+      <div
+        className="absolute inset-x-0 top-0 h-160 bg-[radial-gradient(circle_at_50%_20%,var(--color-gmx-slate-700),transparent_60%)] sm:h-215"
+        aria-hidden="true"
+      />
 
-      <div className="relative mx-auto w-full max-w-300">
+      <div className="relative mx-auto flex min-h-160 w-full max-w-300 flex-col justify-end px-4 pt-20 pb-15 sm:min-h-215 sm:px-10 sm:pt-24 sm:pb-20">
         <h1 className="text-heading-1 text-white">
           Trade <AnimatedTitle /> from your wallet
         </h1>
@@ -62,7 +65,9 @@ export function HeroSection() {
             <VolumeStat value={stats.totalVolume === null ? "-" : shortFormatUsd(stats.totalVolume)} />
           </div>
         </div>
+      </div>
 
+      <div className="relative mx-auto w-full max-w-300 px-4 sm:px-10">
         <FeatureGrid />
       </div>
     </section>
