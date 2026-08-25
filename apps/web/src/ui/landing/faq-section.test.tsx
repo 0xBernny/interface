@@ -2,13 +2,13 @@ import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it } from "vitest"
 
-import { LandingFaq } from "./faq"
+import { FaqSection } from "./faq-section"
 import { LANDING_FAQS } from "./faq.generated"
 
-describe("LandingFaq", () => {
+describe("FaqSection", () => {
   it("renders every generated entry and reveals its documentation link", async () => {
     const user = userEvent.setup()
-    render(<LandingFaq />)
+    render(<FaqSection />)
     for (const item of LANDING_FAQS) {
       expect(
         screen.getByRole("button", { name: item.question }),

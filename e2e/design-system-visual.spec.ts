@@ -60,13 +60,24 @@ async function stubExternalNetwork(page: Page) {
 for (const theme of THEMES) {
   for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
     test.describe(`${theme} theme, ${viewportName}`, () => {
-      test.use({ viewport })
+      // reducedMotion: "reduce" *should* stop JS-timer-driven animations
+      // that `animations: "disabled"` can't freeze (e.g. the landing
+      // hero's word-rotation interval and the community marquee), but
+      // this Chrome Headless Shell build doesn't reflect it in
+      // matchMedia() or CSS @media queries (verified: both read false
+      // even with this set) — kept anyway as the semantically correct
+      // setting for engines that do honor it. The actual freeze comes
+      // from page.clock below, which stops those timers from ever firing
+      // by fixing the clock before any script runs.
+      test.use({ viewport, reducedMotion: "reduce" })
 
       test.beforeEach(async ({ page }) => {
         await stubExternalNetwork(page)
         await page.addInitScript((t) => {
           window.localStorage.setItem("so4-theme", t)
         }, theme)
+        await page.clock.install({ time: new Date("2026-01-01T00:00:00Z") })
+        await page.clock.pauseAt(new Date("2026-01-01T00:00:01Z"))
       })
 
       for (const route of ROUTES) {
@@ -90,7 +101,7 @@ for (const theme of THEMES) {
   for (const direction of DIRECTIONS) {
     for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
       test.describe(`${theme} theme, ${direction}, ${viewportName}`, () => {
-        test.use({ viewport })
+        test.use({ viewport, reducedMotion: "reduce" })
 
         test.beforeEach(async ({ page }) => {
           await stubExternalNetwork(page)

@@ -69,6 +69,37 @@ describe("Accordion", () => {
     expect(content).toHaveAttribute("aria-hidden", "false")
   })
 
+  it("removes focusable content in a closed panel from the tab order", () => {
+    // Regression: aria-hidden alone hides the panel from assistive tech but
+    // doesn't stop a sighted keyboard user from tabbing into a link inside
+    // it — WCAG 4.1.2. `inert` must make it genuinely unfocusable too.
+    render(
+      <Accordion type="single" defaultValue="first">
+        <AccordionItem value="first">
+          <AccordionTrigger>First question</AccordionTrigger>
+          <AccordionContent>
+            <a href="#first">Link in the open panel</a>
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="second">
+          <AccordionTrigger>Second question</AccordionTrigger>
+          <AccordionContent>
+            <a href="#second">Link in the closed panel</a>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    )
+
+    const openLink = screen.getByRole("link", { name: "Link in the open panel" })
+    const closedLink = screen.queryByRole("link", { name: "Link in the closed panel" })
+
+    // The open panel's link stays in the accessibility tree and tab order.
+    expect(openLink).toBeVisible()
+    // The closed panel's link is inert: not exposed as a link (removed from
+    // the a11y tree) and not focusable, even though it's still in the DOM.
+    expect(closedLink).not.toBeInTheDocument()
+  })
+
   it("keeps only one item open in single mode", async () => {
     const user = userEvent.setup()
     render(<ExampleAccordion />)
