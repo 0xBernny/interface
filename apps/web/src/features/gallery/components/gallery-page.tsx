@@ -3,7 +3,14 @@ import { AppShell } from "@workspace/ui/components/app-shell"
 import { Avatar, AvatarGroup } from "@workspace/ui/components/avatar"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@workspace/ui/components/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@workspace/ui/components/card"
 import { Input } from "@workspace/ui/components/input"
 import { KeyboardShortcut } from "@workspace/ui/components/keyboard-shortcut"
 import { LiveRegion } from "@workspace/ui/components/live-region"
@@ -14,24 +21,63 @@ import { Divider, Separator } from "@workspace/ui/components/separator"
 import { Skeleton } from "@workspace/ui/components/skeleton"
 import { Slider } from "@workspace/ui/components/slider"
 import { Spinner } from "@workspace/ui/components/spinner"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@workspace/ui/components/tooltip"
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@workspace/ui/components/tabs"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@workspace/ui/components/tooltip"
 import { VisuallyHidden } from "@workspace/ui/components/visually-hidden"
+import type { ProgressIndicatorProps } from "@workspace/ui/components/progress-indicator"
 import { useDirection } from "@/ui/direction-provider"
+import { ChangelogCategoryBadge } from "@/features/changelog/components/ChangelogCategoryBadge"
+import { CHANGELOG_ENTRY_TYPES } from "@/features/changelog/types"
 
-const BUTTON_VARIANTS = ["default", "outline", "secondary", "ghost", "destructive", "link"] as const
+const BUTTON_VARIANTS = [
+  "default",
+  "outline",
+  "secondary",
+  "ghost",
+  "destructive",
+  "link",
+] as const
 const BUTTON_SIZES = ["xs", "sm", "default", "lg"] as const
-const BADGE_VARIANTS = ["default", "secondary", "destructive", "outline", "ghost", "link"] as const
+const BADGE_VARIANTS = [
+  "default",
+  "secondary",
+  "destructive",
+  "outline",
+  "ghost",
+  "link",
+] as const
 const AVATAR_SIZES = ["xs", "sm", "md", "lg", "xl", "2xl"] as const
 const PROGRESS_SIZES = ["sm", "md", "lg"] as const
-const PROGRESS_TONES = ["neutral", "accent", "success", "danger"] as const
+const PROGRESS_TONES = [
+  "neutral",
+  "accent",
+  "success",
+  "danger",
+] as const satisfies ReadonlyArray<NonNullable<ProgressIndicatorProps["tone"]>>
 const SEPARATOR_TONES = ["subtle", "default", "strong"] as const
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-      <div className="rounded-lg border border-border bg-card p-6">{children}</div>
+      <div className="rounded-lg border border-border bg-card p-6">
+        {children}
+      </div>
     </section>
   )
 }
@@ -57,7 +103,9 @@ export function GalleryPage() {
     <main className="mx-auto max-w-4xl space-y-10 p-6">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Component Gallery</h1>
+          <h1 className="text-2xl font-semibold text-foreground">
+            Component Gallery
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Every packages/ui primitive, all variants. See{" "}
             <a
@@ -90,7 +138,9 @@ export function GalleryPage() {
         <div className="flex flex-col gap-4">
           {BUTTON_VARIANTS.map((variant) => (
             <div key={variant} className="flex flex-wrap items-center gap-3">
-              <span className="w-20 shrink-0 text-13 text-muted-foreground">{variant}</span>
+              <span className="w-20 shrink-0 text-13 text-muted-foreground">
+                {variant}
+              </span>
               {BUTTON_SIZES.map((size) => (
                 <Button key={size} variant={variant} size={size}>
                   {size}
@@ -111,6 +161,35 @@ export function GalleryPage() {
         </div>
       </Section>
 
+      <Section title="Changelog status badges">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {CHANGELOG_ENTRY_TYPES.map((type) => (
+            <div
+              key={type}
+              className="flex items-center justify-between gap-4 rounded-md bg-surface-canvas p-3"
+            >
+              <ChangelogCategoryBadge type={type} />
+              <span className="text-xs text-muted-foreground">Canvas</span>
+            </div>
+          ))}
+          {CHANGELOG_ENTRY_TYPES.map((type) => (
+            <div
+              key={`${type}-raised`}
+              className="flex items-center justify-between gap-4 rounded-md bg-surface-raised p-3"
+            >
+              <ChangelogCategoryBadge type={type} />
+              <span className="text-xs text-muted-foreground">Raised</span>
+            </div>
+          ))}
+          <div className="flex items-center gap-3 rounded-md bg-surface-canvas p-3 sm:col-span-2">
+            <ChangelogCategoryBadge type="changed" breaking />
+            <span className="text-xs text-muted-foreground">
+              Breaking marker composes with every category
+            </span>
+          </div>
+        </div>
+      </Section>
+
       <Section title="Input">
         <div className="max-w-sm space-y-3">
           <Input placeholder="Default input" />
@@ -123,11 +202,15 @@ export function GalleryPage() {
         <div className="max-w-sm">
           <Slider
             value={sliderValue}
-            onValueChange={(value) => setSliderValue(Array.isArray(value) ? [...value] : [value])}
+            onValueChange={(value) =>
+              setSliderValue(Array.isArray(value) ? [...value] : [value])
+            }
             max={100}
             step={1}
           />
-          <p className="mt-2 text-13 text-muted-foreground">Value: {sliderValue[0]}</p>
+          <p className="mt-2 text-13 text-muted-foreground">
+            Value: {sliderValue[0]}
+          </p>
         </div>
       </Section>
 
@@ -160,7 +243,7 @@ export function GalleryPage() {
         <div className="mt-6 space-y-3">
           {SEPARATOR_TONES.map((tone) => (
             <div key={tone} className="space-y-2">
-              <p className="text-11 uppercase text-muted-foreground">{tone}</p>
+              <p className="text-11 text-muted-foreground uppercase">{tone}</p>
               <Separator tone={tone} decorative />
             </div>
           ))}
@@ -186,10 +269,13 @@ export function GalleryPage() {
       <Section title="ScrollArea">
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <p className="text-11 uppercase text-muted-foreground">
+            <p className="text-11 text-muted-foreground uppercase">
               Vertical — edge shadows follow scroll position
             </p>
-            <ScrollArea className="max-h-40 rounded-md border border-border" tone="card">
+            <ScrollArea
+              className="max-h-40 rounded-md border border-border"
+              tone="card"
+            >
               <div className="space-y-1 p-3">
                 {Array.from({ length: 20 }, (_, i) => (
                   <p key={i} className="text-13 text-foreground">
@@ -201,7 +287,9 @@ export function GalleryPage() {
           </div>
 
           <div className="space-y-2">
-            <p className="text-11 uppercase text-muted-foreground">Horizontal</p>
+            <p className="text-11 text-muted-foreground uppercase">
+              Horizontal
+            </p>
             <ScrollArea
               orientation="horizontal"
               className="rounded-md border border-border"
@@ -225,12 +313,15 @@ export function GalleryPage() {
       <Section title="Accessibility primitives">
         <div className="space-y-4">
           <p className="text-13 text-muted-foreground">
-            VisuallyHidden and LiveRegion render nothing visible by default — the
-            button below carries a hidden label, and the counter announces itself
-            politely. See packages/ui/ACCESSIBILITY_PRIMITIVES.md.
+            VisuallyHidden and LiveRegion render nothing visible by default —
+            the button below carries a hidden label, and the counter announces
+            itself politely. See packages/ui/ACCESSIBILITY_PRIMITIVES.md.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Button variant="outline" onClick={() => setAnnounceCount((n) => n + 1)}>
+            <Button
+              variant="outline"
+              onClick={() => setAnnounceCount((n) => n + 1)}
+            >
               Announce
               <VisuallyHidden> a polite status message</VisuallyHidden>
             </Button>
@@ -270,7 +361,8 @@ export function GalleryPage() {
       <Section title="AppShell">
         <div className="space-y-4">
           <p className="text-13 text-muted-foreground">
-            Constrained layout (default) — used for Pools, Earn, Referrals, Faucet
+            Constrained layout (default) — used for Pools, Earn, Referrals,
+            Faucet
           </p>
           <div className="overflow-hidden rounded-lg border border-border">
             <AppShell
@@ -282,7 +374,9 @@ export function GalleryPage() {
               skipLink={false}
               navbar={
                 <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
-                  <span className="text-13 font-medium text-foreground">Navbar slot</span>
+                  <span className="text-13 font-medium text-foreground">
+                    Navbar slot
+                  </span>
                 </div>
               }
               banner={
@@ -307,7 +401,9 @@ export function GalleryPage() {
               skipLink={false}
               navbar={
                 <div className="flex h-10 items-center border-b border-border bg-muted/30 px-4">
-                  <span className="text-13 font-medium text-foreground">Navbar slot</span>
+                  <span className="text-13 font-medium text-foreground">
+                    Navbar slot
+                  </span>
                 </div>
               }
             >
@@ -322,14 +418,21 @@ export function GalleryPage() {
       <Section title="PageHeader">
         <div className="space-y-6">
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">Minimal — title + description</p>
+            <p className="mb-2 text-13 text-muted-foreground">
+              Minimal — title + description
+            </p>
             <div className="rounded-lg border border-border bg-muted/10 p-4">
-              <PageHeader title="Pools" description="Provide liquidity to SO4 GM markets." />
+              <PageHeader
+                title="Pools"
+                description="Provide liquidity to SO4 GM markets."
+              />
             </div>
           </div>
 
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">With actions slot</p>
+            <p className="mb-2 text-13 text-muted-foreground">
+              With actions slot
+            </p>
             <div className="rounded-lg border border-border bg-muted/10 p-4">
               <PageHeader
                 title="Earn"
@@ -347,7 +450,9 @@ export function GalleryPage() {
           </div>
 
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">With metadata + tabs slot</p>
+            <p className="mb-2 text-13 text-muted-foreground">
+              With metadata + tabs slot
+            </p>
             <div className="rounded-lg border border-border bg-muted/10 p-4">
               <PageHeader
                 title="Referrals"
@@ -355,7 +460,9 @@ export function GalleryPage() {
                 metadata={
                   <>
                     <Badge variant="success">Active</Badge>
-                    <span className="text-13 text-muted-foreground">Tier 3</span>
+                    <span className="text-13 text-muted-foreground">
+                      Tier 3
+                    </span>
                   </>
                 }
                 tabs={
@@ -363,7 +470,9 @@ export function GalleryPage() {
                     <TabsList className="h-9">
                       <TabsTrigger value="traders">Traders</TabsTrigger>
                       <TabsTrigger value="affiliates">Affiliates</TabsTrigger>
-                      <TabsTrigger value="distributions">Distributions</TabsTrigger>
+                      <TabsTrigger value="distributions">
+                        Distributions
+                      </TabsTrigger>
                     </TabsList>
                   </Tabs>
                 }
@@ -372,7 +481,9 @@ export function GalleryPage() {
           </div>
 
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">With breadcrumbs slot</p>
+            <p className="mb-2 text-13 text-muted-foreground">
+              With breadcrumbs slot
+            </p>
             <div className="rounded-lg border border-border bg-muted/10 p-4">
               <PageHeader
                 title="Settings"
@@ -394,7 +505,10 @@ export function GalleryPage() {
         <div className="flex flex-wrap items-center gap-3">
           <KeyboardShortcut keys={["Mod", "K"]} platform="mac" />
           <KeyboardShortcut keys={["Mod", "Shift", "P"]} platform="mac" />
-          <KeyboardShortcut keys={["Ctrl", "Alt", "Delete"]} platform="windows" />
+          <KeyboardShortcut
+            keys={["Ctrl", "Alt", "Delete"]}
+            platform="windows"
+          />
           <KeyboardShortcut keys={["Mod", "S"]} presentation="grouped" />
         </div>
       </Section>
@@ -402,7 +516,9 @@ export function GalleryPage() {
       <Section title="Card">
         <div className="space-y-6">
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">Default variant</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              Default variant
+            </p>
             <Card>
               <CardHeader>
                 <CardTitle>Card Title</CardTitle>
@@ -419,7 +535,9 @@ export function GalleryPage() {
           </div>
 
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">Interactive variant</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              Interactive variant
+            </p>
             <Card variant="interactive" className="cursor-pointer">
               <CardHeader>
                 <CardTitle>Interactive Card</CardTitle>
@@ -434,12 +552,16 @@ export function GalleryPage() {
               <CardHeader>
                 <CardTitle>Supporting Information</CardTitle>
               </CardHeader>
-              <CardContent>Recessed surface for secondary information</CardContent>
+              <CardContent>
+                Recessed surface for secondary information
+              </CardContent>
             </Card>
           </div>
 
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">With compact padding</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              With compact padding
+            </p>
             <Card padding="compact">
               <CardHeader>
                 <CardTitle>Compact Card</CardTitle>
@@ -453,11 +575,15 @@ export function GalleryPage() {
       <Section title="Spinner">
         <div className="space-y-6">
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">Decorative (hidden from screen readers)</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              Decorative (hidden from screen readers)
+            </p>
             <Spinner />
           </div>
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">With accessible label</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              With accessible label
+            </p>
             <Spinner label="Loading data..." />
           </div>
         </div>
@@ -471,7 +597,7 @@ export function GalleryPage() {
               {PROGRESS_TONES.map((tone) => (
                 <div key={`${size}-${tone}`} className="mb-3 space-y-1">
                   <span className="text-10 text-text-tertiary">{tone}</span>
-                  <ProgressIndicator value={65} size={size} tone={tone as any} />
+                  <ProgressIndicator value={65} size={size} tone={tone} />
                 </div>
               ))}
             </div>
@@ -485,7 +611,11 @@ export function GalleryPage() {
             <p className="mb-3 text-13 text-muted-foreground">All sizes</p>
             <div className="flex items-center gap-4">
               {AVATAR_SIZES.map((size) => (
-                <Avatar key={size} size={size} fallback={size.charAt(0).toUpperCase()} />
+                <Avatar
+                  key={size}
+                  size={size}
+                  fallback={size.charAt(0).toUpperCase()}
+                />
               ))}
             </div>
           </div>
@@ -511,7 +641,9 @@ export function GalleryPage() {
       <Section title="AvatarGroup">
         <div className="space-y-6">
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">With maximum visible</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              With maximum visible
+            </p>
             <AvatarGroup max={3}>
               <Avatar fallback="A" />
               <Avatar fallback="B" />
@@ -531,7 +663,9 @@ export function GalleryPage() {
           </div>
 
           <div>
-            <p className="mb-3 text-13 text-muted-foreground">Without overflow count</p>
+            <p className="mb-3 text-13 text-muted-foreground">
+              Without overflow count
+            </p>
             <AvatarGroup max={2} showCount={false}>
               <Avatar fallback="A" />
               <Avatar fallback="B" />
@@ -549,11 +683,15 @@ export function GalleryPage() {
         <div className="dark space-y-6 bg-background p-6">
           <div>
             <p className="mb-2 text-13 text-muted-foreground">text-heading-1</p>
-            <h1 className="text-heading-1 text-foreground">Perpetual markets.</h1>
+            <h1 className="text-heading-1 text-foreground">
+              Perpetual markets.
+            </h1>
           </div>
           <div>
             <p className="mb-2 text-13 text-muted-foreground">text-heading-2</p>
-            <h2 className="text-heading-2 text-foreground">Built for traders.</h2>
+            <h2 className="text-heading-2 text-foreground">
+              Built for traders.
+            </h2>
           </div>
           <div>
             <p className="mb-2 text-13 text-muted-foreground">text-heading-3</p>
@@ -561,22 +699,30 @@ export function GalleryPage() {
           </div>
           <div>
             <p className="mb-2 text-13 text-muted-foreground">text-heading-4</p>
-            <h4 className="text-heading-4 text-foreground">Small card titles</h4>
+            <h4 className="text-heading-4 text-foreground">
+              Small card titles
+            </h4>
           </div>
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">text-subheadline</p>
-            <p className="text-subheadline">Supporting copy under a call to action.</p>
+            <p className="mb-2 text-13 text-muted-foreground">
+              text-subheadline
+            </p>
+            <p className="text-subheadline">
+              Supporting copy under a call to action.
+            </p>
           </div>
           <div>
-            <p className="mb-2 text-13 text-muted-foreground">text-description</p>
-            <p className="text-description max-w-md">
-              Body copy on a dark card surface, set in Archivo at 16px with GMX's
-              tracking and line height.
+            <p className="mb-2 text-13 text-muted-foreground">
+              text-description
+            </p>
+            <p className="max-w-md text-description">
+              Body copy on a dark card surface, set in Archivo at 16px with
+              GMX's tracking and line height.
             </p>
           </div>
           <div>
             <p className="mb-2 text-13 text-muted-foreground">btn-landing</p>
-            <Button variant="default" className="btn-landing h-10 px-5 text-sm">
+            <Button variant="default" className="h-10 btn-landing px-5 text-sm">
               Launch trading app
             </Button>
           </div>

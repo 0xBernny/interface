@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - Search", () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +52,9 @@ test.describe("Changelog - Search", () => {
     await page.setViewportSize({ width: 1024, height: 768 })
 
     // Apply category filter
-    const addedChip = page.locator('[role="button"]').filter({ hasText: "Added" })
+    const addedChip = page
+      .locator('[role="button"]')
+      .filter({ hasText: "Added" })
     await addedChip.click()
 
     // Apply search
@@ -73,7 +75,9 @@ test.describe("Changelog - Search", () => {
     const areaSelect = page.locator("select-trigger").first()
     if ((await areaSelect.count()) > 0) {
       await areaSelect.click()
-      const tradeOption = page.locator("select-item").filter({ hasText: "Trading" })
+      const tradeOption = page
+        .locator("select-item")
+        .filter({ hasText: "Trading" })
       if ((await tradeOption.count()) > 0) {
         await tradeOption.click()
       }
@@ -88,10 +92,10 @@ test.describe("Changelog - Search", () => {
     expect(url).toContain("q=orders")
   })
 
-  test("typing does not create history entry per character", async ({ page }) => {
-    const historyLengthBefore = await page.evaluate(
-      () => window.history.length
-    )
+  test("typing does not create history entry per character", async ({
+    page,
+  }) => {
+    const historyLengthBefore = await page.evaluate(() => window.history.length)
 
     const searchInput = page.locator("input[placeholder*='Search']")
     await searchInput.fill("t")
@@ -104,9 +108,7 @@ test.describe("Changelog - Search", () => {
     // Wait for debounce
     await page.waitForTimeout(400)
 
-    const historyLengthAfter = await page.evaluate(
-      () => window.history.length
-    )
+    const historyLengthAfter = await page.evaluate(() => window.history.length)
 
     // Should only add 1 history entry, not 3
     const entriesAdded = historyLengthAfter - historyLengthBefore
@@ -149,7 +151,9 @@ test.describe("Changelog - Search", () => {
     await page.waitForTimeout(400)
 
     // Apply additional filter
-    const addedChip = page.locator('[role="button"]').filter({ hasText: "Added" })
+    const addedChip = page
+      .locator('[role="button"]')
+      .filter({ hasText: "Added" })
     await addedChip.click()
 
     // Clear all filters
@@ -176,8 +180,6 @@ test.describe("Changelog - Search", () => {
     await filterBtn.click()
 
     const searchInput = page.locator("input[placeholder*='Search']")
-    const startTime = Date.now()
-
     await searchInput.fill("test")
     await page.waitForTimeout(100)
     await searchInput.fill("test2")
@@ -233,6 +235,7 @@ test.describe("Changelog - Search", () => {
     await page.waitForTimeout(400)
 
     const urlBefore = page.url()
+    expect(urlBefore).toContain("q=liquidation")
 
     // Reload page
     await page.reload()

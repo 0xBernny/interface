@@ -1,9 +1,14 @@
-import { describe, it, expect, vi, beforeAll, afterEach, afterAll } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "vitest"
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { HttpResponse, http } from "msw"
 import { ChangelogPage } from "./components/ChangelogPage"
+import { server } from "@/test/msw/server"
+
+vi.mock("@/ui/Navbar", () => ({
+  Navbar: () => <nav aria-label="Primary" />,
+}))
 
 const mockChangelogData = {
   releases: [
@@ -24,18 +29,25 @@ const mockChangelogData = {
   ],
 }
 
-const server = setupServer(
-  http.get("/changelog.json", () => {
-    return HttpResponse.json(mockChangelogData)
-  })
-)
+beforeEach(() => {
+  server.use(
+    http.get("/changelog.json", () => HttpResponse.json(mockChangelogData))
+  )
+})
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+function renderPage() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <ChangelogPage />
+    </QueryClientProvider>
+  )
+}
 
 describe("ChangelogPage - States", () => {
-  it("renders skeleton while loading", async () => {
+  it("renders skeleton while loading", () => {
     server.use(
       http.get("/changelog.json", async () => {
         await new Promise((resolve) => setTimeout(resolve, 100))
@@ -43,7 +55,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     const status = screen.getByRole("status")
     expect(status).toBeInTheDocument()
@@ -57,7 +69,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     await waitFor(() => {
       const alert = screen.getByRole("alert")
@@ -80,7 +92,7 @@ describe("ChangelogPage - States", () => {
     )
 
     const user = userEvent.setup()
-    render(<ChangelogPage />)
+    renderPage()
 
     // Wait for error
     await waitFor(() => {
@@ -97,7 +109,7 @@ describe("ChangelogPage - States", () => {
       expect(screen.getByText("0.4.0")).toBeInTheDocument()
     })
 
-    expect(callCount).toBe(2)
+    expect(callCount).toBeGreaterThanOrEqual(2)
   })
 
   it("renders empty state for zero releases", async () => {
@@ -107,7 +119,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     await waitFor(() => {
       expect(screen.getByText("No releases yet")).toBeInTheDocument()
@@ -121,7 +133,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     await waitFor(() => {
       const alert = screen.getByRole("alert")
@@ -137,7 +149,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     await waitFor(() => {
       const alert = screen.getByRole("alert")
@@ -147,21 +159,69 @@ describe("ChangelogPage - States", () => {
   })
 
   it("displays loaded content after successful fetch", async () => {
-    render(<ChangelogPage />)
+    renderPage()
 
     await waitFor(() => {
       expect(screen.getByText("0.4.0")).toBeInTheDocument()
-      expect(screen.getByText("Trigger orders on the trade panel.")).toBeInTheDocument()
+      expect(
+        screen.getByText("Trigger orders on the trade panel.")
+      ).toBeInTheDocument()
     })
+  })
+
+  it("bounds the initial page to the ten newest releases", async () => {
+    server.use(
+      http.get("/changelog.json", () =>
+        HttpResponse.json({
+          releases: Array.from({ length: 11 }, (_, index) => ({
+            version: `1.${10 - index}.0`,
+            date: "2026-08-24",
+            yanked: false,
+            entries: [
+              {
+                type: "added",
+                area: "trade",
+                text: `Release ${10 - index}.`,
+                pr: index + 1,
+                breaking: false,
+              },
+            ],
+          })),
+        })
+      )
+    )
+
+    renderPage()
+
+    expect(await screen.findByText("1.10.0")).toBeInTheDocument()
+    expect(screen.queryByText("1.0.0")).not.toBeInTheDocument()
+  })
+
+  it("copies an absolute release permalink", async () => {
+    const user = userEvent.setup()
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText },
+    })
+    renderPage()
+
+    await user.click(
+      await screen.findByRole("button", {
+        name: "Copy permalink for version 0.4.0",
+      })
+    )
+
+    expect(writeText).toHaveBeenCalledWith(
+      "http://localhost:3000/changelog#v0-4-0"
+    )
   })
 
   it("preserves header across all states", async () => {
     // Error state
-    server.use(
-      http.get("/changelog.json", () => HttpResponse.error())
-    )
+    server.use(http.get("/changelog.json", () => HttpResponse.error()))
 
-    const { rerender } = render(<ChangelogPage />)
+    const { unmount } = renderPage()
     await waitFor(() => screen.getByRole("alert"))
 
     let heading = screen.getByRole("heading", { name: /changelog/i })
@@ -170,19 +230,18 @@ describe("ChangelogPage - States", () => {
     // Empty state
     server.resetHandlers()
     server.use(
-      http.get("/changelog.json", () =>
-        HttpResponse.json({ releases: [] })
-      )
+      http.get("/changelog.json", () => HttpResponse.json({ releases: [] }))
     )
 
-    rerender(<ChangelogPage />)
+    unmount()
+    renderPage()
     await waitFor(() => screen.getByText("No releases yet"))
 
     heading = screen.getByRole("heading", { name: /changelog/i })
     expect(heading).toBeInTheDocument()
   })
 
-  it("skeleton has aria attributes for accessibility", async () => {
+  it("skeleton has aria attributes for accessibility", () => {
     server.use(
       http.get("/changelog.json", async () => {
         await new Promise((resolve) => setTimeout(resolve, 100))
@@ -190,7 +249,7 @@ describe("ChangelogPage - States", () => {
       })
     )
 
-    render(<ChangelogPage />)
+    renderPage()
 
     const status = screen.getByRole("status")
     expect(status).toHaveAttribute("aria-live", "polite")

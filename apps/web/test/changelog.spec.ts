@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - Responsive Layout", () => {
   test.beforeEach(async ({ page }) => {
@@ -6,9 +6,7 @@ test.describe("Changelog - Responsive Layout", () => {
   })
 
   // Mobile viewport tests (360px, 768px)
-  test("renders without horizontal scroll at 360px width", async ({
-    page,
-  }) => {
+  test("renders without horizontal scroll at 360px width", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 })
     await page.waitForLoadState("networkidle")
 
@@ -28,9 +26,7 @@ test.describe("Changelog - Responsive Layout", () => {
     expect(await versionHeading.first().isVisible()).toBe(true)
   })
 
-  test("renders without horizontal scroll at 768px width", async ({
-    page,
-  }) => {
+  test("renders without horizontal scroll at 768px width", async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 })
     await page.waitForLoadState("networkidle")
 
@@ -77,7 +73,7 @@ test.describe("Changelog - Responsive Layout", () => {
     page,
     context,
   }) => {
-    await context.setOfflineMode(false)
+    await context.setOffline(false)
     await page.setViewportSize({ width: 360, height: 800 })
 
     // Add touch device simulation

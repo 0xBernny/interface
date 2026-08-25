@@ -10,7 +10,11 @@ interface HighlightedTextProps {
  * Safely highlights matched substrings without breaking markup.
  * Only highlights plain text segments, not markdown or links.
  */
-export function HighlightedText({ text, query, className }: HighlightedTextProps) {
+export function HighlightedText({
+  text,
+  query,
+  className,
+}: HighlightedTextProps) {
   if (!query) {
     return <span className={className}>{text}</span>
   }
@@ -23,7 +27,10 @@ export function HighlightedText({ text, query, className }: HighlightedTextProps
         const [content, isMatch] = segment
         if (isMatch) {
           return (
-            <mark key={idx} className="bg-yellow-200 dark:bg-yellow-700 font-medium">
+            <mark
+              key={idx}
+              className="bg-yellow-200 font-medium dark:bg-yellow-700"
+            >
               {content}
             </mark>
           )

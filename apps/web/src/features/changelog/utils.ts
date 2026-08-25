@@ -1,39 +1,28 @@
-import type { ChangelogEntryType } from "./types"
+import {
+  CHANGELOG_AREAS,
+  CHANGELOG_ENTRY_TYPES
+  
+} from "./types"
+import { isChangelogEntryType } from "./lib/changelog-client"
+import type {ChangelogEntryType} from "./types";
+import type { StatusVariant } from "@workspace/ui/components/status-badge"
 
-export const CHANGELOG_TYPES: ChangelogEntryType[] = [
-  "added",
-  "changed",
-  "deprecated",
-  "removed",
-  "fixed",
-  "security",
-]
+export const CHANGELOG_TYPES = CHANGELOG_ENTRY_TYPES
 
-export const CHANGELOG_AREAS = [
-  "trade",
-  "pools",
-  "earn",
-  "referrals",
-  "faucet",
-  "wallet",
-  "docs",
-  "ci",
-  "internal",
-]
-
-export function typeToVariant(type: ChangelogEntryType) {
-  const map: Record<ChangelogEntryType, string> = {
+export function typeToVariant(type: string): StatusVariant {
+  const map: Record<ChangelogEntryType, StatusVariant> = {
     added: "success",
     changed: "info",
-    deprecated: "warning",
-    removed: "danger",
-    fixed: "info",
+    fixed: "info-subtle",
+    deprecated: "muted",
+    removed: "danger-subtle",
     security: "warning",
   }
-  return map[type]
+
+  return isChangelogEntryType(type) ? map[type] : "neutral"
 }
 
-export function typeLabel(type: ChangelogEntryType): string {
+export function typeLabel(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 
@@ -61,6 +50,4 @@ export function formatDate(dateStr: string): string {
   })
 }
 
-export function createAnchor(version: string): string {
-  return `#v${version.replace(/\./g, "-")}`
-}
+export { CHANGELOG_AREAS }

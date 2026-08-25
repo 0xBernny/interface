@@ -8,11 +8,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import type { ChangelogSearch, ChangelogEntryType, ChangelogArea } from "../types"
-import { CHANGELOG_TYPES, CHANGELOG_AREAS, typeLabel, areaLabel } from "../utils"
-import { useState, useEffect, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { ChevronDownIcon } from "@hugeicons/core-free-icons"
 import { Icon } from "@workspace/ui/components/icon"
+import {
+  CHANGELOG_AREAS,
+  CHANGELOG_TYPES,
+  areaLabel,
+  typeLabel,
+} from "../utils"
+import type {
+  ChangelogArea,
+  ChangelogEntryType,
+  ChangelogSearch,
+} from "../types"
 
 interface FilterBarProps {
   search: ChangelogSearch
@@ -44,11 +53,11 @@ export function FilterBar({
     setSearchInput(search.q || "")
   }, [search.q])
 
-  const handleTypeFilter = (type: ChangelogEntryType | null) => {
+  const handleTypeFilter = (type: ChangelogEntryType | undefined) => {
     onFilterChange({ ...search, type })
   }
 
-  const handleAreaFilter = (area: ChangelogArea | null) => {
+  const handleAreaFilter = (area: ChangelogArea | undefined) => {
     onFilterChange({ ...search, area })
   }
 
@@ -66,10 +75,10 @@ export function FilterBar({
   return (
     <>
       {/* Mobile: Collapsible filter bar */}
-      <div className="md:hidden mb-6">
+      <div className="mb-6 md:hidden">
         <Button
           variant="outline"
-          className="w-full h-11 justify-between px-4 focus-visible:ring-2"
+          className="h-11 w-full justify-between px-4 focus-visible:ring-2"
           onClick={() => setIsFilterOpen(!isFilterOpen)}
         >
           <span className="flex items-center gap-2">
@@ -80,26 +89,27 @@ export function FilterBar({
               </Badge>
             )}
           </span>
-          <Icon className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}>
-            <ChevronDownIcon />
-          </Icon>
+          <Icon
+            icon={ChevronDownIcon}
+            className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+          />
         </Button>
 
         {/* Collapsible content */}
         {isFilterOpen && (
-          <div className="mt-3 space-y-3 p-4 bg-surface-raised rounded-lg border border-border">
+          <div className="mt-3 space-y-3 rounded-lg border border-border bg-surface-raised p-4">
             {/* Category chips - scrollable row on mobile */}
             <div>
-              <p className="text-label mb-2">Category</p>
+              <p className="mb-2 text-label">Category</p>
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant={allTypesActive ? "default" : "outline"}
                   size="sm"
-                  className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
-                  onClick={() => handleTypeFilter(null)}
+                  className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
+                  onClick={() => handleTypeFilter(undefined)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      handleTypeFilter(null)
+                      handleTypeFilter(undefined)
                     }
                   }}
                   role="button"
@@ -112,7 +122,7 @@ export function FilterBar({
                     key={type}
                     variant={search.type === type ? "default" : "outline"}
                     size="sm"
-                    className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
+                    className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
                     onClick={() => handleTypeFilter(type)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -130,12 +140,16 @@ export function FilterBar({
 
             {/* Area dropdown */}
             <div>
-              <label className="text-label block mb-2">Area</label>
+              <label className="mb-2 block text-label">Area</label>
               <Select
                 value={search.area || "all"}
-                onValueChange={(v) => handleAreaFilter(v === "all" ? undefined : (v as ChangelogArea))}
+                onValueChange={(v) =>
+                  handleAreaFilter(
+                    v === "all" ? undefined : (v as ChangelogArea)
+                  )
+                }
               >
-                <SelectTrigger className="w-full h-11">
+                <SelectTrigger className="h-11 w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -151,7 +165,7 @@ export function FilterBar({
 
             {/* Search */}
             <div>
-              <label className="text-label block mb-2">Search</label>
+              <label className="mb-2 block text-label">Search</label>
               <Input
                 placeholder="Search entries..."
                 value={searchInput}
@@ -164,7 +178,7 @@ export function FilterBar({
             {activeFilterCount > 0 && (
               <Button
                 variant="ghost"
-                className="w-full h-9 text-text-secondary"
+                className="h-9 w-full text-text-secondary"
                 onClick={handleClearAll}
               >
                 Clear all filters
@@ -175,17 +189,17 @@ export function FilterBar({
       </div>
 
       {/* Desktop: Always visible filter bar */}
-      <div className="hidden md:flex gap-4 mb-8 items-center flex-wrap">
+      <div className="mb-8 hidden flex-wrap items-center gap-4 md:flex">
         {/* Category chips */}
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Badge
             variant={allTypesActive ? "default" : "outline"}
             size="sm"
-            className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
-            onClick={() => handleTypeFilter(null)}
+            className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
+            onClick={() => handleTypeFilter(undefined)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                handleTypeFilter(null)
+                handleTypeFilter(undefined)
               }
             }}
             role="button"
@@ -198,7 +212,7 @@ export function FilterBar({
               key={type}
               variant={search.type === type ? "default" : "outline"}
               size="sm"
-              className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
+              className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
               onClick={() => handleTypeFilter(type)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -216,9 +230,11 @@ export function FilterBar({
         {/* Area dropdown */}
         <Select
           value={search.area || "all"}
-          onValueChange={(v) => handleAreaFilter(v === "all" ? undefined : (v as ChangelogArea))}
+          onValueChange={(v) =>
+            handleAreaFilter(v === "all" ? undefined : (v as ChangelogArea))
+          }
         >
-          <SelectTrigger className="w-48 h-9">
+          <SelectTrigger className="h-9 w-48">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -236,7 +252,7 @@ export function FilterBar({
           placeholder="Search..."
           value={searchInput}
           onChange={handleSearchChange}
-          className="h-9 flex-1 min-w-xs"
+          className="h-9 min-w-xs flex-1"
         />
       </div>
     </>

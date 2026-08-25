@@ -11,7 +11,10 @@ function normalizeString(str: string): string {
 /**
  * Find all indices of a substring in text (case and diacritic-insensitive)
  */
-export function findMatches(text: string, query: string): Array<{ start: number; end: number }> {
+export function findMatches(
+  text: string,
+  query: string
+): Array<{ start: number; end: number }> {
   if (!query) return []
 
   const normalizedText = normalizeString(text)

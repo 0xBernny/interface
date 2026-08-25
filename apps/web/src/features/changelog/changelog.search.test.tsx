@@ -1,7 +1,6 @@
-import { describe, it, expect } from "vitest"
-import { render, screen, waitFor } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { highlightMatches, findMatches, matchesQuery } from "./utils.search"
+import { describe, expect, it } from "vitest"
+import { render } from "@testing-library/react"
+import { findMatches, highlightMatches, matchesQuery } from "./utils.search"
 import { HighlightedText } from "./components/HighlightedText"
 
 describe("Search utilities", () => {
@@ -80,9 +79,7 @@ describe("Search utilities", () => {
 
 describe("HighlightedText component", () => {
   it("renders text without highlighting when no query", () => {
-    const { container } = render(
-      <HighlightedText text="hello world" />
-    )
+    const { container } = render(<HighlightedText text="hello world" />)
     expect(container.textContent).toBe("hello world")
   })
 
@@ -129,15 +126,25 @@ describe("HighlightedText component", () => {
 describe("Search in changelog context", () => {
   it("composes search with other filters", () => {
     const entries = [
-      { type: "added" as const, area: "trade" as const, text: "Trigger orders", pr: 1, breaking: false },
-      { type: "fixed" as const, area: "pools" as const, text: "Pool APY calculation", pr: 2, breaking: false },
+      {
+        type: "added" as const,
+        area: "trade" as const,
+        text: "Trigger orders",
+        pr: 1,
+        breaking: false,
+      },
+      {
+        type: "fixed" as const,
+        area: "pools" as const,
+        text: "Pool APY calculation",
+        pr: 2,
+        breaking: false,
+      },
     ]
 
     // Filter by type AND search
     const filtered = entries.filter(
-      (e) =>
-        e.type === "added" &&
-        matchesQuery(e.text, "trigger")
+      (e) => e.type === "added" && matchesQuery(e.text, "trigger")
     )
 
     expect(filtered).toHaveLength(1)

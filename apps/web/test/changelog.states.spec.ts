@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - States (Loading, Error, Empty)", () => {
   test("displays skeleton loading state initially", async ({ page }) => {

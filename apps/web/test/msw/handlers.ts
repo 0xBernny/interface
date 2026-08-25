@@ -1,4 +1,5 @@
 import { HttpResponse, http } from "msw"
+import changelog from "../../public/changelog.json"
 
 type RpcBody = { id?: string | number; method?: string }
 
@@ -14,6 +15,8 @@ const simulateTransactionSuccess = {
 }
 
 export const handlers = [
+  http.get("/changelog.json", () => HttpResponse.json(changelog)),
+
   http.post("https://soroban-testnet.stellar.org", async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as RpcBody
 
@@ -28,5 +31,7 @@ export const handlers = [
     return HttpResponse.json({ jsonrpc: "2.0", id: body.id ?? 1, result: {} })
   }),
 
-  http.get("https://horizon-testnet.stellar.org/:path*", () => HttpResponse.json({})),
+  http.get("https://horizon-testnet.stellar.org/:path*", () =>
+    HttpResponse.json({})
+  ),
 ]
