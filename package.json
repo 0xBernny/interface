@@ -19,7 +19,9 @@
     "check:integration": "bash scripts/check-integration.sh",
     "check:tokens": "bun run scripts/check-design-tokens.ts",
     "check:content": "bun run --cwd apps/docs check:content",
-    "check:links": "bun run --cwd apps/docs check:links"
+    "check:links": "bun run --cwd apps/docs check:links",
+    "changelog:validate": "bun run scripts/changelog/validate.ts",
+    "changelog:release": "bun run scripts/changelog/release.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
