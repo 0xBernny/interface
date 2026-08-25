@@ -51,6 +51,9 @@ jobs:
       - name: Documentation link and FAQ drift checks
         run: bun run check:links && bun run --cwd apps/docs check:faq
 
+      - name: Documentation generated-reference drift checks
+        run: bun run --cwd apps/docs check:tokens:generated
+
       - name: Test
         run: bun run test
 

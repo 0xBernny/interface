@@ -8,7 +8,8 @@
         "developers/indexer",
         "developers/contract-clients",
         "developers/reading-data",
-        "developers/writing-transactions"
+        "developers/writing-transactions",
+        "developers/design-system"
       ]
     },
     {
@@ -19,7 +20,15 @@
         "concepts/liquidation"
       ]
     },
-    { "label": "Reference", "pages": ["reference/contracts.generated", "reference/exchange-router", "reference/glossary"] },
+    {
+      "label": "Reference",
+      "pages": [
+        "reference/contracts.generated",
+        "reference/exchange-router",
+        "reference/tokens.generated",
+        "reference/glossary"
+      ]
+    },
     {
       "label": "Resources",
       "pages": [
