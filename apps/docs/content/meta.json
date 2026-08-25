@@ -21,6 +21,10 @@
       ]
     },
     {
+      "label": "Guides",
+      "pages": ["guides/troubleshooting"]
+    },
+    {
       "label": "Reference",
       "pages": [
         "reference/contracts.generated",
