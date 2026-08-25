@@ -19,9 +19,14 @@
 import * as fs from "fs"
 import * as path from "path"
 
-const CSS_PATH = path.join(process.cwd(), "packages/ui/src/styles/globals.css")
+// Resolve relative to this file, not process.cwd() — this script is invoked
+// both from the repo root (bun run scripts/generate-design-tokens.ts) and
+// from apps/docs via a relative package.json script, which have different
+// working directories.
+const REPO_ROOT = path.join(import.meta.dir, "..")
+const CSS_PATH = path.join(REPO_ROOT, "packages/ui/src/styles/globals.css")
 const OUTPUT_PATH = path.join(
-  process.cwd(),
+  REPO_ROOT,
   "apps/docs/content/reference/tokens.generated.mdx",
 )
 

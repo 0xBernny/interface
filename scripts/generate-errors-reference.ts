@@ -16,8 +16,12 @@
 import * as fs from "fs"
 import * as path from "path"
 
-const SOURCE_PATH = path.join(process.cwd(), "packages/contracts/src/errors.ts")
-const OUTPUT_PATH = path.join(process.cwd(), "apps/docs/content/reference/errors.mdx")
+// Resolve relative to this file, not process.cwd() — this script is invoked
+// both from the repo root and from apps/docs via a relative package.json
+// script, which have different working directories.
+const REPO_ROOT = path.join(import.meta.dir, "..")
+const SOURCE_PATH = path.join(REPO_ROOT, "packages/contracts/src/errors.ts")
+const OUTPUT_PATH = path.join(REPO_ROOT, "apps/docs/content/reference/errors.mdx")
 
 function extractNamedConstants(source: string): Record<string, string> {
   const named: Record<string, string> = {}
