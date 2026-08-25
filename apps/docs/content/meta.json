@@ -1,6 +1,17 @@
 {
   "sections": [
     {
+      "label": "Developers",
+      "pages": [
+        "developers/architecture",
+        "developers/local-setup",
+        "developers/indexer",
+        "developers/contract-clients",
+        "developers/reading-data",
+        "developers/writing-transactions"
+      ]
+    },
+    {
       "label": "Concepts",
       "pages": [
         "concepts/risk",
@@ -18,6 +29,7 @@
         "reference/glossary"
       ]
     },
+    { "label": "Reference", "pages": ["reference/contracts.generated", "reference/exchange-router", "reference/glossary"] },
     {
       "label": "Resources",
       "pages": [
