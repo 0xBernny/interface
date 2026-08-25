@@ -1,5 +1,15 @@
 export type ChangelogEntryType = "added" | "changed" | "deprecated" | "removed" | "fixed" | "security"
-export type ChangelogArea = "trade" | "pools" | "earn" | "referrals" | "faucet" | "wallet" | "docs" | "ci" | "internal"
+export type ChangelogArea =
+  | "trade"
+  | "pools"
+  | "earn"
+  | "referrals"
+  | "faucet"
+  | "wallet"
+  | "docs"
+  | "general"
+  | "ci"
+  | "internal"
 
 export interface ChangelogEntry {
   type: ChangelogEntryType
@@ -13,15 +23,19 @@ export interface Release {
   version: string
   date: string
   yanked: boolean
-  entries: ChangelogEntry[]
+  entries: Array<ChangelogEntry>
 }
 
 export interface ChangelogData {
-  releases: Release[]
+  releases: Array<Release>
+  /** True when older releases live in /changelog.archive.json (DX-012). */
+  hasArchive?: boolean
 }
 
 export type ChangelogSearch = {
   type?: ChangelogEntryType
   area?: ChangelogArea
   q?: string
+  /** Show ci/internal entries; URL-backed so the view stays shareable (DX-010). */
+  showInternal?: boolean
 }

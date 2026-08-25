@@ -1,11 +1,10 @@
-import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
-import type { Release } from "../types"
-import { formatDate, createAnchor, typeToVariant, typeLabel } from "../utils"
-import { ChangelogEntry } from "./ChangelogEntry"
 import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Icon } from "@workspace/ui/components/icon"
 import { useState } from "react"
+import { createAnchor, formatDate } from "../utils"
+import { ChangelogEntry } from "./ChangelogEntry"
+import type { Release } from "../types"
 
 interface ReleaseSectionProps {
   release: Release
@@ -52,9 +51,10 @@ export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectio
             title={`Copy permalink for version ${release.version}`}
             aria-label={`Copy permalink for version ${release.version}`}
           >
-            <Icon>
-              {copied ? <Tick02Icon className="text-success" /> : <Copy01Icon />}
-            </Icon>
+            <Icon
+              icon={copied ? Tick02Icon : Copy01Icon}
+              tone={copied ? "success" : "default"}
+            />
           </Button>
         </div>
 

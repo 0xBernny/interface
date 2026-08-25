@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - Search", () => {
   test.beforeEach(async ({ page }) => {
@@ -176,7 +176,6 @@ test.describe("Changelog - Search", () => {
     await filterBtn.click()
 
     const searchInput = page.locator("input[placeholder*='Search']")
-    const startTime = Date.now()
 
     await searchInput.fill("test")
     await page.waitForTimeout(100)
@@ -232,7 +231,6 @@ test.describe("Changelog - Search", () => {
     await searchInput.fill("liquidation")
     await page.waitForTimeout(400)
 
-    const urlBefore = page.url()
 
     // Reload page
     await page.reload()

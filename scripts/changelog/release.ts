@@ -132,8 +132,11 @@ function formatDate(date: Date): string {
 
 function formatChangelogEntry(entry: ChangelogEntry): string {
   const link = entry.pr ? ` ([#${entry.pr}](https://github.com/SO4-Markets/interface/pull/${entry.pr}))` : "";
-  const typeLabel = entry.type.charAt(0).toUpperCase() + entry.type.slice(1);
-  return `- ${entry.body}${link}`;
+  // Structured metadata rides along in an HTML comment so the DX-005 parser
+  // (scripts/changelog/build.ts) can recover area/breaking. It renders
+  // invisibly on GitHub and keeps CHANGELOG.md the human artifact.
+  const meta = `<!-- so4: area=${entry.area}${entry.breaking ? " breaking" : ""} -->`;
+  return `- ${entry.body}${link} ${meta}`;
 }
 
 async function main() {

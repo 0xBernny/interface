@@ -1,7 +1,6 @@
-import { describe, it, expect } from "vitest"
-import { render, screen, waitFor } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { highlightMatches, findMatches, matchesQuery } from "./utils.search"
+import { describe, expect, it } from "vitest"
+import { render } from "@testing-library/react"
+import { findMatches, highlightMatches, matchesQuery } from "./utils.search"
 import { HighlightedText } from "./components/HighlightedText"
 
 describe("Search utilities", () => {

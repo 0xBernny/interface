@@ -8,11 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import type { ChangelogSearch, ChangelogEntryType, ChangelogArea } from "../types"
-import { CHANGELOG_TYPES, CHANGELOG_AREAS, typeLabel, areaLabel } from "../utils"
-import { useState, useEffect, useCallback } from "react"
+import { Switch } from "@workspace/ui/components/switch"
+import { useEffect, useState } from "react"
 import { ChevronDownIcon } from "@hugeicons/core-free-icons"
 import { Icon } from "@workspace/ui/components/icon"
+import { CHANGELOG_AREAS, CHANGELOG_TYPES, areaLabel, publicAreas, typeLabel } from "../utils"
+import type { ChangelogArea, ChangelogEntryType, ChangelogSearch } from "../types"
 
 interface FilterBarProps {
   search: ChangelogSearch
@@ -44,13 +45,19 @@ export function FilterBar({
     setSearchInput(search.q || "")
   }, [search.q])
 
-  const handleTypeFilter = (type: ChangelogEntryType | null) => {
+  const handleTypeFilter = (type: ChangelogEntryType | undefined) => {
     onFilterChange({ ...search, type })
   }
 
-  const handleAreaFilter = (area: ChangelogArea | null) => {
+  const handleAreaFilter = (area: ChangelogArea | undefined) => {
     onFilterChange({ ...search, area })
   }
+
+  const handleShowInternal = (checked: boolean) => {
+    onFilterChange({ ...search, showInternal: checked || undefined })
+  }
+
+  const areaOptions = search.showInternal ? CHANGELOG_AREAS : publicAreas()
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value)
@@ -80,9 +87,10 @@ export function FilterBar({
               </Badge>
             )}
           </span>
-          <Icon className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}>
-            <ChevronDownIcon />
-          </Icon>
+          <Icon
+            icon={ChevronDownIcon}
+            className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
+          />
         </Button>
 
         {/* Collapsible content */}
@@ -96,10 +104,10 @@ export function FilterBar({
                   variant={allTypesActive ? "default" : "outline"}
                   size="sm"
                   className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
-                  onClick={() => handleTypeFilter(null)}
+                  onClick={() => handleTypeFilter(undefined)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      handleTypeFilter(null)
+                      handleTypeFilter(undefined)
                     }
                   }}
                   role="button"
@@ -140,7 +148,7 @@ export function FilterBar({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All areas</SelectItem>
-                  {CHANGELOG_AREAS.map((area) => (
+                  {areaOptions.map((area) => (
                     <SelectItem key={area} value={area}>
                       {areaLabel(area)}
                     </SelectItem>
@@ -157,6 +165,18 @@ export function FilterBar({
                 value={searchInput}
                 onChange={handleSearchChange}
                 className="h-11"
+              />
+            </div>
+
+            {/* Internal changes toggle (URL-backed) */}
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor="changelog-show-internal" className="text-label">
+                Show internal changes
+              </label>
+              <Switch
+                id="changelog-show-internal"
+                checked={Boolean(search.showInternal)}
+                onCheckedChange={handleShowInternal}
               />
             </div>
 
@@ -182,10 +202,10 @@ export function FilterBar({
             variant={allTypesActive ? "default" : "outline"}
             size="sm"
             className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
-            onClick={() => handleTypeFilter(null)}
+            onClick={() => handleTypeFilter(undefined)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                handleTypeFilter(null)
+                handleTypeFilter(undefined)
               }
             }}
             role="button"
@@ -238,6 +258,18 @@ export function FilterBar({
           onChange={handleSearchChange}
           className="h-9 flex-1 min-w-xs"
         />
+
+        {/* Internal changes toggle (URL-backed) */}
+        <div className="flex items-center gap-2">
+          <Switch
+            id="changelog-show-internal"
+            checked={Boolean(search.showInternal)}
+            onCheckedChange={handleShowInternal}
+          />
+          <label htmlFor="changelog-show-internal" className="text-label">
+            Show internal changes
+          </label>
+        </div>
       </div>
     </>
   )

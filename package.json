@@ -8,7 +8,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
-    "test": "turbo test",
+    "test": "turbo test && bun test scripts/changelog",
     "test:coverage": "turbo test:coverage",
     "test:e2e": "playwright test",
     "contracts:gen:all": "bun run scripts/generate-bindings.ts",
@@ -25,7 +25,8 @@
     "generate:errors": "bun run scripts/generate-errors-reference.ts",
     "check:errors:generated": "bun run scripts/generate-errors-reference.ts --check",
     "changelog:validate": "bun run scripts/changelog/validate.ts",
-    "changelog:release": "bun run scripts/changelog/release.ts"
+    "changelog:release": "bun run scripts/changelog/release.ts",
+    "changelog:build": "bun run scripts/changelog/build.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test"
+import { expect, test } from "@playwright/test"
 
 test.describe("Changelog - Accessibility", () => {
   test.beforeEach(async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe("Changelog - Accessibility", () => {
 
     // Start tabbing
     await page.keyboard.press("Tab")
-    let focusedElement = await page.evaluate(() => document.activeElement?.tagName)
+    const focusedElement = await page.evaluate(() => document.activeElement?.tagName)
     expect(focusedElement).not.toBeNull()
 
     // Tab through several elements and ensure we keep getting focus
@@ -177,7 +177,6 @@ test.describe("Changelog - Accessibility", () => {
       await page.keyboard.press("Enter")
 
       // Button should show success state (Check icon)
-      const checkIcon = page.locator("svg").filter({ hasText: "✓" }).first()
       // Icon state changes on copy
       await page.waitForTimeout(100)
     }
