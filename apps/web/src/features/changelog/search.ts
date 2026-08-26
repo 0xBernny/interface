@@ -39,7 +39,7 @@ export function entryMatchesFilters(
   entry: ChangelogEntry,
   search: ChangelogSearch
 ): boolean {
-  if (!search.showInternal && INTERNAL_AREAS.includes(entry.area)) {
+  if (!search.showInternal && entry.area && INTERNAL_AREAS.includes(entry.area)) {
     return false
   }
   if (search.type && entry.type !== search.type) return false

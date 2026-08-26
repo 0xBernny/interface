@@ -2,6 +2,7 @@ import { defineConfig } from "vite"
 import mdx from "@mdx-js/rollup"
 import remarkFrontmatter from "remark-frontmatter"
 import remarkMdxFrontmatter from "remark-mdx-frontmatter"
+import { shikiPlugin } from "./src/lib/rehype-shiki"
 import tailwindcss from "@tailwindcss/vite"
 import { resolve } from "node:path"
 
@@ -10,6 +11,7 @@ export default defineConfig({
   plugins: [
     mdx({
       remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+      rehypePlugins: [shikiPlugin],
     }),
     tailwindcss(),
   ],

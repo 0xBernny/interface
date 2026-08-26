@@ -37,7 +37,7 @@ export function ChangelogSkeleton() {
 
           {/* Changelog entries - 3 per release */}
           <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, entryIdx) => (
+            {Array.from({ length: 3 }).map((__, entryIdx) => (
               <div key={`entry-${entryIdx}`} className="py-3 flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 min-w-0 space-y-2">
                   <Skeleton className="h-5 w-16" />
