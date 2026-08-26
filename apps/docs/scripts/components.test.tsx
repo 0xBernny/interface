@@ -1,8 +1,8 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator"
-GlobalRegistrator.register()
 
 
-import { test, expect, afterEach, afterAll } from "bun:test"
+
+import { test, expect, afterEach, afterAll, beforeAll } from "bun:test"
 import { cleanup, render, act } from "@testing-library/react"
 import { components } from "../src/mdx/components"
 import * as jsxRuntime from "react/jsx-runtime"
@@ -15,6 +15,10 @@ import {
 } from "@tanstack/react-router"
 import { shikiPlugin } from "../src/lib/rehype-shiki"
 import remarkGfm from "remark-gfm"
+
+beforeAll(() => {
+  GlobalRegistrator.register()
+})
 
 afterAll(() => {
   GlobalRegistrator.unregister()
