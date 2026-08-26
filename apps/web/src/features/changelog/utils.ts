@@ -1,4 +1,5 @@
 import type { ChangelogArea, ChangelogEntryType } from "./types"
+import { formatDate as formatDateShared } from "@/shared/lib/format"
 
 export const CHANGELOG_TYPES: Array<ChangelogEntryType> = [
   "added",
@@ -62,13 +63,11 @@ export function areaLabel(area: string): string {
   return map[area] || area
 }
 
+// DX-072 shared helper, not an ad-hoc toLocaleDateString: the default en-US
+// locale means every visitor sees the identical release-date format no matter
+// what their browser requests.
 export function formatDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
+  return formatDateShared(dateStr)
 }
 
 export function createAnchor(version: string): string {

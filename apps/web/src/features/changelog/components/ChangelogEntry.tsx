@@ -1,6 +1,6 @@
 import { Badge } from "@workspace/ui/components/badge"
-import { typeLabel, typeToVariant } from "../utils"
-import { HighlightedText } from "./HighlightedText"
+import { areaLabel, typeLabel, typeToVariant } from "../utils"
+import { InlineMarkdown } from "./InlineMarkdown"
 import type { ChangelogEntry as IChangelogEntry } from "../types"
 
 interface ChangelogEntryProps {
@@ -11,9 +11,9 @@ interface ChangelogEntryProps {
 export function ChangelogEntry({ entry, highlight }: ChangelogEntryProps) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between py-3 border-b border-border last:border-b-0">
-      {/* Left side: badge and text */}
+      {/* Left side: badges and text */}
       <div className="flex flex-col gap-2 min-w-0 flex-1">
-        <div className="flex flex-wrap gap-2 items-start">
+        <div className="flex flex-wrap gap-2 items-center">
           <Badge
             variant={typeToVariant(entry.type) as any}
             size="sm"
@@ -21,10 +21,17 @@ export function ChangelogEntry({ entry, highlight }: ChangelogEntryProps) {
           >
             {typeLabel(entry.type)}
           </Badge>
+          {/* Area label — absent for pre-tooling historical entries */}
+          {entry.area && (
+            <span className="text-caption text-text-tertiary shrink-0">
+              {areaLabel(entry.area)}
+            </span>
+          )}
         </div>
-        {/* Entry text with highlight support */}
+        {/* Entry text with inline markdown rendered as React elements
+            (links, code, emphasis) — raw HTML is escaped, never injected. */}
         <p className="text-body text-text-secondary break-words">
-          <HighlightedText text={entry.text} query={highlight} />
+          <InlineMarkdown text={entry.text} query={highlight} />
         </p>
       </div>
 

@@ -1,5 +1,8 @@
+import { useCallback, useEffect, useState } from "react"
+import { ChevronDownIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Icon } from "@workspace/ui/components/icon"
 import { Input } from "@workspace/ui/components/input"
 import {
   Select,
@@ -9,9 +12,6 @@ import {
   SelectValue,
 } from "@workspace/ui/components/select"
 import { Switch } from "@workspace/ui/components/switch"
-import { useEffect, useState } from "react"
-import { ChevronDownIcon } from "@hugeicons/core-free-icons"
-import { Icon } from "@workspace/ui/components/icon"
 import { CHANGELOG_AREAS, CHANGELOG_TYPES, areaLabel, publicAreas, typeLabel } from "../utils"
 import type { ChangelogArea, ChangelogEntryType, ChangelogSearch } from "../types"
 
