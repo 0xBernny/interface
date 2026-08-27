@@ -58,15 +58,16 @@ export function ChangelogPage() {
     }
   }, [])
 
-  useEffect(() => {
-    fetchChangelog()
-  }, [fetchChangelog])
+interface ChangelogPageProps {
+  search?: ChangelogSearch
+  onSearchChange?: (search: ChangelogSearch) => void
+}
 
-  const handleFilterChange = (newSearch: ChangelogSearch) => {
-    navigate({ search: newSearch })
-  }
-
-  // Live region announcements with debouncing
+export function ChangelogPage({
+  search = {},
+  onSearchChange = () => {},
+}: ChangelogPageProps) {
+  const changelog = useChangelog()
   const { message, announcementKey, announce } = useAnnouncer()
 
   const activeFilterCount = [
@@ -158,8 +159,7 @@ export function ChangelogPage() {
       announce(`${resultCount} result${resultCount !== 1 ? "s" : ""} found`)
     }, 300)
 
-    return () => clearTimeout(timer)
-  }, [filteredReleases, announce])
+  useReleaseHash(changelog.isSuccess)
 
   if (loading) {
     return (
@@ -175,57 +175,13 @@ export function ChangelogPage() {
         </div>
       </div>
     )
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] pt-6 md:pt-8 lg:pt-10 pb-4 md:pb-6 border-b border-border">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-display-sm md:text-display font-bold text-foreground mb-2">
-              Changelog
-            </h1>
-            <p className="text-body text-text-secondary">
-              Everything that shipped, newest first.
-            </p>
-          </div>
-        </div>
-        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] py-6 md:py-8 max-w-4xl mx-auto">
-          <ErrorState
-            title="Failed to load changelog"
-            description={error}
-            onRetry={fetchChangelog}
-            retryLabel="Try again"
-          />
-        </div>
-      </div>
+    const timer = window.setTimeout(
+      () =>
+        announce(`${resultCount} result${resultCount === 1 ? "" : "s"} found`),
+      300
     )
-  }
-
-  // Empty state
-  if (!data || data.releases.length === 0) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] pt-6 md:pt-8 lg:pt-10 pb-4 md:pb-6 border-b border-border">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-display-sm md:text-display font-bold text-foreground mb-2">
-              Changelog
-            </h1>
-            <p className="text-body text-text-secondary">
-              Everything that shipped, newest first.
-            </p>
-          </div>
-        </div>
-        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] py-6 md:py-8 max-w-4xl mx-auto">
-          <EmptyState
-            title="No releases yet"
-            description="The changelog is empty. Releases will appear here as they ship."
-          />
-        </div>
-      </div>
-    )
-  }
+    return () => window.clearTimeout(timer)
+  }, [announce, changelog.isSuccess, filteredReleases])
 
   const showLoadOlder = Boolean(data.hasArchive) && archiveStatus !== "loaded"
 

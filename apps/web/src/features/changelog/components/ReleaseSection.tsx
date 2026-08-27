@@ -14,16 +14,17 @@ interface ReleaseSectionProps {
   highlight?: string
 }
 
-export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectionProps) {
-  const [copied, setCopied] = useState(false)
-  const anchor = createAnchor(release.version)
-
-  const handleCopyPermalink = () => {
-    const url = `${window.location.origin}/changelog${anchor}`
-    navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+export function ReleaseSection({
+  release,
+  isFiltered,
+  highlight,
+}: ReleaseSectionProps) {
+  const anchorId = versionToAnchorId(release.version)
+  const origin =
+    typeof window === "undefined"
+      ? "https://so4.market"
+      : window.location.origin
+  const permalink = releasePermalink(release.version, origin)
 
   return (
     // Yanked releases keep their permanent anchor but render muted — the
@@ -38,9 +39,9 @@ export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectio
       }
     >
       {/* Release header: responsive layout */}
-      <div className="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
         {/* Version and date: stack on mobile, inline on desktop */}
-        <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 sm:gap-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
               {/* h2 for release - proper heading hierarchy */}
@@ -89,7 +90,7 @@ export function ReleaseSection({ release, isFiltered, highlight }: ReleaseSectio
       </ul>
 
       {isFiltered && (
-        <p className="text-caption text-text-tertiary mt-4">
+        <p className="mt-4 text-caption text-text-tertiary">
           Filtered view — some entries hidden
         </p>
       )}

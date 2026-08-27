@@ -6,9 +6,7 @@ test.describe("Changelog - Responsive Layout", () => {
   })
 
   // Mobile viewport tests (360px, 768px)
-  test("renders without horizontal scroll at 360px width", async ({
-    page,
-  }) => {
+  test("renders without horizontal scroll at 360px width", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 800 })
     await page.waitForLoadState("networkidle")
 
@@ -28,9 +26,7 @@ test.describe("Changelog - Responsive Layout", () => {
     expect(await versionHeading.first().isVisible()).toBe(true)
   })
 
-  test("renders without horizontal scroll at 768px width", async ({
-    page,
-  }) => {
+  test("renders without horizontal scroll at 768px width", async ({ page }) => {
     await page.setViewportSize({ width: 768, height: 1024 })
     await page.waitForLoadState("networkidle")
 

@@ -35,15 +35,16 @@ export function typeToVariant(type: ChangelogEntryType) {
   const map: Record<ChangelogEntryType, string> = {
     added: "success",
     changed: "info",
-    deprecated: "warning",
-    removed: "danger",
-    fixed: "info",
+    fixed: "info-subtle",
+    deprecated: "muted",
+    removed: "danger-subtle",
     security: "warning",
   }
-  return map[type]
+
+  return isChangelogEntryType(type) ? map[type] : "neutral"
 }
 
-export function typeLabel(type: ChangelogEntryType): string {
+export function typeLabel(type: string): string {
   return type.charAt(0).toUpperCase() + type.slice(1)
 }
 

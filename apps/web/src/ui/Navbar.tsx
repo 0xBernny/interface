@@ -13,8 +13,7 @@ import {
   useMobileMenu,
 } from "./nav/primitives"
 import { ConnectButton } from "@/features/wallet/components/ConnectButton"
-import { WhatsNewDot } from "@/features/changelog/components/WhatsNewDot"
-import { useWhatsNewIndicator } from "@/features/changelog/whats-new"
+import { WhatsNew } from "@/features/changelog/components/WhatsNew"
 
 const LANDING_LINKS = [
   { label: "Trade", href: "/trade" },
@@ -26,8 +25,7 @@ const LANDING_LINKS = [
 
 const APP_LINKS: Array<{
   label: string
-  to: "/trade" | "/pools" | "/earn" | "/referrals" | "/faucet" | "/changelog" | null
-  whatsNew?: boolean
+  to: "/trade" | "/pools" | "/earn" | "/referrals" | "/faucet" | null
 }> = [
   { label: "Trade", to: "/trade" },
   { label: "Pools", to: "/pools" },
@@ -98,15 +96,18 @@ export function Navbar({ variant }: Props) {
 
         {/* Actions */}
         <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2">
+          {isApp && <WhatsNew />}
           <ThemeToggle />
           <ConnectButton />
           {!isApp && (
             <Button
               variant="default"
-              className="btn-landing hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
+              className="hidden h-9.5 gap-2 btn-landing px-4 text-13-5 sm:inline-flex"
             >
               Launch app
-              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              <span className="transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
             </Button>
           )}
           <HamburgerButton open={open} onToggle={toggle} />
@@ -156,7 +157,7 @@ export function Navbar({ variant }: Props) {
                 ))}
           </ul>
           {!isApp && (
-            <Button variant="default" className="btn-landing mt-3 w-full gap-2">
+            <Button variant="default" className="mt-3 w-full gap-2 btn-landing">
               Launch app →
             </Button>
           )}

@@ -15,6 +15,8 @@ const simulateTransactionSuccess = {
 }
 
 export const handlers = [
+  http.get("/changelog.json", () => HttpResponse.json(changelog)),
+
   http.post("https://soroban-testnet.stellar.org", async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as RpcBody
 

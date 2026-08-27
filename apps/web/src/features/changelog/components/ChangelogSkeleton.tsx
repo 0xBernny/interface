@@ -17,14 +17,17 @@ export function ChangelogSkeleton() {
             <Skeleton key={`chip-${i}`} className="h-9 w-20" />
           ))}
         </div>
-        <Skeleton className="h-9 w-48 hidden md:block" />
+        <Skeleton className="hidden h-9 w-48 md:block" />
       </div>
 
       {/* Release sections - 3 releases with consistent heights */}
       {Array.from({ length: 3 }).map((_, releaseIdx) => (
-        <div key={`release-${releaseIdx}`} className="pb-8 border-b border-border">
+        <div
+          key={`release-${releaseIdx}`}
+          className="border-b border-border pb-8"
+        >
           {/* Release header */}
-          <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 sm:gap-4 mb-6">
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
             <div className="flex flex-col gap-2">
               <Skeleton className="h-8 w-32" />
               <Skeleton className="h-4 w-40" />
@@ -33,7 +36,7 @@ export function ChangelogSkeleton() {
           </div>
 
           {/* Version separator */}
-          <Skeleton className="h-px w-full mb-6" />
+          <Skeleton className="mb-6 h-px w-full" />
 
           {/* Changelog entries - 3 per release */}
           <div className="space-y-3">

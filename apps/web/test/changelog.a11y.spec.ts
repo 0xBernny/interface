@@ -57,7 +57,9 @@ test.describe("Changelog - Accessibility", () => {
   test("releases are in a list structure", async ({ page }) => {
     await page.waitForLoadState("networkidle")
 
-    const list = page.locator('section[aria-label="Release history"] ul[role="list"]')
+    const list = page.locator(
+      'section[aria-label="Release history"] ul[role="list"]'
+    )
     await expect(list).toBeVisible()
 
     const items = list.locator("li")
@@ -69,15 +71,17 @@ test.describe("Changelog - Accessibility", () => {
     await page.waitForLoadState("networkidle")
 
     // Tab through all focusable elements
-    const focusableElements = await page.locator(
-      "button, [role='button'], input, select, a, [tabindex]"
-    ).count()
+    const focusableElements = await page
+      .locator("button, [role='button'], input, select, a, [tabindex]")
+      .count()
 
     expect(focusableElements).toBeGreaterThan(0)
 
     // Start tabbing
     await page.keyboard.press("Tab")
-    const focusedElement = await page.evaluate(() => document.activeElement?.tagName)
+    const focusedElement = await page.evaluate(
+      () => document.activeElement?.tagName
+    )
     expect(focusedElement).not.toBeNull()
 
     // Tab through several elements and ensure we keep getting focus
@@ -144,7 +148,9 @@ test.describe("Changelog - Accessibility", () => {
     await page.waitForLoadState("networkidle")
 
     // Find a filter chip with role="button"
-    const chips = page.locator('[role="button"]').filter({ hasText: /Added|Fixed/ })
+    const chips = page
+      .locator('[role="button"]')
+      .filter({ hasText: /Added|Fixed/ })
 
     if ((await chips.count()) > 0) {
       const firstChip = chips.first()
@@ -215,7 +221,10 @@ test.describe("Changelog - Accessibility", () => {
     await page.setViewportSize({ width: 1024, height: 768 })
 
     // Click a filter
-    const addedChip = page.locator('[role="button"]').filter({ hasText: "Added" }).first()
+    const addedChip = page
+      .locator('[role="button"]')
+      .filter({ hasText: "Added" })
+      .first()
     if ((await addedChip.count()) > 0) {
       await addedChip.click()
 
@@ -282,9 +291,7 @@ test.describe("Changelog - Accessibility", () => {
 
     // Should be able to Tab out
     await page.keyboard.press("Tab")
-    const activeTag = await page.evaluate(
-      () => document.activeElement?.tagName
-    )
+    const activeTag = await page.evaluate(() => document.activeElement?.tagName)
     expect(activeTag).not.toBe("BODY")
   })
 })
