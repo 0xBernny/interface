@@ -13,6 +13,7 @@ import {
   useMobileMenu,
 } from "./nav/primitives"
 import { ConnectButton } from "@/features/wallet/components/ConnectButton"
+import { WhatsNew } from "@/features/changelog/components/WhatsNew"
 
 const LANDING_LINKS = [
   { label: "Trade", href: "/trade" },
@@ -22,7 +23,10 @@ const LANDING_LINKS = [
   { label: "Governance", href: "#" },
 ]
 
-const APP_LINKS: Array<{ label: string; to: "/trade" | "/pools" | "/earn" | "/referrals" | "/faucet" | null }> = [
+const APP_LINKS: Array<{
+  label: string
+  to: "/trade" | "/pools" | "/earn" | "/referrals" | "/faucet" | null
+}> = [
   { label: "Trade", to: "/trade" },
   { label: "Pools", to: "/pools" },
   { label: "Earn", to: "/earn" },
@@ -30,6 +34,7 @@ const APP_LINKS: Array<{ label: string; to: "/trade" | "/pools" | "/earn" | "/re
   { label: "Faucet", to: "/faucet" },
   { label: "Stats", to: null },
   { label: "Docs", to: null },
+  { label: "Changelog", to: "/changelog", whatsNew: true },
 ]
 
 type Props = {
@@ -39,6 +44,8 @@ type Props = {
 export function Navbar({ variant }: Props) {
   const { open, toggle, close } = useMobileMenu()
   const isApp = variant === "app"
+  // DX-016: dot on the changelog nav item when a major/minor release shipped.
+  const hasNewReleases = useWhatsNewIndicator()
 
   return (
     <nav className={navOuterClass}>
@@ -54,7 +61,7 @@ export function Navbar({ variant }: Props) {
         {/* Desktop links */}
         <ul className="hidden items-center gap-7 md:flex">
           {isApp
-            ? APP_LINKS.map(({ label, to }) => (
+            ? APP_LINKS.map(({ label, to, whatsNew }) => (
                 <li key={label}>
                   {to ? (
                     <Link
@@ -62,8 +69,14 @@ export function Navbar({ variant }: Props) {
                       className={desktopLinkClass}
                       activeOptions={{ exact: true }}
                       activeProps={{ className: desktopActiveLinkClass }}
+                      aria-label={
+                        whatsNew && hasNewReleases
+                          ? `${label} — new releases`
+                          : undefined
+                      }
                     >
                       {label}
+                      <WhatsNewDot show={Boolean(whatsNew && hasNewReleases)} />
                     </Link>
                   ) : (
                     <span className="cursor-default text-13-5 text-muted-foreground/40">
@@ -83,15 +96,18 @@ export function Navbar({ variant }: Props) {
 
         {/* Actions */}
         <div className="flex min-w-0 shrink-0 items-center gap-1.5 sm:gap-2">
+          {isApp && <WhatsNew />}
           <ThemeToggle />
           <ConnectButton />
           {!isApp && (
             <Button
               variant="default"
-              className="btn-landing hidden h-9.5 gap-2 px-4 text-13-5 sm:inline-flex"
+              className="hidden h-9.5 gap-2 btn-landing px-4 text-13-5 sm:inline-flex"
             >
               Launch app
-              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              <span className="transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
             </Button>
           )}
           <HamburgerButton open={open} onToggle={toggle} />
@@ -103,7 +119,7 @@ export function Navbar({ variant }: Props) {
         <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
           <ul className="flex flex-col gap-1 pt-2">
             {isApp
-              ? APP_LINKS.map(({ label, to }) => (
+              ? APP_LINKS.map(({ label, to, whatsNew }) => (
                   <li key={label}>
                     {to ? (
                       <Link
@@ -111,9 +127,15 @@ export function Navbar({ variant }: Props) {
                         className={mobileLinkClass}
                         activeOptions={{ exact: true }}
                         activeProps={{ className: mobileActiveLinkClass }}
+                        aria-label={
+                          whatsNew && hasNewReleases
+                            ? `${label} — new releases`
+                            : undefined
+                        }
                         onClick={close}
                       >
                         {label}
+                        <WhatsNewDot show={Boolean(whatsNew && hasNewReleases)} />
                       </Link>
                     ) : (
                       <span className="block rounded py-2 text-sm text-muted-foreground/40">
@@ -135,7 +157,7 @@ export function Navbar({ variant }: Props) {
                 ))}
           </ul>
           {!isApp && (
-            <Button variant="default" className="btn-landing mt-3 w-full gap-2">
+            <Button variant="default" className="mt-3 w-full gap-2 btn-landing">
               Launch app →
             </Button>
           )}

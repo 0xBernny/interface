@@ -8,7 +8,9 @@
         "developers/indexer",
         "developers/contract-clients",
         "developers/reading-data",
-        "developers/writing-transactions"
+        "developers/writing-transactions",
+        "developers/design-system",
+        "developers/json-feed"
       ]
     },
     {
@@ -36,7 +38,8 @@
         "resources/terms",
         "resources/faq",
         "resources/roadmap",
-        "resources/changelog"
+        "resources/changelog",
+        "resources/security"
       ]
     }
   ]
