@@ -9,6 +9,9 @@ export type Frontmatter = {
   description: string
   updated: string
   status: "stable" | "beta" | "draft"
+  sidebarLabel?: string
+  order?: number
+  tags?: Array<string>
   landing?: Array<string>
 }
 
@@ -60,7 +63,7 @@ export function parsePage(file: string, source: string): Page {
     route: `/${relative(contentRoot, file)
       .replace(/\.mdx$/, "")
       .replaceAll("\\", "/")}`,
-    frontmatter: values as Frontmatter,
+    frontmatter: values as unknown as Frontmatter,
     body: match[2].trim(),
   }
 }

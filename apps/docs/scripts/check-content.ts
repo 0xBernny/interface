@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises"
 import { join } from "node:path"
 
 import { contentRoot, headingEntries, loadPages } from "./content"
+import { validateFrontmatter } from "../src/lib/frontmatter"
 
 const pages = await loadPages()
 const errors: Array<string> = []

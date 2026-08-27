@@ -174,7 +174,7 @@ function Toast({ item, onDismiss }: { item: ToastItem; onDismiss: (id: string) =
 }
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
-  const { toasts, dismiss } = useToast()
+  const { toasts: activeToasts, dismiss } = useToast()
 
   return (
     <>
@@ -184,7 +184,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         aria-atomic="false"
         className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"
       >
-        {toasts.map((t) => (
+        {activeToasts.map((t) => (
           <Toast key={t.id} item={t} onDismiss={dismiss} />
         ))}
       </div>
