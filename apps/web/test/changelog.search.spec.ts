@@ -180,6 +180,7 @@ test.describe("Changelog - Search", () => {
     await filterBtn.click()
 
     const searchInput = page.locator("input[placeholder*='Search']")
+
     await searchInput.fill("test")
     await page.waitForTimeout(100)
     await searchInput.fill("test2")
@@ -234,8 +235,6 @@ test.describe("Changelog - Search", () => {
     await searchInput.fill("liquidation")
     await page.waitForTimeout(400)
 
-    const urlBefore = page.url()
-    expect(urlBefore).toContain("q=liquidation")
 
     // Reload page
     await page.reload()

@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react"
+import { ChevronDownIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
+import { Icon } from "@workspace/ui/components/icon"
 import { Input } from "@workspace/ui/components/input"
 import {
   Select,
@@ -8,20 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select"
-import { useEffect, useState } from "react"
-import { ChevronDownIcon } from "@hugeicons/core-free-icons"
-import { Icon } from "@workspace/ui/components/icon"
-import {
-  CHANGELOG_AREAS,
-  CHANGELOG_TYPES,
-  areaLabel,
-  typeLabel,
-} from "../utils"
-import type {
-  ChangelogArea,
-  ChangelogEntryType,
-  ChangelogSearch,
-} from "../types"
+import { Switch } from "@workspace/ui/components/switch"
+import { CHANGELOG_AREAS, CHANGELOG_TYPES, areaLabel, publicAreas, typeLabel } from "../utils"
+import type { ChangelogArea, ChangelogEntryType, ChangelogSearch } from "../types"
 
 interface FilterBarProps {
   search: ChangelogSearch
@@ -60,6 +52,12 @@ export function FilterBar({
   const handleAreaFilter = (area: ChangelogArea | undefined) => {
     onFilterChange({ ...search, area })
   }
+
+  const handleShowInternal = (checked: boolean) => {
+    onFilterChange({ ...search, showInternal: checked || undefined })
+  }
+
+  const areaOptions = search.showInternal ? CHANGELOG_AREAS : publicAreas()
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value)
@@ -105,7 +103,7 @@ export function FilterBar({
                 <Badge
                   variant={allTypesActive ? "default" : "outline"}
                   size="sm"
-                  className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
+                  className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
                   onClick={() => handleTypeFilter(undefined)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -154,7 +152,7 @@ export function FilterBar({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All areas</SelectItem>
-                  {CHANGELOG_AREAS.map((area) => (
+                  {areaOptions.map((area) => (
                     <SelectItem key={area} value={area}>
                       {areaLabel(area)}
                     </SelectItem>
@@ -171,6 +169,18 @@ export function FilterBar({
                 value={searchInput}
                 onChange={handleSearchChange}
                 className="h-11"
+              />
+            </div>
+
+            {/* Internal changes toggle (URL-backed) */}
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor="changelog-show-internal" className="text-label">
+                Show internal changes
+              </label>
+              <Switch
+                id="changelog-show-internal"
+                checked={Boolean(search.showInternal)}
+                onCheckedChange={handleShowInternal}
               />
             </div>
 
@@ -195,7 +205,7 @@ export function FilterBar({
           <Badge
             variant={allTypesActive ? "default" : "outline"}
             size="sm"
-            className="h-9 cursor-pointer px-3 py-1 transition-all focus-visible:ring-2"
+            className="cursor-pointer transition-all h-9 px-3 py-1 focus-visible:ring-2"
             onClick={() => handleTypeFilter(undefined)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -254,6 +264,18 @@ export function FilterBar({
           onChange={handleSearchChange}
           className="h-9 min-w-xs flex-1"
         />
+
+        {/* Internal changes toggle (URL-backed) */}
+        <div className="flex items-center gap-2">
+          <Switch
+            id="changelog-show-internal"
+            checked={Boolean(search.showInternal)}
+            onCheckedChange={handleShowInternal}
+          />
+          <label htmlFor="changelog-show-internal" className="text-label">
+            Show internal changes
+          </label>
+        </div>
       </div>
     </>
   )

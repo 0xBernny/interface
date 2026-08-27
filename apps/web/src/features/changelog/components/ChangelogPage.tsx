@@ -1,20 +1,62 @@
-import { useEffect, useMemo } from "react"
-import { RssIcon } from "@hugeicons/core-free-icons"
-import { AppShell } from "@workspace/ui/components/app-shell"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useNavigate, useSearch } from "@tanstack/react-router"
 import { Button } from "@workspace/ui/components/button"
+import { RefreshIcon, RssIcon } from "@hugeicons/core-free-icons"
 import { Icon } from "@workspace/ui/components/icon"
-import { LiveRegion, useAnnouncer } from "@workspace/ui/components/live-region"
-import { PageHeader } from "@workspace/ui/components/page-header"
 import { EmptyState, ErrorState } from "@workspace/ui/components/states"
-import { useChangelog } from "../hooks/use-changelog"
-import { useReleaseHash } from "../hooks/use-release-hash"
-import { ChangelogSkeleton } from "./ChangelogSkeleton"
+import { LiveRegion, useAnnouncer } from "@workspace/ui/components/live-region"
+import { entryMatchesFilters } from "../search"
+import { validateChangelogData } from "../validate"
+import { loadArchiveOnce } from "../archive"
+import { writeSeenVersion } from "../whats-new"
 import { FilterBar } from "./FilterBar"
 import { ReleaseSection } from "./ReleaseSection"
-import type { ChangelogSearch } from "../types"
-import { Navbar } from "@/ui/Navbar"
+import { ChangelogSkeleton } from "./ChangelogSkeleton"
+import type { ChangelogData, ChangelogSearch, Release } from "../types"
 
-const INITIAL_RELEASE_LIMIT = 10
+type ArchiveStatus = "idle" | "loading" | "loaded" | "error"
+
+function anchorIdFromHash(): string | null {
+  if (typeof window === "undefined") return null
+  const hash = window.location.hash
+  return hash.length > 1 ? decodeURIComponent(hash.slice(1)) : null
+}
+
+function versionToAnchorId(version: string): string {
+  return `v${version.replace(/\./g, "-")}`
+}
+
+export function ChangelogPage() {
+  const search = useSearch({ from: "/changelog" })
+  const navigate = useNavigate({ from: "/changelog" })
+  const [data, setData] = useState<ChangelogData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // DX-012: archive releases, fetched at most once per session.
+  const [archiveReleases, setArchiveReleases] = useState<Array<Release>>([])
+  const [archiveStatus, setArchiveStatus] = useState<ArchiveStatus>("idle")
+
+  const fetchChangelog = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/changelog.json")
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: Failed to load changelog`)
+      }
+      const json: unknown = await res.json()
+      if (!validateChangelogData(json)) {
+        throw new Error("Invalid changelog format: missing or malformed releases")
+      }
+      setData(json)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error")
+      setData(null)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
 interface ChangelogPageProps {
   search?: ChangelogSearch
@@ -27,40 +69,111 @@ export function ChangelogPage({
 }: ChangelogPageProps) {
   const changelog = useChangelog()
   const { message, announcementKey, announce } = useAnnouncer()
-  const releases = useMemo(
-    () => changelog.data?.releases.slice(0, INITIAL_RELEASE_LIMIT) ?? [],
-    [changelog.data]
-  )
-  const activeFilterCount = [search.type, search.area, search.q].filter(
-    Boolean
-  ).length
+
+  const activeFilterCount = [
+    search.type,
+    search.area,
+    search.q,
+    search.showInternal,
+  ].filter(Boolean).length
+
   const isFiltered = activeFilterCount > 0
+
+  // DX-012: a filtered view that silently omits history is wrong — pull the
+  // archive in automatically whenever any filter or search is active.
+  const ensureArchive = useCallback(() => {
+    if (archiveStatus === "loading" || archiveStatus === "loaded") return
+    setArchiveStatus("loading")
+    loadArchiveOnce()
+      .then((releases) => {
+        setArchiveReleases(releases)
+        setArchiveStatus("loaded")
+      })
+      .catch(() => {
+        setArchiveStatus("error")
+      })
+  }, [archiveStatus])
+
+  useEffect(() => {
+    if (data && isFiltered && archiveStatus !== "loaded") {
+      ensureArchive()
+    }
+  }, [data, isFiltered, archiveStatus, ensureArchive])
+
+  // DX-016: visiting /changelog acknowledges the newest release, clearing the
+  // navbar dot. Storage failures are swallowed inside the writer.
+  const newestVersion = data?.releases[0]?.version
+  useEffect(() => {
+    if (newestVersion) writeSeenVersion(newestVersion)
+  }, [newestVersion])
+
+  // All releases, recent window first and archive appended once loaded.
+  const allReleases = useMemo(
+    () => (archiveReleases.length ? [...(data?.releases ?? []), ...archiveReleases] : data?.releases ?? []),
+    [data, archiveReleases]
+  )
 
   const filteredReleases = useMemo(
     () =>
-      releases
+      allReleases
         .map((release) => ({
           ...release,
-          entries: release.entries.filter((entry) => {
-            if (search.type && entry.type !== search.type) return false
-            if (search.area && entry.area !== search.area) return false
-            return !(
-              search.q &&
-              !entry.text.toLowerCase().includes(search.q.toLowerCase())
-            )
-          }),
+          entries: release.entries.filter((entry) =>
+            entryMatchesFilters(entry, search)
+          ),
         }))
         .filter((release) => release.entries.length > 0),
-    [releases, search.area, search.q, search.type]
+    [allReleases, search]
   )
+
+  // DX-012: deep links to an archived anchor load the archive first, then
+  // scroll once the element exists in the DOM. The hash is captured once, on
+  // cold load, so in-page navigation never re-triggers this.
+  const [pendingAnchorId] = useState(() => anchorIdFromHash())
+  const anchorHandledRef = useRef(false)
+
+  useEffect(() => {
+    if (!pendingAnchorId || loading || !data || anchorHandledRef.current) return
+
+    const knownAnchorIds = new Set(
+      allReleases.map((release) => versionToAnchorId(release.version))
+    )
+    if (knownAnchorIds.has(pendingAnchorId)) {
+      anchorHandledRef.current = true
+      requestAnimationFrame(() => {
+        document.getElementById(pendingAnchorId)?.scrollIntoView({ block: "start" })
+      })
+      return
+    }
+    // Anchor not rendered yet: it may live in the archive.
+    if (data.hasArchive && archiveStatus !== "loaded") ensureArchive()
+  }, [pendingAnchorId, loading, data, allReleases, archiveStatus, ensureArchive])
+
+  // Announce filter results with debouncing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const resultCount = filteredReleases.reduce(
+        (sum, release) => sum + release.entries.length,
+        0
+      )
+      announce(`${resultCount} result${resultCount !== 1 ? "s" : ""} found`)
+    }, 300)
 
   useReleaseHash(changelog.isSuccess)
 
-  useEffect(() => {
-    if (!changelog.isSuccess) return
-    const resultCount = filteredReleases.reduce(
-      (sum, release) => sum + release.entries.length,
-      0
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] pt-6 md:pt-8 lg:pt-10 pb-4 md:pb-6 border-b border-border">
+          <div className="max-w-4xl mx-auto flex flex-col gap-2">
+            <div className="h-10 w-48 bg-muted rounded animate-pulse" />
+            <div className="h-4 w-96 bg-muted rounded animate-pulse" />
+          </div>
+        </div>
+        <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] py-6 md:py-8 max-w-4xl mx-auto">
+          <ChangelogSkeleton />
+        </div>
+      </div>
     )
     const timer = window.setTimeout(
       () =>
@@ -70,82 +183,113 @@ export function ChangelogPage({
     return () => window.clearTimeout(timer)
   }, [announce, changelog.isSuccess, filteredReleases])
 
+  const showLoadOlder = Boolean(data.hasArchive) && archiveStatus !== "loaded"
+
   return (
-    <AppShell navbar={<Navbar variant="app" />} maxWidth="3xl">
-      <PageHeader
-        title="Changelog"
-        description="Everything that shipped, newest first."
-        actions={
-          <Button
-            variant="ghost"
-            size="sm"
-            render={<a href="/changelog.xml" />}
-            nativeButton={false}
+    <div className="min-h-screen bg-background">
+      {/* Page header with safe area padding */}
+      <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] pt-6 md:pt-8 lg:pt-10 pb-4 md:pb-6 border-b border-border">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-8">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-display-sm md:text-display font-bold text-foreground mb-2 break-words">
+              Changelog
+            </h1>
+            <p className="text-body text-text-secondary">
+              Everything that shipped, newest first.
+            </p>
+          </div>
+          <a
+            href="/feed.json"
+            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-xs/relaxed font-medium transition-colors hover:bg-muted"
           >
             <Icon icon={RssIcon} />
-            RSS
-          </Button>
-        }
-      />
+            <span>Feed</span>
+          </a>
+        </div>
+      </div>
 
-      {changelog.isPending && <ChangelogSkeleton />}
+      {/* Main content */}
+      <div className="px-[var(--gutter-page-sm)] md:px-[var(--gutter-page-md)] lg:px-[var(--gutter-page-lg)] py-6 md:py-8 max-w-4xl mx-auto">
+        {/* Live region for filter announcements */}
+        <LiveRegion message={message} announcementKey={announcementKey} />
 
-      {changelog.isError && (
-        <ErrorState
-          title="Failed to load changelog"
-          description={changelog.error.message}
-          onRetry={() => void changelog.refetch()}
-          retryLabel="Try again"
-        />
-      )}
+        {/* Filter region - landmark */}
+        <section aria-labelledby="filter-heading" className="mb-6">
+          <h2 id="filter-heading" className="sr-only">
+            Filters and search
+          </h2>
+          <FilterBar
+            search={search}
+            onFilterChange={handleFilterChange}
+            activeFilterCount={activeFilterCount}
+          />
+        </section>
 
-      {changelog.isSuccess && releases.length === 0 && (
-        <EmptyState
-          title="No releases yet"
-          description="The changelog is empty. Releases will appear here as they ship."
-        />
-      )}
-
-      {changelog.isSuccess && releases.length > 0 && (
-        <>
-          <LiveRegion message={message} announcementKey={announcementKey} />
-          <section aria-labelledby="changelog-filters" className="mb-6">
-            <h2 id="changelog-filters" className="sr-only">
-              Filters and search
-            </h2>
-            <FilterBar
-              search={search}
-              onFilterChange={onSearchChange}
-              activeFilterCount={activeFilterCount}
-            />
+        {/* Releases list */}
+        {filteredReleases.length > 0 ? (
+          <section aria-label="Release history" className="space-y-0">
+            <ul role="list" className="space-y-0">
+              {filteredReleases.map((release) => (
+                <li key={release.version}>
+                  <ReleaseSection
+                    release={release}
+                    isFiltered={isFiltered}
+                    highlight={search.q}
+                  />
+                </li>
+              ))}
+            </ul>
           </section>
+        ) : (
+          <div className="py-12 text-center">
+            <p className="text-body text-text-secondary mb-2">
+              No entries match your filters.
+            </p>
+            <Button
+              variant="link"
+              onClick={() => handleFilterChange({})}
+              className="h-9 px-3"
+            >
+              Clear all filters
+            </Button>
+          </div>
+        )}
 
-          {filteredReleases.length > 0 ? (
-            <section aria-label="Release history">
-              <ul role="list">
-                {filteredReleases.map((release) => (
-                  <li key={release.version}>
-                    <ReleaseSection
-                      release={release}
-                      isFiltered={isFiltered}
-                      highlight={search.q}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : (
-            <div className="py-12 text-center">
-              <p className="mb-2 text-sm text-text-secondary">
-                No entries match your filters.
-              </p>
-              <Button variant="link" onClick={() => onSearchChange({})}>
-                Clear all filters
-              </Button>
-            </div>
-          )}
-        </>
-      )}
-    </AppShell>
+        {/* Load older releases (DX-012) */}
+        {showLoadOlder && (
+          <div className="mt-10 flex justify-center pb-4">
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-11 min-w-56"
+              disabled={archiveStatus === "loading"}
+              aria-busy={archiveStatus === "loading"}
+              onClick={ensureArchive}
+            >
+              <span className="flex items-center gap-2">
+                {archiveStatus === "loading" ? (
+                  <>
+                    <Icon icon={RefreshIcon} className="animate-spin" />
+                    Loading older releases…
+                  </>
+                ) : (
+                  "Load older releases"
+                )}
+              </span>
+            </Button>
+          </div>
+        )}
+        {archiveStatus === "error" && (
+          <div role="alert" className="mt-6 text-center">
+            <p className="text-body-sm text-text-secondary mb-2">
+              Couldn&apos;t load older releases.
+            </p>
+            <Button variant="link" onClick={ensureArchive} className="h-9 px-3">
+              Try again
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }

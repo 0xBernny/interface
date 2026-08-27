@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw"
-import changelog from "../../public/changelog.json"
+import { mockArchiveChangelog, mockRecentChangelog } from "./data/changelog"
 
 type RpcBody = { id?: string | number; method?: string }
 
@@ -31,7 +31,11 @@ export const handlers = [
     return HttpResponse.json({ jsonrpc: "2.0", id: body.id ?? 1, result: {} })
   }),
 
-  http.get("https://horizon-testnet.stellar.org/:path*", () =>
-    HttpResponse.json({})
-  ),
+  http.get("https://horizon-testnet.stellar.org/:path*", () => HttpResponse.json({})),
+
+  // Generated changelog data (DX-012). Every test file sees these, including
+  // pages that render the navbar (its what's-new indicator fetches
+  // /changelog.json).
+  http.get("*/changelog.json", () => HttpResponse.json(mockRecentChangelog)),
+  http.get("*/changelog.archive.json", () => HttpResponse.json(mockArchiveChangelog)),
 ]

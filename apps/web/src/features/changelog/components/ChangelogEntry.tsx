@@ -1,6 +1,6 @@
-import { Button } from "@workspace/ui/components/button"
-import { HighlightedText } from "./HighlightedText"
-import { ChangelogCategoryBadge } from "./ChangelogCategoryBadge"
+import { Badge } from "@workspace/ui/components/badge"
+import { areaLabel, typeLabel, typeToVariant } from "../utils"
+import { InlineMarkdown } from "./InlineMarkdown"
 import type { ChangelogEntry as IChangelogEntry } from "../types"
 
 interface ChangelogEntryProps {
@@ -10,36 +10,42 @@ interface ChangelogEntryProps {
 
 export function ChangelogEntry({ entry, highlight }: ChangelogEntryProps) {
   return (
-    <div className="flex flex-col gap-2 border-b border-border py-3 last:border-b-0 sm:flex-row sm:items-start sm:justify-between">
-      {/* Left side: badge and text */}
-      <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <div className="flex flex-wrap items-start gap-2">
-          <ChangelogCategoryBadge type={entry.type} breaking={entry.breaking} />
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between py-3 border-b border-border last:border-b-0">
+      {/* Left side: badges and text */}
+      <div className="flex flex-col gap-2 min-w-0 flex-1">
+        <div className="flex flex-wrap gap-2 items-center">
+          <Badge
+            variant={typeToVariant(entry.type) as any}
+            size="sm"
+            className="shrink-0"
+          >
+            {typeLabel(entry.type)}
+          </Badge>
+          {/* Area label — absent for pre-tooling historical entries */}
+          {entry.area && (
+            <span className="text-caption text-text-tertiary shrink-0">
+              {areaLabel(entry.area)}
+            </span>
+          )}
         </div>
-        {/* Entry text with highlight support */}
-        <p className="text-body break-words text-text-secondary">
-          <HighlightedText text={entry.text} query={highlight} />
+        {/* Entry text with inline markdown rendered as React elements
+            (links, code, emphasis) — raw HTML is escaped, never injected. */}
+        <p className="text-body text-text-secondary break-words">
+          <InlineMarkdown text={entry.text} query={highlight} />
         </p>
       </div>
 
       {/* Right side: PR link - touch target 44×44 */}
       {entry.pr && (
-        <div className="mt-2 shrink-0 sm:mt-0 sm:ml-4">
-          <Button
-            variant="link"
-            size="sm"
-            className="h-11 min-w-11 px-3 text-info transition-colors hover:text-info/80"
-            render={
-              <a
-                href={`https://github.com/SO4-Markets/interface/pull/${entry.pr}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              />
-            }
-            nativeButton={false}
+        <div className="mt-2 sm:mt-0 sm:ml-4 shrink-0">
+          <a
+            href={`https://github.com/SO4-Markets/interface/pull/${entry.pr}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-11 min-w-11 items-center justify-center px-3 text-xs/relaxed font-medium text-info transition-colors hover:text-info/80"
           >
             #{entry.pr}
-          </Button>
+          </a>
         </div>
       )}
     </div>

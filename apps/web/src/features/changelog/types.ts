@@ -1,40 +1,43 @@
-import type changelogJson from "../../../public/changelog.json"
+export type ChangelogEntryType = "added" | "changed" | "deprecated" | "removed" | "fixed" | "security"
+export type ChangelogArea =
+  | "trade"
+  | "pools"
+  | "earn"
+  | "referrals"
+  | "faucet"
+  | "wallet"
+  | "docs"
+  | "general"
+  | "ci"
+  | "internal"
 
-/**
- * The response model is derived from the generated DX-005 JSON artifact. This
- * keeps the UI coupled to the producer's shape instead of maintaining a second
- * release interface by hand.
- */
-export type ChangelogData = typeof changelogJson
-export type Release = ChangelogData["releases"][number]
-export type ChangelogEntry = Release["entries"][number]
+export interface ChangelogEntry {
+  type: ChangelogEntryType
+  // Pre-tooling and hand-written historical entries have no area; the parser
+  // (scripts/changelog/parse.ts) emits null for them.
+  area: ChangelogArea | null
+  text: string
+  pr: number | null
+  breaking: boolean
+}
 
-export const CHANGELOG_ENTRY_TYPES = [
-  "added",
-  "changed",
-  "deprecated",
-  "removed",
-  "fixed",
-  "security",
-] as const
+export interface Release {
+  version: string
+  date: string
+  yanked: boolean
+  entries: Array<ChangelogEntry>
+}
 
-export const CHANGELOG_AREAS = [
-  "trade",
-  "pools",
-  "earn",
-  "referrals",
-  "faucet",
-  "wallet",
-  "docs",
-  "ci",
-  "internal",
-] as const
-
-export type ChangelogEntryType = (typeof CHANGELOG_ENTRY_TYPES)[number]
-export type ChangelogArea = (typeof CHANGELOG_AREAS)[number]
+export interface ChangelogData {
+  releases: Array<Release>
+  /** True when older releases live in /changelog.archive.json (DX-012). */
+  hasArchive?: boolean
+}
 
 export type ChangelogSearch = {
   type?: ChangelogEntryType
   area?: ChangelogArea
   q?: string
+  /** Show ci/internal entries; URL-backed so the view stays shareable (DX-010). */
+  showInternal?: boolean
 }

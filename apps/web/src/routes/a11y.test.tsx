@@ -1,32 +1,13 @@
-import { describe, expect, it, vi } from "vitest"
-import { render } from "@testing-library/react"
-import { axe } from "vitest-axe"
-import {
-  RouterProvider,
-  createMemoryHistory,
-  createRootRoute,
-  createRoute,
-  createRouter,
-} from "@tanstack/react-router"
-import { HttpResponse, http } from "msw"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { FaucetPage } from "../features/faucet/components/faucet-page"
-import { TradePage } from "../features/trade/components/TradePage"
-import { ReferralsPage } from "../features/referrals/components/referrals-page"
-import { ChangelogPage } from "../features/changelog/components/ChangelogPage"
-import { server } from "@/test/msw/server"
-
-vi.mock("@/ui/Navbar", () => ({
-  Navbar: () => <nav aria-label="Primary" />,
-}))
-
-vi.mock("@/lib/contracts", () => ({
-  saveReferralCode: vi.fn(),
-  referralStorageClient: { getStakerInfo: vi.fn() },
-  getAffiliateCode: vi.fn(),
-  getTraderDiscountBps: vi.fn(),
-  getTraderReferralCode: vi.fn(),
-}))
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { render } from "@testing-library/react";
+import { axe } from "vitest-axe";
+import { RouterProvider, createMemoryHistory, createRootRoute, createRoute, createRouter } from "@tanstack/react-router";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
+import { FaucetPage } from "../features/faucet/components/faucet-page";
+import { TradePage } from "../features/trade/components/TradePage";
+import { ReferralsPage } from "../features/referrals/components/referrals-page";
+import { ChangelogPage } from "../features/changelog/components/ChangelogPage";
 
 // A11y Triage Guide:
 // If an accessibility violation occurs, you can triage it by inspecting the violation details.

@@ -296,7 +296,8 @@ this repository, enforcing the same gate. Point your tool at it.
 
 Open an issue on GitHub with a clear title, steps to reproduce, expected vs
 actual behaviour, and the failing command's output. For suspected security
-vulnerabilities, contact the maintainers privately instead of filing publicly.
+vulnerabilities, contact the maintainers privately instead of filing publicly
+— see [`SECURITY.md`](./SECURITY.md).
 
 ---
 
