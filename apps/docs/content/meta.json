@@ -8,7 +8,9 @@
         "developers/indexer",
         "developers/contract-clients",
         "developers/reading-data",
-        "developers/writing-transactions"
+        "developers/writing-transactions",
+        "developers/design-system",
+        "developers/json-feed"
       ]
     },
     {
@@ -21,7 +23,13 @@
     },
     {
       "label": "Reference",
-      "pages": ["reference/data-store", "reference/glossary"]
+      "pages": [
+        "reference/data-store",
+        "reference/synthetics-reader",
+        "reference/order-vault",
+        "reference/graphql.generated",
+        "reference/glossary"
+      ]
     },
     { "label": "Reference", "pages": ["reference/contracts.generated", "reference/exchange-router", "reference/glossary"] },
     {
@@ -30,7 +38,8 @@
         "resources/terms",
         "resources/faq",
         "resources/roadmap",
-        "resources/changelog"
+        "resources/changelog",
+        "resources/security"
       ]
     }
   ]
