@@ -17,7 +17,8 @@
     "indexer:dev": "bun run --cwd apps/s03-indexer dev",
     "indexer:start": "bun run --cwd apps/s03-indexer start",
     "check:integration": "bash scripts/check-integration.sh",
-    "check:tokens": "bun run scripts/check-design-tokens.ts"
+    "check:tokens": "bun run scripts/check-design-tokens.ts",
+    "check:content": "bun run --cwd apps/docs check:content"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

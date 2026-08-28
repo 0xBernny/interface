@@ -24,7 +24,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const ROOT = path.resolve(__dirname, "..")
 
-const SCAN_DIRS = ["apps/web/src", "packages/ui/src"]
+const SCAN_DIRS = ["apps/web/src", "apps/docs/src", "packages/ui/src"]
 const SCAN_EXTENSIONS = [".tsx", ".ts", ".css"]
 
 // Directories to skip entirely regardless of extension.
