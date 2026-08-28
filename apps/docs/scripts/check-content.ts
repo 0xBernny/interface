@@ -19,7 +19,18 @@ for (const page of pages) {
     errors.push(`${page.route}: updated must be ISO date`)
   if (!["stable", "beta", "draft"].includes(status))
     errors.push(`${page.route}: invalid status`)
+
+  // DX-055: Enforce image alt text and dimension requirements
+  const imgMatches = page.body.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)
+  for (const match of imgMatches) {
+    const alt = match[1]
+    const src = match[2]
+    if (alt.trim() === "") {
+      errors.push(`${page.route}: image "${src}" missing required alt text`)
+    }
+  }
 }
+
 
 const meta = JSON.parse(
   await readFile(join(contentRoot, "meta.json"), "utf8"),
