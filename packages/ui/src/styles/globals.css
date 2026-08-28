@@ -141,6 +141,22 @@
     --text-40: 2.5rem;        /* 40px */
 
     /*
+     * Landing-scoped additions (GF3-002) — sizes the GMX spec calls for
+     * that the app-wide scale above didn't need yet (nav links, stat
+     * numbers, section sub-heads, footer text). Namespaced by literal
+     * pixel value like their siblings above, not semantic names, for the
+     * same reason: these are a documented scale, not per-callsite magic
+     * numbers, but they don't map to an existing semantic role.
+     */
+    --text-12: 0.75rem;       /* 12px — eyebrow/footer text */
+    --text-14: 0.875rem;      /* 14px — nav links, body copy */
+    --text-16: 1rem;          /* 16px — base body */
+    --text-18: 1.125rem;      /* 18px — light-band body */
+    --text-24: 1.5rem;        /* 24px — pool card name, card titles */
+    --text-28: 1.75rem;       /* 28px — section sub-heads (sm) */
+    --text-30: 1.875rem;      /* 30px — stat numbers */
+
+    /*
      * Spacing scale — micro through section spacing.
      *
      * Intent-named tokens that reduce one-off arbitrary spacing values
@@ -209,6 +225,10 @@
     --color-gmx-stroke-primary: oklch(0.3591 0.0539 277.68);  /* #363A59 */
     --color-gmx-surface-primary: oklch(0.1959 0.0264 276.95); /* #121421 */
 
+    /* Inline hexes used by specific landing sections (001_theme_update.md §3) */
+    --color-gmx-sponsors-border: oklch(0.8933 0.0194 276.32); /* #D8DBE9 — SponsorsSection top border */
+    --color-gmx-card-shadow: oklch(0 0 0);                    /* #000 — ProgramCards drop shadow */
+
     --font-landing-sans: "Archivo Variable", "Geist Variable", sans-serif;
     --font-landing-code: "Space Mono", "Geist Mono Variable", monospace;
 
@@ -223,6 +243,28 @@
     @keyframes scroll {
         0% { transform: translateX(0%); }
         100% { transform: translateX(-50%); }
+    }
+
+    /*
+     * Landing-scoped radius scale. SO4's app-wide --radius is 0 (sharp
+     * corners) by design (see DESIGN.md) — GMX's landing look explicitly
+     * needs a rounded scale, so these are namespaced (rounded-8/12/20)
+     * rather than touching the app's --radius-sm/md/lg/xl tokens.
+     */
+    --radius-8: 0.5rem;   /* 8px  — buttons, inputs, launch buttons */
+    --radius-12: 0.75rem; /* 12px — sponsor logo cards */
+    --radius-20: 1.25rem; /* 20px — feature/pool/program cards */
+
+    /* Hero title word-rotation (AnimatedTitle) */
+    --animate-title-in: title-in 0.25s ease-in-out forwards;
+    --animate-title-out: title-out 0.25s ease-in-out forwards;
+    @keyframes title-in {
+        0% { transform: translateY(98%); opacity: 0; }
+        100% { transform: translateY(0%); opacity: 1; }
+    }
+    @keyframes title-out {
+        0% { transform: translateY(0%); opacity: 1; }
+        100% { transform: translateY(-98%); opacity: 0; }
     }
 }
 
@@ -312,7 +354,6 @@
         display: none;
     }
 }
-
 :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);

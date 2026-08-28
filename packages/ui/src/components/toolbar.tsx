@@ -50,7 +50,7 @@ const ToolbarRoot = React.forwardRef<HTMLDivElement, ToolbarRootProps>(
       (itemRef: React.RefObject<HTMLElement | null>) => {
         itemsRef.current.push(itemRef)
         return () => {
-          itemsRef.current = itemsRef.current.filter((ref) => ref !== itemRef)
+          itemsRef.current = itemsRef.current.filter((r) => r !== itemRef)
         }
       },
       []

@@ -14,9 +14,15 @@ import { RouteAnnouncer } from "../shared/components/RouteAnnouncer"
 // Update this to your production domain before going live.
 const SITE_URL = "https://so4.market"
 const SITE_NAME = "so4.market"
-const TITLE = "SO4 — On-chain perpetuals"
+const TITLE = "SO4 · On-chain perpetuals"
 const DESCRIPTION =
   "A unified-liquidity perp DEX. Deep books, sub-second matching, and self-custodied risk — built for traders who care where their fills come from."
+// TODO(GF3-003): apply the dot-separator convention (no em dashes as list
+// separators, "." between clauses — e.g. "Trade · Long/Short") through the
+// rest of the landing copy pass. This file's list-style SEO strings (title,
+// OG/Twitter image alt) are fixed now since they're the page's actual SEO
+// surface; DESCRIPTION's dash is a genuine sentence break, not a list
+// separator, and stays.
 const OG_IMAGE = `${SITE_URL}/og-image.svg`
 const TWITTER_HANDLE = "@so4market"
 
@@ -98,7 +104,7 @@ export const Route = createRootRoute({
       {
         property: "og:image:alt",
         content:
-          "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
+          "SO4 · On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
       },
 
       // ── Twitter / X Card ────────────────────────────────────────
@@ -111,7 +117,7 @@ export const Route = createRootRoute({
       {
         name: "twitter:image:alt",
         content:
-          "SO4 — On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
+          "SO4 · On-chain perpetuals DEX · $8.42B 24h volume · 184 markets",
       },
     ],
     links: [

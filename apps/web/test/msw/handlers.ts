@@ -1,4 +1,5 @@
 import { HttpResponse, http } from "msw"
+import { mockArchiveChangelog, mockRecentChangelog } from "./data/changelog"
 
 type RpcBody = { id?: string | number; method?: string }
 
@@ -14,6 +15,8 @@ const simulateTransactionSuccess = {
 }
 
 export const handlers = [
+  http.get("/changelog.json", () => HttpResponse.json(changelog)),
+
   http.post("https://soroban-testnet.stellar.org", async ({ request }) => {
     const body = (await request.json().catch(() => ({}))) as RpcBody
 
@@ -29,4 +32,10 @@ export const handlers = [
   }),
 
   http.get("https://horizon-testnet.stellar.org/:path*", () => HttpResponse.json({})),
+
+  // Generated changelog data (DX-012). Every test file sees these, including
+  // pages that render the navbar (its what's-new indicator fetches
+  // /changelog.json).
+  http.get("*/changelog.json", () => HttpResponse.json(mockRecentChangelog)),
+  http.get("*/changelog.archive.json", () => HttpResponse.json(mockArchiveChangelog)),
 ]

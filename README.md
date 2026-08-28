@@ -30,6 +30,7 @@ SO4 is a unified-liquidity perpetuals DEX built on Stellar/Soroban. Deep order b
 - [Testing Guide](#testing-guide)
 - [Architecture](#architecture)
 - [Contributing](#contributing) — see also [`CONTRIBUTING.md`](./CONTRIBUTING.md) and [`AGENTS.md`](./AGENTS.md)
+- [Changelog](#changelog)
 - [License](#license)
 
 ---
@@ -295,7 +296,14 @@ this repository, enforcing the same gate. Point your tool at it.
 
 Open an issue on GitHub with a clear title, steps to reproduce, expected vs
 actual behaviour, and the failing command's output. For suspected security
-vulnerabilities, contact the maintainers privately instead of filing publicly.
+vulnerabilities, contact the maintainers privately instead of filing publicly
+— see [`SECURITY.md`](./SECURITY.md).
+
+---
+
+## Changelog
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for a full history of releases and features.
 
 ---
 

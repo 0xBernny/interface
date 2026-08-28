@@ -1,18 +1,26 @@
 import { defineConfig } from "vite"
-import { tanstackStart } from "@tanstack/react-start/plugin/vite"
-import viteReact from "@vitejs/plugin-react"
-import viteTsConfigPaths from "vite-tsconfig-paths"
+import mdx from "@mdx-js/rollup"
+import remarkFrontmatter from "remark-frontmatter"
+import remarkMdxFrontmatter from "remark-mdx-frontmatter"
+import { shikiPlugin } from "./src/lib/rehype-shiki"
 import tailwindcss from "@tailwindcss/vite"
-import { nitro } from "nitro/vite"
+import { resolve } from "node:path"
 
 export default defineConfig({
+  root: import.meta.dirname,
   plugins: [
-    nitro(),
-    viteTsConfigPaths({
-      projects: ["./tsconfig.json"],
+    mdx({
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+      rehypePlugins: [shikiPlugin],
     }),
     tailwindcss(),
-    tanstackStart(),
-    viteReact(),
   ],
+  resolve: {
+    alias: {
+      "@workspace/ui": resolve(import.meta.dirname, "../../packages/ui/src"),
+    },
+  },
+  build: {
+    outDir: ".output",
+  },
 })

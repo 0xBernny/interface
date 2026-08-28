@@ -34,7 +34,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Lint
         run: bun lint
@@ -45,8 +45,15 @@ jobs:
       - name: Design token check
         run: bun run check:tokens
 
-      - name: Docs content check
-        run: bun run check:content
+      - name: Documentation content and prose checks
+        run: bun run check:content && bun run --cwd apps/docs lint:prose
+
+
+      - name: Documentation link and FAQ drift checks
+        run: bun run check:links && bun run --cwd apps/docs check:faq
+
+      - name: Documentation generated-reference drift checks
+        run: bun run --cwd apps/docs check:tokens:generated && bun run --cwd apps/docs check:errors:generated
 
       - name: Test
         run: bun run test
