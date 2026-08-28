@@ -1,9 +1,13 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator"
 
-
-
 import { test, expect, afterEach, afterAll, beforeAll } from "bun:test"
-import { cleanup, render, act } from "@testing-library/react"
+import {
+  cleanup,
+  render,
+  act,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react"
 import { components } from "../src/mdx/components"
 import * as jsxRuntime from "react/jsx-runtime"
 import { compile, run } from "@mdx-js/mdx"
@@ -15,6 +19,8 @@ import {
 } from "@tanstack/react-router"
 import { shikiPlugin } from "../src/lib/rehype-shiki"
 import remarkGfm from "remark-gfm"
+import { DocsLayout } from "../src/components/DocsLayout"
+import { Tab, Tabs as DocsTabs } from "../src/mdx/Tabs"
 
 beforeAll(() => {
   GlobalRegistrator.register()
@@ -26,6 +32,7 @@ afterAll(() => {
 
 afterEach(() => {
   cleanup()
+  window.localStorage.clear()
 })
 
 const mdxFixture = `
@@ -57,7 +64,7 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [shikiPlugin],
   })
-  
+
   const { default: MDXContent } = await run(String(compiled), {
     ...jsxRuntime,
   })
@@ -65,7 +72,7 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
   const rootRoute = createRootRoute({
     component: () => <MDXContent components={components} />,
   })
-  
+
   const router = createRouter({
     routeTree: rootRoute,
     history: createMemoryHistory(),
@@ -82,7 +89,7 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
   expect(h1).not.toBeNull()
   expect(h1?.className).toContain("text-22")
   expect(h1?.className).toContain("font-semibold")
-  
+
   // Verify blockquote (Callout)
   const callout = container.querySelector("[role='status']")
   expect(callout).not.toBeNull()
@@ -90,7 +97,7 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
 
   // Verify inline code
   const codes = Array.from(container.querySelectorAll("code"))
-  const inlineCode = codes.find(c => c.textContent === "inline code")
+  const inlineCode = codes.find((c) => c.textContent === "inline code")
   expect(inlineCode).not.toBeUndefined()
   expect(inlineCode?.className).toContain("bg-surface-sunken")
 
@@ -98,7 +105,7 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
   const internalLink = container.querySelector("a[href='/foo']")
   expect(internalLink).not.toBeNull()
   expect(internalLink?.className).toContain("hover:underline")
-  
+
   // Verify external link
   const externalLink = container.querySelector("a[href='https://example.com']")
   expect(externalLink).not.toBeNull()
@@ -107,11 +114,106 @@ test("MDX components map renders kitchen-sink fixture correctly", async () => {
   expect(externalLink?.querySelector("svg")).not.toBeNull() // Arrow icon
 
   // Verify table structure
-  const tableContainer = container.querySelector("[data-slot='table-container']")
+  const tableContainer = container.querySelector(
+    "[data-slot='table-container']"
+  )
   if (!tableContainer) {
     console.log("HTML Output:", container.innerHTML)
   }
   expect(tableContainer).not.toBeNull()
   expect(tableContainer?.className).toContain("overflow-x-auto")
   expect(tableContainer?.querySelector("table")).not.toBeNull()
+})
+
+function SyncedTabs() {
+  return (
+    <>
+      <DocsTabs groupId="manager">
+        <Tab label="bun">Bun first</Tab>
+        <Tab label="npm">npm first</Tab>
+      </DocsTabs>
+      <DocsTabs groupId="manager">
+        <Tab label="bun">Bun second</Tab>
+        <Tab label="npm">npm second</Tab>
+      </DocsTabs>
+    </>
+  )
+}
+
+test("DocsLayout exposes landmarks and a working skip link", () => {
+  const result = render(
+    <DocsLayout
+      header={<a href="/">SO4 docs</a>}
+      sidebar={<nav aria-label="Documentation">Sidebar</nav>}
+      toc={
+        <ol>
+          <li>
+            <a href="#intro">Introduction</a>
+          </li>
+        </ol>
+      }
+      footer="Footer"
+    >
+      <h1 id="intro">Introduction</h1>
+    </DocsLayout>
+  )
+
+  const main = result.getByRole("main")
+  const skipLink = result.getByRole("link", { name: "Skip to main content" })
+  expect(main.id).toBe("main-content")
+  expect(main.getAttribute("tabindex")).toBe("-1")
+  expect(result.getByRole("contentinfo")).toBeDefined()
+
+  fireEvent.click(skipLink)
+  expect(document.activeElement).toBe(main)
+})
+
+test("MDX tabs sync groups, persist selection, and keep every panel", async () => {
+  const result = render(<SyncedTabs />)
+  const npmTabs = result.getAllByRole("tab", { name: "npm" })
+  fireEvent.click(npmTabs[0])
+
+  await waitFor(() => {
+    expect(npmTabs[0].getAttribute("aria-selected")).toBe("true")
+    expect(npmTabs[1].getAttribute("aria-selected")).toBe("true")
+  })
+  expect(window.localStorage.getItem("so4-docs-tabs:manager")).toBe("npm")
+  expect(result.getByText("npm first")).toBeDefined()
+  expect(result.getByText("npm second")).toBeDefined()
+})
+
+test("MDX tabs restore a persisted selection", async () => {
+  window.localStorage.setItem("so4-docs-tabs:manager", "npm")
+  const result = render(<SyncedTabs />)
+
+  await waitFor(() => {
+    for (const tab of result.getAllByRole("tab", { name: "npm" })) {
+      expect(tab.getAttribute("aria-selected")).toBe("true")
+    }
+  })
+})
+
+test("MDX tabs fall back to the first option when storage is unavailable", async () => {
+  const storage = window.localStorage
+  const originalGetItem = storage.getItem.bind(storage)
+  Object.defineProperty(storage, "getItem", {
+    configurable: true,
+    value: () => {
+      throw new Error("storage disabled")
+    },
+  })
+
+  try {
+    const result = render(<SyncedTabs />)
+    await waitFor(() => {
+      for (const tab of result.getAllByRole("tab", { name: "bun" })) {
+        expect(tab.getAttribute("aria-selected")).toBe("true")
+      }
+    })
+  } finally {
+    Object.defineProperty(storage, "getItem", {
+      configurable: true,
+      value: originalGetItem,
+    })
+  }
 })

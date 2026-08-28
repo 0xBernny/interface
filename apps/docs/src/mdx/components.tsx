@@ -14,6 +14,8 @@ import {
   TableHead,
   TableCell,
 } from "@workspace/ui/components/table"
+import { CodeGroup } from "./CodeGroup"
+import { Tab, Tabs } from "./Tabs"
 
 export const components: MDXComponents = {
   h1: (props) => <Heading level={1} {...props} />,
@@ -32,7 +34,7 @@ export const components: MDXComponents = {
       <code
         {...props}
         className={cn(
-          "font-mono text-[0.875em] bg-surface-sunken px-1.5 py-0.5 rounded text-text-primary",
+          "rounded bg-surface-sunken px-1.5 py-0.5 font-mono text-sm text-text-primary",
           props.className
         )}
       />
@@ -61,7 +63,7 @@ export const components: MDXComponents = {
         <Link
           to={href}
           preload="intent"
-          className="text-primary hover:underline font-medium"
+          className="font-medium text-primary hover:underline"
           {...props}
         >
           {children}
@@ -73,23 +75,39 @@ export const components: MDXComponents = {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-primary hover:underline font-medium inline-flex items-center gap-0.5"
+        className="inline-flex items-center gap-0.5 font-medium text-primary hover:underline"
         {...props}
       >
         {children}
-        <Icon icon={ArrowUpRight01Icon} size="sm" className="inline-block text-text-tertiary ml-0.5" />
+        <Icon
+          icon={ArrowUpRight01Icon}
+          size="sm"
+          className="ml-0.5 inline-block text-text-tertiary"
+        />
       </a>
     )
   },
   ul: (props) => (
-    <ul className="list-disc pl-6 mb-4 space-y-2 text-text-primary text-sm" {...props} />
+    <ul
+      className="mb-4 list-disc space-y-2 pl-6 text-sm text-text-primary"
+      {...props}
+    />
   ),
   ol: (props) => (
-    <ol className="list-decimal pl-6 mb-4 space-y-2 text-text-primary text-sm" {...props} />
+    <ol
+      className="mb-4 list-decimal space-y-2 pl-6 text-sm text-text-primary"
+      {...props}
+    />
   ),
   li: (props) => <li {...props} />,
   hr: (props) => <hr className="my-8 border-border" {...props} />,
   img: (props) => (
-    <img className="rounded-lg border border-border my-6 max-w-full h-auto" {...props} />
+    <img
+      className="my-6 h-auto max-w-full rounded-lg border border-border"
+      {...props}
+    />
   ),
+  Tabs,
+  Tab,
+  CodeGroup,
 }
