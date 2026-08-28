@@ -26,6 +26,7 @@ Run from the repository root, in this order:
 bun lint               # zero errors
 bun typecheck          # zero errors
 bun run check:tokens   # zero violations
+bun run check:content  # zero docs content violations
 bun run test           # all pass
 bun run test:coverage  # all pass, thresholds met
 bun run build          # succeeds
@@ -117,7 +118,7 @@ configuration, verify in a clean clone before committing:**
 git clone file://$PWD /tmp/so4-cleanroom
 cd /tmp/so4-cleanroom
 bun install --frozen-lockfile
-bun lint && bun typecheck && bun run test && bun run build
+bun lint && bun typecheck && bun run check:content && bun run test && bun run build
 ```
 
 Use `--frozen-lockfile`, because that is what reproducibility means here: the
@@ -153,6 +154,9 @@ Violating these silently breaks the build for everyone.
   an explicit handler. Never make a test depend on the real network.
 - **Design tokens are mandatory.** Use the named tokens in
   `packages/ui/src/styles/globals.css` rather than raw hex or arbitrary sizes.
+- **Docs content is validated centrally.** Run
+  `bun run --cwd apps/docs check:content` or the root `bun run check:content`
+  before changing docs content, manifests, or docs assets.
 
 ---
 
