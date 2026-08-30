@@ -223,6 +223,30 @@ test("MDX tabs sync groups, persist selection, and keep every panel", async () =
   expect(result.getByText("npm second")).toBeDefined()
 })
 
+test("MDX content tabs keep every panel mounted for print and search", () => {
+  const result = render(
+    <components.Tabs>
+      <components.TabItem label="bun">Bun instructions</components.TabItem>
+      <components.TabItem label="npm">npm instructions</components.TabItem>
+    </components.Tabs>
+  )
+
+  const panels = [...result.container.querySelectorAll("[data-tab-panel]")]
+  expect(panels.length).toBe(2)
+  expect(panels.map((panel) => panel.getAttribute("data-tab-label"))).toEqual([
+    "bun",
+    "npm",
+  ])
+  expect(panels[0].hidden).toBe(false)
+  expect(panels[1].hidden).toBe(true)
+
+  // Only the `hidden` attribute separates the panels, so the print stylesheet
+  // can expand all of them without a beforeprint JS hook.
+  fireEvent.click(result.getByRole("button", { name: "npm" }))
+  expect(panels[0].hidden).toBe(true)
+  expect(panels[1].hidden).toBe(false)
+})
+
 test("MDX tabs restore a persisted selection", async () => {
   window.localStorage.setItem("so4-docs-tabs:manager", "npm")
   const result = render(<SyncedTabs />)

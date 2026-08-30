@@ -34,9 +34,15 @@ export function DocsLayout({
   children,
 }: DocsLayoutProps) {
   return (
-    <div className="min-h-dvh overflow-x-clip bg-surface-canvas text-text-primary">
+    <div
+      data-slot="docs-shell"
+      className="min-h-dvh overflow-x-clip bg-surface-canvas text-text-primary"
+    >
       <SkipLink />
-      <header className="sticky top-0 z-40 border-b border-border bg-surface-canvas">
+      <header
+        data-slot="docs-header"
+        className="sticky top-0 z-40 border-b border-border bg-surface-canvas"
+      >
         <div className="mx-auto flex h-16 max-w-screen-2xl items-center gap-3 px-4 md:px-6 lg:px-8">
           <div className="lg:hidden">
             <Sheet>
@@ -67,7 +73,10 @@ export function DocsLayout({
       </header>
 
       <div className="mx-auto flex max-w-screen-2xl items-start px-4 md:px-6 lg:px-8">
-        <aside className="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 pe-6 lg:block xl:w-64">
+        <aside
+          data-slot="docs-sidebar"
+          className="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 pe-6 lg:block xl:w-64"
+        >
           {sidebar}
         </aside>
 
@@ -89,14 +98,20 @@ export function DocsLayout({
         </main>
 
         {toc ? (
-          <aside className="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 ps-6 xl:block">
+          <aside
+            data-slot="docs-toc"
+            className="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 ps-6 xl:block"
+          >
             <nav aria-label="On this page">{toc}</nav>
           </aside>
         ) : null}
       </div>
 
       {footer ? (
-        <footer className="border-t border-border px-4 py-8 md:px-6 lg:px-8">
+        <footer
+          data-slot="docs-footer"
+          className="border-t border-border px-4 py-8 md:px-6 lg:px-8"
+        >
           <div className="mx-auto max-w-screen-2xl">{footer}</div>
         </footer>
       ) : null}

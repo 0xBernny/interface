@@ -58,6 +58,7 @@ export function Tabs({
           key={values[index]}
           value={values[index]}
           keepMounted
+          data-tab-label={tab.props.label ?? values[index]}
           className="mt-4 text-sm print:block"
         >
           {tab.props.children}
