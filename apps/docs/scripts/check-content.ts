@@ -43,9 +43,8 @@ const navRoutes = meta.sections.flatMap((section) =>
 for (const route of navRoutes)
   if (!routes.has(route)) errors.push(`sidebar references missing ${route}`)
 for (const route of routes)
-  // The home page is the site root — reachable by definition, not a sidebar
-  // entry — so it is exempt from the orphan check.
-  if (!navRoutes.includes(route) && route !== "/index")
+  // `/index` is the docs home page and is intentionally not in the sidebar.
+  if (route !== "/index" && !navRoutes.includes(route))
     errors.push(`orphan page ${route}`)
 
 const glossary = pages.find((page) => page.route === "/reference/glossary")

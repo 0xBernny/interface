@@ -125,7 +125,7 @@ export async function loadContentIndex(
     }
   }
   for (const route of byRoute.keys()) {
-    if (!sidebarRoutes.has(route)) {
+    if (route !== "/index" && !sidebarRoutes.has(route)) {
       errors.push(`orphan page ${route}`)
     }
   }
