@@ -1,4 +1,4 @@
-import { mkdir, rm } from "node:fs/promises"
+import { mkdir, readdir, rm } from "node:fs/promises"
 import { join } from "node:path"
 
 import { $ } from "bun"
@@ -12,7 +12,7 @@ await $`bun run ${join(appRoot, "../../scripts/generate-design-tokens.ts")} --ch
 await $`bun run ${join(appRoot, "../../scripts/generate-errors-reference.ts")} --check`
 
 const pages = (await loadPages()).filter(
-  (page) => page.frontmatter.status !== "draft",
+  (page) => page.frontmatter.status !== "draft"
 )
 const outputRoot = join(appRoot, ".nitro-static")
 
@@ -27,7 +27,7 @@ function renderInline(value: string) {
   return value
     .replace(
       /<Term id="([a-z0-9-]+)">([^<]+)<\/Term>/g,
-      '<a href="/reference/glossary#$1">$2</a>',
+      '<a href="/reference/glossary#$1">$2</a>'
     )
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -56,13 +56,13 @@ function render(body: string) {
         return `<ol class="steps">${items}</ol>`
       }
       if (block.startsWith("> "))
-        return `<aside>${renderInline(block.replace(/^> ?/gm, ""))}</aside>`
+        return `<aside class="my-6 rounded-lg bg-warning-subtle p-4 text-sm text-text-primary">${renderInline(block.replace(/^> ?/gm, ""))}</aside>`
       if (block.startsWith("- "))
-        return `<ul>${block
+        return `<ul class="mb-4 list-disc space-y-2 ps-6 text-sm text-text-primary">${block
           .split("\n")
           .map((line) => `<li>${renderInline(line.slice(2))}</li>`)
           .join("")}</ul>`
-      return `<p>${renderInline(block)}</p>`
+      return `<p class="mb-4 text-sm leading-7 text-text-primary">${renderInline(block)}</p>`
     })
     .join("\n")
 }
@@ -75,7 +75,7 @@ await rm(outputRoot, { recursive: true, force: true })
 for (const page of pages) {
   const directory = join(outputRoot, page.route.slice(1))
   await mkdir(directory, { recursive: true })
-  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(page.frontmatter.title)} · SO4 docs</title><meta name="description" content="${escape(page.frontmatter.description)}"><style>:root{font:16px/1.65 system-ui;color:#17191d;background:#fff}body{margin:0}header,main{max-width:760px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;border-bottom:1px solid #ddd}a{color:#3156c8}h1{font-size:2.4rem;line-height:1.1}h2{margin-top:2.5rem}aside{border-left:4px solid #d99b16;background:#fff8df;padding:16px}code{background:#eee;padding:2px 5px}@media print{header{display:none}main{max-width:none;padding:0}a{color:inherit;text-decoration:none}aside{break-inside:avoid;background:none;border:1px solid #777}h2{break-after:avoid}}</style></head><body><header data-pagefind-ignore><a href="/">SO4 docs</a><a href="https://so4.market">Open interface</a></header><main data-pagefind-body><h1>${escape(page.frontmatter.title)}</h1>${render(page.body)}</main></body></html>`
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(page.frontmatter.title)} · SO4 docs</title><meta name="description" content="${escape(page.frontmatter.description)}"><link rel="stylesheet" href="/assets/${stylesheet}"></head><body class="bg-surface-canvas text-text-primary"><header class="mx-auto flex h-16 max-w-3xl items-center justify-between border-b border-border px-4" data-pagefind-ignore><a class="text-sm font-semibold text-text-primary" href="/">SO4 docs</a><a class="text-sm font-medium text-text-link" href="https://so4.market">Open interface</a></header><main class="mx-auto max-w-3xl px-4 py-10" data-pagefind-body><h1 class="mb-6 text-2xl font-semibold text-text-primary">${escape(page.frontmatter.title)}</h1>${render(page.body)}</main></body></html>`
   await Bun.write(join(directory, "index.html"), html)
 }
 

@@ -4,7 +4,6 @@ import remarkFrontmatter from "remark-frontmatter"
 import remarkMdxFrontmatter from "remark-mdx-frontmatter"
 import { shikiPlugin } from "./src/lib/rehype-shiki"
 import tailwindcss from "@tailwindcss/vite"
-import { resolve } from "node:path"
 
 export default defineConfig({
   root: import.meta.dirname,
@@ -15,12 +14,8 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-  resolve: {
-    alias: {
-      "@workspace/ui": resolve(import.meta.dirname, "../../packages/ui/src"),
-    },
-  },
   build: {
-    outDir: ".output",
+    outDir: ".nitro-static",
+    emptyOutDir: false,
   },
 })
