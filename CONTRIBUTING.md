@@ -16,6 +16,8 @@ quality bar every change must clear, and how to get a pull request merged.
 - [The quality gate](#the-quality-gate)
 - [Development workflow](#development-workflow)
 - [Fixing issues properly](#fixing-issues-properly)
+- [Changelog entries](#changelog-entries)
+- [Release procedure](#release-procedure)
 - [Commit conventions](#commit-conventions)
 - [Pull requests](#pull-requests)
 - [Project-specific gotchas](#project-specific-gotchas)
@@ -244,6 +246,46 @@ for the format and naming convention.
 - ❌ Internal refactors, test additions, CI/build changes, or non-user-facing work
 
 Run `bun run changelog:validate` before committing to catch formatting errors.
+
+---
+
+## Release procedure
+
+SO4 Market uses tag-driven release automation with CI verification (DX-025).
+
+CI **verifies** release readiness; it **never writes** back to `main`. The release process is kept entirely in reviewed PRs:
+
+1. **Cut the release in a PR**:
+   Run the release command with the target SemVer version:
+   ```bash
+   bun run changelog:release 0.2.0
+   ```
+   This command:
+   - Validates all pending entry files in `.changelog/unreleased/`.
+   - Aggregates them into a new `## [0.2.0] - YYYY-MM-DD` section in `CHANGELOG.md`.
+   - Clears consumed entry files from `.changelog/unreleased/`.
+   - Updates compare links at the bottom of `CHANGELOG.md`.
+
+2. **Open, review, and merge the PR**:
+   Submit the release PR targeting `main`. Run the full quality gate. Once approved and CI is green, merge to `main`.
+
+3. **Tag the release on `main`**:
+   After merging, pull the latest `main` and push an annotated git tag matching the release version:
+   ```bash
+   git checkout main
+   git pull upstream main
+   git tag -a v0.2.0 -m "Release v0.2.0"
+   git push upstream v0.2.0
+   ```
+
+4. **CI Release Workflow (`.github/workflows/release.yml`)**:
+   On push of any `v*` tag, CI:
+   - Runs the full quality gate (`AGENTS.md` §1).
+   - Asserts `.changelog/unreleased/` is empty.
+   - Asserts `CHANGELOG.md` contains a release section matching the version in the tag.
+   - Asserts the release date in `CHANGELOG.md` is within 1 day of the tag date.
+   - Extracts the release section notes and creates a GitHub Release for the tag.
+   - Never pushes commits to any branch.
 
 ---
 

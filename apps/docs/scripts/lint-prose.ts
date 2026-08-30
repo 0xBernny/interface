@@ -29,10 +29,10 @@ const REQUIRED_CAPITALIZATIONS = [
   { wrong: /\bstellar\b/g, correct: "Stellar" },
   { wrong: /\bfreighter\b/g, correct: "Freighter" },
   { wrong: /\bturborepo\b/g, correct: "Turborepo" },
-  { wrong: /\border-vault\b/i, correct: "OrderVault" },
-  { wrong: /\bexchange-router\b/i, correct: "ExchangeRouter" },
-  { wrong: /\bsynthetics-reader\b/i, correct: "SyntheticsReader" },
-  { wrong: /\bdata-store\b/i, correct: "DataStore" },
+  { wrong: /\border-vault\b/gi, correct: "OrderVault" },
+  { wrong: /\bexchange-router\b/gi, correct: "ExchangeRouter" },
+  { wrong: /\bsynthetics-reader\b/gi, correct: "SyntheticsReader" },
+  { wrong: /\bdata-store\b/gi, correct: "DataStore" },
 ]
 
 const PASSIVE_VOICE_PATTERNS = [
@@ -67,9 +67,15 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     }
     if (inCodeBlock) continue
 
+    // Mask inline code spans, link targets, and HTML tags/elements with spaces to preserve column indices
+    const proseLine = line
+      .replace(/`[^`]+`/g, (m) => " ".repeat(m.length))
+      .replace(/\]\([^)]+\)/g, (m) => "]" + " ".repeat(m.length - 1))
+      .replace(/<[^>]+>/g, (m) => " ".repeat(m.length))
+
     // 1. Exclamation marks check (Error)
-    const exclamIdx = line.indexOf("!")
-    if (exclamIdx !== -1 && !line.match(/!\[.*?\]\(.*?\)/) && !line.match(/!=\s*/)) {
+    const exclamIdx = proseLine.indexOf("!")
+    if (exclamIdx !== -1 && !proseLine.match(/!=\s*/)) {
       errors.push({
         file,
         line: lineNum,
@@ -84,7 +90,7 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     for (const { word, reason } of BANNED_WORDS) {
       const regex = new RegExp(`\\b${word}\\b`, "gi")
       let match: RegExpExecArray | null
-      while ((match = regex.exec(line)) !== null) {
+      while ((match = regex.exec(proseLine)) !== null) {
         errors.push({
           file,
           line: lineNum,
@@ -100,7 +106,7 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     for (const { wrong, correct } of REQUIRED_CAPITALIZATIONS) {
       let match: RegExpExecArray | null
       wrong.lastIndex = 0
-      while ((match = wrong.exec(line)) !== null) {
+      while ((match = wrong.exec(proseLine)) !== null) {
         // Skip if matched inside link or code snippet if case matches correct
         if (match[0] !== correct) {
           errors.push({
@@ -117,7 +123,7 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
 
     // 4. Passive voice check (Warning)
     for (const pattern of PASSIVE_VOICE_PATTERNS) {
-      const match = pattern.exec(line)
+      const match = pattern.exec(proseLine)
       if (match) {
         warnings.push({
           file,
@@ -131,7 +137,7 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     }
 
     // 5. Sentence length threshold (> 30 words) (Warning)
-    const sentences = line.split(/(?<=[.!?])\s+/)
+    const sentences = proseLine.split(/(?<=[.!?])\s+/)
     for (const sentence of sentences) {
       const words = sentence.trim().split(/\s+/).filter(Boolean)
       if (words.length > 30) {

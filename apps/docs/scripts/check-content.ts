@@ -1,9 +1,10 @@
-import { readFile } from "node:fs/promises"
+import { readFile, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 
-import { contentRoot, headingEntries, loadPages } from "./content"
-import { validateFrontmatter } from "../src/lib/frontmatter"
+import { contentRoot, headingEntries, loadPages } from "./content.ts"
+import { validateFrontmatter } from "../src/lib/frontmatter.ts"
 
+const isFix = process.argv.includes("--fix")
 const pages = await loadPages()
 const errors: Array<string> = []
 const routes = new Set(pages.map((page) => page.route))
@@ -20,6 +21,37 @@ for (const page of pages) {
   if (!["stable", "beta", "draft"].includes(status))
     errors.push(`${page.route}: invalid status`)
 
+  // DX-045: Validate updated date against git commit history if tracked
+  if (!page.file.endsWith(".generated.mdx") && status !== "draft") {
+    try {
+      const proc = Bun.spawnSync([
+        "git",
+        "log",
+        "-1",
+        "--format=%cs",
+        "--",
+        page.file,
+      ])
+      const gitDate = proc.stdout.toString().trim()
+      if (gitDate && /^\d{4}-\d{2}-\d{2}$/.test(gitDate)) {
+        if (updated !== gitDate) {
+          if (isFix) {
+            const raw = await readFile(page.file, "utf-8")
+            const fixed = raw.replace(/^updated:\s*.*$/m, `updated: ${gitDate}`)
+            await writeFile(page.file, fixed, "utf-8")
+            page.frontmatter.updated = gitDate
+          } else {
+            errors.push(
+              `${page.route}: frontmatter updated date (${updated}) does not match last git commit date (${gitDate})`
+            )
+          }
+        }
+      }
+    } catch {
+      // Ignore if git is not available
+    }
+  }
+
   // DX-055: Enforce image alt text and dimension requirements
   const imgMatches = page.body.matchAll(/!\[([^\]]*)\]\(([^)]+)\)/g)
   for (const match of imgMatches) {
@@ -30,7 +62,6 @@ for (const page of pages) {
     }
   }
 }
-
 
 const meta = JSON.parse(
   await readFile(join(contentRoot, "meta.json"), "utf8"),
