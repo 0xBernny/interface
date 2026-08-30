@@ -1,51 +1,62 @@
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
-import { Icon } from "@workspace/ui/components/icon"
+import React from "react"
+import { Link } from "@tanstack/react-router"
 import { cn } from "@workspace/ui/lib/utils"
 
-import type { PagerLinks } from "../lib/navigation"
+export interface PageLink {
+  title: string
+  route: string
+}
 
-interface PagerProps extends PagerLinks {
+export interface PagerProps {
+  prev?: PageLink
+  next?: PageLink
   className?: string
 }
 
-export function Pager({ previous, next, className }: PagerProps) {
-  if (!previous && !next) return null
+export function Pager({ prev, next, className }: PagerProps) {
+  if (!prev && !next) return null
 
   return (
     <nav
-      aria-label="Documentation pagination"
-      className={cn("mt-12 flex gap-4 border-t border-border pt-6", className)}
+      aria-label="Pagination navigation"
+      className={cn(
+        "mt-12 pt-6 border-t border-border flex items-center justify-between gap-4",
+        className,
+      )}
     >
-      {previous ? (
-        <a
-          href={previous.route}
+      {prev ? (
+        <Link
+          to={prev.route}
           rel="prev"
-          className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg bg-surface-sunken p-4 text-start transition-colors hover:bg-surface-interactive focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="group flex flex-col items-start px-4 py-3 rounded-lg border border-border hover:border-border-accent transition-colors"
         >
-          <Icon icon={ArrowLeft01Icon} size="md" className="shrink-0" />
-          <span className="min-w-0">
-            <span className="block text-xs text-text-secondary">Previous</span>
-            <span className="block truncate text-sm font-medium text-text-primary">
-              {previous.title}
-            </span>
+          <span className="text-xs text-text-tertiary font-medium group-hover:text-text-primary">
+            ← Previous
           </span>
-        </a>
-      ) : null}
+          <span className="text-sm font-semibold text-text-primary group-hover:text-text-accent">
+            {prev.title}
+          </span>
+        </Link>
+      ) : (
+        <div />
+      )}
+
       {next ? (
-        <a
-          href={next.route}
+        <Link
+          to={next.route}
           rel="next"
-          className="group ms-auto flex min-w-0 flex-1 items-center justify-end gap-3 rounded-lg bg-surface-sunken p-4 text-end transition-colors hover:bg-surface-interactive focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+          className="group flex flex-col items-end px-4 py-3 rounded-lg border border-border hover:border-border-accent transition-colors ml-auto"
         >
-          <span className="min-w-0">
-            <span className="block text-xs text-text-secondary">Next</span>
-            <span className="block truncate text-sm font-medium text-text-primary">
-              {next.title}
-            </span>
+          <span className="text-xs text-text-tertiary font-medium group-hover:text-text-primary">
+            Next →
           </span>
-          <Icon icon={ArrowRight01Icon} size="md" className="shrink-0" />
-        </a>
-      ) : null}
+          <span className="text-sm font-semibold text-text-primary group-hover:text-text-accent">
+            {next.title}
+          </span>
+        </Link>
+      ) : (
+        <div />
+      )}
     </nav>
   )
 }

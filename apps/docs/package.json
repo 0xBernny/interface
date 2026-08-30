@@ -6,7 +6,8 @@
   "scripts": {
     "build": "bun run scripts/build.ts && bunx --bun pagefind --site .nitro-static && bunx nitro build",
     "dev": "bun run scripts/build.ts && bunx nitro dev",
-    "lint": "bun run check:content",
+    "lint": "bun run check:content && bun run lint:prose",
+    "lint:prose": "bun run scripts/lint-prose.ts",
     "format": "prettier --write \"content/**/*.mdx\" \"scripts/**/*.ts\" \"src/**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "test": "bun test",

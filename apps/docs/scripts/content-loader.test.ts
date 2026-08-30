@@ -22,10 +22,14 @@ describe("content loader — kebab-case validation", () => {
     expect(isKebabCase("myPage")).toBe(false)
     expect(isKebabCase("MY-PAGE")).toBe(false)
     expect(isKebabCase("my_page")).toBe(false)
+    expect(isKebabCase("page_name_1")).toBe(false)
+    expect(isKebabCase("page.name")).toBe(false)
+    expect(isKebabCase("-leading-dash")).toBe(false)
+    expect(isKebabCase("trailing-dash-")).toBe(false)
   })
 })
 
-describe("content loader — draft exclusion", () => {
+describe("content loader — draft exclusion & frontmatter validation", () => {
   test("draft status is accepted by frontmatter schema", () => {
     const fm = validateFrontmatter("test.mdx", {
       title: "Alpha",
@@ -46,5 +50,21 @@ describe("content loader — draft exclusion", () => {
       status: "stable",
     })
     expect(fm.status).toBe("stable")
+  })
+
+  test("rejects malformed frontmatter objects", () => {
+    expect(() => validateFrontmatter("bad-title.mdx", {
+      title: "",
+      description: "A valid description that satisfies the min length threshold.",
+      updated: "2026-08-24",
+      status: "stable",
+    })).toThrow("bad-title.mdx")
+
+    expect(() => validateFrontmatter("bad-date.mdx", {
+      title: "Valid title",
+      description: "A valid description that satisfies the min length threshold.",
+      updated: "24-08-2026",
+      status: "stable",
+    })).toThrow("bad-date.mdx")
   })
 })

@@ -77,6 +77,7 @@ exact commands CI runs, in the same order. Run them from the repository root.
 bun lint               # ESLint across all packages — zero errors
 bun typecheck          # tsc --noEmit across all packages
 bun run check:tokens   # design-token policy (no raw hex / arbitrary sizes)
+bun run check:content  # docs frontmatter, nav, slug, freshness, and asset checks
 bun run test           # unit tests
 bun run test:coverage  # unit tests + coverage thresholds
 bun run build          # production build of every package
@@ -158,6 +159,9 @@ even when your fork has drifted behind.
 - Prefer workspace imports (`@workspace/ui/...`) over deep relative paths.
 - Use design tokens, not raw values — `check:tokens` enforces this. Text sizes
   and radii have named tokens in `packages/ui/src/styles/globals.css`.
+- For docs content, run `bun run --cwd apps/docs check:content`. Use
+  `bun run --cwd apps/docs check:content -- --fix` only for the mechanically
+  fixable subset: `updated:` dates and manifest ordering.
 - Comment non-obvious intent only. Don't restate the code.
 
 ### 3. Format
@@ -180,7 +184,7 @@ clone:
 git clone file://$PWD /tmp/so4-cleanroom
 cd /tmp/so4-cleanroom
 bun install --frozen-lockfile
-bun lint && bun typecheck && bun run test && bun run build
+bun lint && bun typecheck && bun run check:content && bun run test && bun run build
 ```
 
 This is not paranoia — it is how a whole class of "passes locally, fails in CI"

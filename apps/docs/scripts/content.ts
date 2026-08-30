@@ -80,9 +80,21 @@ export async function loadPages(): Promise<Array<Page>> {
 export function headingEntries(body: string) {
   return [
     ...body.matchAll(
-      /^## (.+?) \{#([a-z0-9-]+)\}\n\n([\s\S]*?)(?=\n\n## |$)/gm,
+      /^(#{2,6}) (.+?)(?: \{#([a-z0-9-]+)\})?$/gm,
     ),
-  ].map(([, title, id, answer]) => ({ title, id, answer: answer.trim() }))
+  ].map(([, , title, explicitId]) => ({
+    title,
+    id: explicitId ?? slugifyHeading(title),
+  }))
+}
+
+export function slugifyHeading(title: string): string {
+  return title
+    .toLocaleLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
 }
 
 export function internalLinks(body: string) {

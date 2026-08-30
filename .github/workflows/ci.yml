@@ -45,8 +45,9 @@ jobs:
       - name: Design token check
         run: bun run check:tokens
 
-      - name: Documentation content check
-        run: bun run check:content
+      - name: Documentation content and prose checks
+        run: bun run check:content && bun run --cwd apps/docs lint:prose
+
 
       - name: Documentation link and FAQ drift checks
         run: bun run check:links && bun run --cwd apps/docs check:faq
