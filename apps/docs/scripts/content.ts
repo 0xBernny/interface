@@ -78,14 +78,26 @@ export async function loadPages(): Promise<Array<Page>> {
 }
 
 export function headingEntries(body: string) {
-  return [
-    ...body.matchAll(
-      /^(#{2,6}) (.+?)(?: \{#([a-z0-9-]+)\})?$/gm,
-    ),
-  ].map(([, , title, explicitId]) => ({
-    title,
-    id: explicitId ?? slugifyHeading(title),
-  }))
+  const lines = body.split("\n")
+  const entries: Array<{
+    title: string
+    id: string
+    answer?: string
+  }> = []
+  for (let i = 0; i < lines.length; i++) {
+    const match = lines[i].match(/^(#{2,6}) (.+?)(?: \{#([a-z0-9-]+)\})?$/)
+    if (!match) continue
+    const title = match[2]
+    const id = match[3] ?? slugifyHeading(title)
+    let answer = ""
+    for (let j = i + 1; j < lines.length; j++) {
+      const next = lines[j]
+      if (/^(#{2,6}) /.test(next)) break
+      if (next.trim()) answer = (answer ? `${answer} ` : "") + next.trim()
+    }
+    entries.push({ title, id, answer: answer || undefined })
+  }
+  return entries
 }
 
 export function slugifyHeading(title: string): string {

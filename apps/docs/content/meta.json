@@ -1,6 +1,10 @@
 {
   "sections": [
     {
+      "label": "Get started",
+      "pages": ["get-started/introduction", "get-started/quickstart"]
+    },
+    {
       "label": "Developers",
       "pages": [
         "developers/architecture",
