@@ -16,7 +16,6 @@ import {
   TableCell,
 } from "@workspace/ui/components/table"
 import { CodeGroup } from "./CodeGroup"
-import { Tab, Tabs } from "./Tabs"
 
 export interface TabsProps {
   children: React.ReactNode
@@ -30,7 +29,7 @@ export function Tabs({ children, defaultValue, className }: TabsProps) {
 
   return (
     <div className={cn("my-6 border border-border rounded-xl overflow-hidden", className)}>
-      <div className="flex border-b border-border bg-surface-sunken">
+      <div className="flex border-b border-border bg-surface-sunken" data-tab-list>
         {childrenArray.map((child: any, idx: number) => {
           const label = child?.props?.label || `Tab ${idx + 1}`
           return (
@@ -50,7 +49,24 @@ export function Tabs({ children, defaultValue, className }: TabsProps) {
           )
         })}
       </div>
-      <div className="p-4">{childrenArray[activeTab]}</div>
+      {/*
+        Every panel stays mounted (inactive ones carry the `hidden` attribute)
+        so hidden panels remain searchable and can be expanded by the print
+        stylesheet — same convention as the primitives-based `Tabs`, whose
+        panels use `keepMounted`.
+      */}
+      <div className="p-4">
+        {childrenArray.map((child: any, idx: number) => (
+          <div
+            key={idx}
+            data-tab-panel
+            data-tab-label={child?.props?.label || `Tab ${idx + 1}`}
+            hidden={idx !== activeTab}
+          >
+            {child}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

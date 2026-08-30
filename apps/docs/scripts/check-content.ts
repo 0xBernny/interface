@@ -58,8 +58,14 @@ if (!glossary) {
   )
   if (titles.some((title, index) => title !== sorted[index]))
     errors.push("glossary is not alphabetical")
+  // `headingEntries` returns `{ title, id }` pairs, so each entry's onward
+  // link is found in its own section of the glossary body.
+  const sections = glossary.body.split(/\n(?=## )/)
   for (const entry of entries) {
-    const link = entry.answer.match(/\]\((\/[a-z0-9/#-]+)\)/)?.[1]
+    const section = sections.find((text) =>
+      text.split("\n")[0].startsWith(`## ${entry.title}`),
+    )
+    const link = section?.match(/\]\((\/[a-z0-9/#-]+)\)/)?.[1]
     if (!link) errors.push(`glossary#${entry.id}: missing onward link`)
     else if (!routes.has(link.split("#")[0]))
       errors.push(`glossary#${entry.id}: missing page ${link}`)
