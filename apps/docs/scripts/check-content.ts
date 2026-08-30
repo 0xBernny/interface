@@ -43,7 +43,10 @@ const navRoutes = meta.sections.flatMap((section) =>
 for (const route of navRoutes)
   if (!routes.has(route)) errors.push(`sidebar references missing ${route}`)
 for (const route of routes)
-  if (!navRoutes.includes(route)) errors.push(`orphan page ${route}`)
+  // The home page is the site root — reachable by definition, not a sidebar
+  // entry — so it is exempt from the orphan check.
+  if (!navRoutes.includes(route) && route !== "/index")
+    errors.push(`orphan page ${route}`)
 
 const glossary = pages.find((page) => page.route === "/reference/glossary")
 if (!glossary) {
@@ -56,8 +59,14 @@ if (!glossary) {
   )
   if (titles.some((title, index) => title !== sorted[index]))
     errors.push("glossary is not alphabetical")
+  // `headingEntries` returns `{ title, id }` pairs, so each entry's onward
+  // link is found in its own section of the glossary body.
+  const sections = glossary.body.split(/\n(?=## )/)
   for (const entry of entries) {
-    const link = entry.answer.match(/\]\((\/[a-z0-9/#-]+)\)/)?.[1]
+    const section = sections.find((text) =>
+      text.split("\n")[0].startsWith(`## ${entry.title}`),
+    )
+    const link = section?.match(/\]\((\/[a-z0-9/#-]+)\)/)?.[1]
     if (!link) errors.push(`glossary#${entry.id}: missing onward link`)
     else if (!routes.has(link.split("#")[0]))
       errors.push(`glossary#${entry.id}: missing page ${link}`)
