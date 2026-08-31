@@ -1,8 +1,10 @@
-import { mkdir, readdir, rm } from "node:fs/promises"
+import { existsSync } from "node:fs"
+import { mkdir, readdir, readFile, rm } from "node:fs/promises"
 import { join } from "node:path"
 
 import { $ } from "bun"
-import { appRoot, loadPages, slugifyHeading } from "./content"
+import { appRoot, contentRoot, loadPages, loadPagesFrom, slugifyHeading, versionsRoot } from "./content"
+import type { Page } from "./content"
 import { DEFAULT_SITE_URL } from "../src/lib/seo"
 import { renderMermaidFigureHtml } from "../src/lib/mermaid"
 
@@ -80,6 +82,85 @@ function render(body: string, filePath: string) {
     .join("\n")
 }
 
+// DX-050: versioned documentation routing.
+//
+// The current version renders unprefixed, unchanged from DX-029. Every
+// directory under content-versions/<id>/ (produced by
+// scripts/snapshot-version.ts; git-ignored, so ordinarily empty in a fresh
+// clone) renders under an explicit /<id> prefix alongside it.
+async function loadVersionIndex(id: string | null, root: string): Promise<DocVersionIndex> {
+  const metaRaw = await readFile(join(root, "meta.json"), "utf8")
+  const meta = JSON.parse(metaRaw) as { sections: Array<{ label: string; pages: Array<string> }> }
+  return {
+    id,
+    sections: meta.sections.map((section) => ({
+      label: section.label,
+      pages: section.pages.map((page) => `/${page}`),
+    })),
+  }
+}
+
+async function discoverVersionIds(): Promise<Array<string>> {
+  if (!existsSync(versionsRoot)) return []
+  const entries = await readdir(versionsRoot, { withFileTypes: true })
+  return entries
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort()
+}
+
+const versionIds = await discoverVersionIds()
+const currentVersionIndex = await loadVersionIndex(null, contentRoot)
+const snapshotIndexes = await Promise.all(
+  versionIds.map((id) => loadVersionIndex(id, join(versionsRoot, id))),
+)
+const allVersions: Array<DocVersionIndex> = [currentVersionIndex, ...snapshotIndexes]
+const versionLabel = (id: string | null) => id ?? "Current"
+
+// DX-061: cookieless "was this helpful" page feedback — see
+// public/assets/feedback-widget.js and routes/api/feedback.post.ts.
+function feedbackWidgetHtml(feedbackPath: string) {
+  return `<section class="feedback-widget mt-10 border-t border-border pt-6" data-feedback-path="${escape(feedbackPath)}" data-pagefind-ignore aria-labelledby="feedback-heading"><h2 id="feedback-heading" class="mb-2 text-sm font-medium text-text-primary">Was this page helpful?</h2><div class="feedback-controls flex gap-2" role="group" aria-label="Was this page helpful?"><button type="button" class="feedback-yes rounded-sm border border-border px-3 py-1 text-xs text-text-primary">Yes</button><button type="button" class="feedback-no rounded-sm border border-border px-3 py-1 text-xs text-text-primary">No</button></div><div class="feedback-followup mt-2" hidden><label for="feedback-comment" class="mb-1 block text-xs text-text-secondary">Optional: tell us more. Do not include a wallet address, key, or email — we remove anything that looks like one before storing your comment.</label><textarea id="feedback-comment" class="feedback-comment w-full rounded-sm border border-border bg-surface-canvas p-2 text-xs text-text-primary" rows="2" maxlength="500"></textarea><button type="button" class="feedback-submit mt-1 rounded-sm border border-border px-3 py-1 text-xs text-text-primary">Submit</button></div><p class="feedback-status mt-2 text-xs text-text-secondary" role="status" aria-live="polite"></p></section>`
+}
+
+function versionPickerHtml(pageVersionId: string | null, pageSections: DocVersionIndex["sections"], route: string) {
+  if (allVersions.length <= 1) return ""
+  const options = allVersions
+    .map((version) => {
+      const href =
+        version.id === pageVersionId
+          ? versionedRoute(pageVersionId, route)
+          : resolveVersionSwitchTarget(route, pageSections, version)
+      const selected = version.id === pageVersionId ? " selected" : ""
+      return `<option value="${escape(href)}"${selected}>${escape(versionLabel(version.id))}</option>`
+    })
+    .join("")
+  return `<label class="sr-only" for="doc-version-picker">Documentation version</label><select id="doc-version-picker" class="doc-version-picker rounded-sm border border-border bg-surface-canvas px-2 py-1 text-xs text-text-primary" aria-label="Documentation version">${options}</select>`
+}
+
+function versionBannerHtml(pageVersionId: string, pageSections: DocVersionIndex["sections"], route: string) {
+  const currentEquivalent = resolveVersionSwitchTarget(route, pageSections, currentVersionIndex)
+  return `<aside class="version-banner border-b border-warning-border bg-warning-subtle px-4 py-2 text-center text-xs text-text-primary" data-pagefind-ignore>You are viewing the archived <strong>${escape(pageVersionId)}</strong> version of these docs, frozen when it was snapshotted. <a class="underline" href="${escape(currentEquivalent)}">View the current version</a>.</aside>`
+}
+
+async function renderPage(page: Page, versionId: string | null, sections: DocVersionIndex["sections"]) {
+  const outRoute = versionedRoute(versionId, page.route)
+  const directory = join(outputRoot, outRoute === "/" ? "" : outRoute.slice(1))
+  await mkdir(directory, { recursive: true })
+
+  const isVersioned = versionId !== null
+  const robotsTag = isVersioned ? `<meta name="robots" content="noindex">` : ""
+  const banner = isVersioned ? versionBannerHtml(versionId, sections, page.route) : ""
+  // Pagefind only indexes elements carrying data-pagefind-body when at least
+  // one page on the site has one; omitting it on archived pages excludes
+  // them from the search index entirely rather than indexing stale prose.
+  const mainAttrs = isVersioned ? "" : " data-pagefind-body"
+  const picker = versionPickerHtml(versionId, sections, page.route)
+
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(page.frontmatter.title)} · SO4 docs</title><meta name="description" content="${escape(page.frontmatter.description)}">${robotsTag}<link rel="stylesheet" href="/assets/${stylesheet}"><script src="/assets/feedback-widget.js" defer></script>${picker ? `<script src="/assets/doc-version-picker.js" defer></script>` : ""}</head><body class="bg-surface-canvas text-text-primary">${banner}<header class="mx-auto flex h-16 max-w-3xl items-center justify-between gap-4 border-b border-border px-4" data-pagefind-ignore><a class="text-sm font-semibold text-text-primary" href="/">SO4 docs</a><div class="flex items-center gap-4">${picker}<a class="text-sm font-medium text-text-link" href="https://so4.market">Open interface</a></div></header><main class="mx-auto max-w-3xl px-4 py-10"${mainAttrs}><h1 class="mb-6 text-2xl font-semibold text-text-primary">${escape(page.frontmatter.title)}</h1>${render(page.body)}${feedbackWidgetHtml(outRoute)}<footer class="docs-print-footer" data-pagefind-ignore data-print-url="${escape(`${DEFAULT_SITE_URL}${outRoute}`)}">Last updated <time datetime="${escape(page.frontmatter.updated)}">${escape(page.frontmatter.updated)}</time></footer></main></body></html>`
+  await Bun.write(join(directory, "index.html"), html)
+}
+
 await rm(outputRoot, { recursive: true, force: true })
 // The docs stylesheet is the Vite bundle of `src/app/main.tsx` →
 // `src/styles/globals.css` (Tailwind v4 + the shared `@workspace/ui` theme).
@@ -98,4 +179,21 @@ for (const page of pages) {
   await Bun.write(join(directory, "index.html"), html)
 }
 
-console.log(`Built ${pages.length} static documentation routes.`)
+let versionedPageCount = 0
+for (let i = 0; i < versionIds.length; i++) {
+  const id = versionIds[i]
+  const snapshotPages = (await loadPagesFrom(join(versionsRoot, id))).filter(
+    (page) => page.frontmatter.status !== "draft",
+  )
+  for (const page of snapshotPages) {
+    await renderPage(page, id, snapshotIndexes[i].sections)
+    versionedPageCount++
+  }
+}
+
+console.log(
+  `Built ${pages.length} current-version routes` +
+    (versionIds.length > 0
+      ? ` and ${versionedPageCount} archived routes across ${versionIds.length} version(s) (${versionIds.join(", ")}).`
+      : "."),
+)

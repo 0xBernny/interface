@@ -24,7 +24,8 @@
         "concepts/risk",
         "concepts/funding-and-fees",
         "concepts/liquidation",
-        "concepts/oracles"
+        "concepts/oracles",
+        "concepts/unified-liquidity"
       ]
     },
     {
