@@ -16,6 +16,7 @@ import {
   TableCell,
 } from "@workspace/ui/components/table"
 import { CodeGroup } from "./CodeGroup"
+import { parseMermaid, renderMermaidSvg } from "../lib/mermaid"
 
 export interface TabsProps {
   children: React.ReactNode
@@ -178,13 +179,49 @@ export function ContractAddress({ contract, address }: ContractAddressProps) {
 
 export interface MermaidProps {
   chart: string
+  caption?: string
+  title?: string
+  className?: string
 }
 
-export function Mermaid({ chart }: MermaidProps) {
+export function Mermaid({ chart, caption, title, className }: MermaidProps) {
+  const meta = { caption, title }
+  const ast = parseMermaid(chart, meta)
+  const id = React.useId().replace(/:/g, "_")
+  const rendered = renderMermaidSvg(ast, meta, id)
+  const captionId = `caption-${id}`
+
   return (
-    <div className="my-6 p-4 rounded-xl border border-border bg-surface-sunken text-center font-mono text-xs text-text-secondary overflow-x-auto">
-      <div className="mermaid">{chart}</div>
-    </div>
+    <figure
+      className={cn(
+        "mermaid-wrapper my-6 rounded-xl border border-border bg-surface-sunken overflow-hidden",
+        className
+      )}
+      role="figure"
+      aria-labelledby={captionId}
+    >
+      <div
+        className="mermaid-scroll overflow-x-auto p-4 md:p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        tabIndex={0}
+        role="region"
+        aria-label="Diagram content"
+      >
+        <div
+          className="mermaid-diagram mermaid-diagram-light block dark:hidden"
+          dangerouslySetInnerHTML={{ __html: rendered.lightSvg }}
+        />
+        <div
+          className="mermaid-diagram mermaid-diagram-dark hidden dark:block"
+          dangerouslySetInnerHTML={{ __html: rendered.darkSvg }}
+        />
+      </div>
+      <figcaption
+        id={captionId}
+        className="mermaid-caption px-4 py-2 border-t border-border bg-surface-elevated text-xs font-sans text-text-secondary text-center"
+      >
+        {rendered.caption}
+      </figcaption>
+    </figure>
   )
 }
 

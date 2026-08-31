@@ -6,8 +6,7 @@ import { $ } from "bun"
 import { appRoot, contentRoot, loadPages, loadPagesFrom, slugifyHeading, versionsRoot } from "./content"
 import type { Page } from "./content"
 import { DEFAULT_SITE_URL } from "../src/lib/seo"
-import { resolveVersionSwitchTarget, versionedRoute } from "../src/lib/doc-versions"
-import type { DocVersionIndex } from "../src/lib/doc-versions"
+import { renderMermaidFigureHtml } from "../src/lib/mermaid"
 
 await $`bun run ${join(appRoot, "scripts/check-content.ts")}`
 await $`bun run ${join(appRoot, "scripts/check-links.ts")}`
@@ -38,10 +37,22 @@ function renderInline(value: string) {
     .replace(/`([^`]+)`/g, "<code>$1</code>")
 }
 
-function render(body: string) {
+function render(body: string, filePath: string) {
   const blocks = body.split(/\n\n+/)
   return blocks
     .map((block) => {
+      if (block.startsWith("```mermaid")) {
+        const firstLineEnd = block.indexOf("\n")
+        const header = firstLineEnd !== -1 ? block.slice(0, firstLineEnd) : block
+        const content = firstLineEnd !== -1 ? block.slice(firstLineEnd + 1).replace(/```$/, "").trim() : ""
+
+        const captionMatch = header.match(/caption=(?:"([^"]+)"|'([^']+)'|([^\s]+))/)
+        const titleMatch = header.match(/title=(?:"([^"]+)"|'([^']+)'|([^\s]+))/)
+        const caption = captionMatch?.[1] || captionMatch?.[2] || captionMatch?.[3]
+        const title = titleMatch?.[1] || titleMatch?.[2] || titleMatch?.[3]
+
+        return renderMermaidFigureHtml(content, { caption, title, file: filePath })
+      }
       const heading = block.match(/^(#{2,6}) (.+?)(?: \{#([a-z0-9-]+)\})?$/)
       if (heading) {
         const level = heading[1].length
@@ -162,7 +173,10 @@ const stylesheet = (await readdir(join(outputRoot, "assets"))).find(
 if (!stylesheet) throw new Error("Vite did not emit the docs stylesheet")
 
 for (const page of pages) {
-  await renderPage(page, null, currentVersionIndex.sections)
+  const directory = join(outputRoot, page.route.slice(1))
+  await mkdir(directory, { recursive: true })
+  const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(page.frontmatter.title)} · SO4 docs</title><meta name="description" content="${escape(page.frontmatter.description)}"><link rel="stylesheet" href="/assets/${stylesheet}"></head><body class="bg-surface-canvas text-text-primary"><header class="mx-auto flex h-16 max-w-3xl items-center justify-between border-b border-border px-4" data-pagefind-ignore><a class="text-sm font-semibold text-text-primary" href="/">SO4 docs</a><a class="text-sm font-medium text-text-link" href="https://so4.market">Open interface</a></header><main class="mx-auto max-w-3xl px-4 py-10" data-pagefind-body><h1 class="mb-6 text-2xl font-semibold text-text-primary">${escape(page.frontmatter.title)}</h1>${render(page.body, page.file)}<footer class="docs-print-footer" data-pagefind-ignore data-print-url="${escape(`${DEFAULT_SITE_URL}${page.route}`)}">Last updated <time datetime="${escape(page.frontmatter.updated)}">${escape(page.frontmatter.updated)}</time></footer></main></body></html>`
+  await Bun.write(join(directory, "index.html"), html)
 }
 
 let versionedPageCount = 0
