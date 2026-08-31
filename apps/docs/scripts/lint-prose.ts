@@ -29,10 +29,10 @@ const REQUIRED_CAPITALIZATIONS = [
   { wrong: /\bstellar\b/g, correct: "Stellar" },
   { wrong: /\bfreighter\b/g, correct: "Freighter" },
   { wrong: /\bturborepo\b/g, correct: "Turborepo" },
-  { wrong: /\border-vault\b/i, correct: "OrderVault" },
-  { wrong: /\bexchange-router\b/i, correct: "ExchangeRouter" },
-  { wrong: /\bsynthetics-reader\b/i, correct: "SyntheticsReader" },
-  { wrong: /\bdata-store\b/i, correct: "DataStore" },
+  { wrong: /\border-vault\b/gi, correct: "OrderVault" },
+  { wrong: /\bexchange-router\b/gi, correct: "ExchangeRouter" },
+  { wrong: /\bsynthetics-reader\b/gi, correct: "SyntheticsReader" },
+  { wrong: /\bdata-store\b/gi, correct: "DataStore" },
 ]
 
 const PASSIVE_VOICE_PATTERNS = [
@@ -42,6 +42,19 @@ const PASSIVE_VOICE_PATTERNS = [
   /\bcan be executed by\b/i,
   /\bwill be processed by\b/i,
 ]
+
+/** Blanks out inline code spans and link targets/path-shaped labels, keeping
+ * every other character's column position intact. The correct-capitalization
+ * rule exists to catch prose mentions of these proper nouns; a route like
+ * `/reference/synthetics-reader` or a URL like `stellar.expert` is neither —
+ * it is required to be lowercase-kebab to work as a link or an identifier. */
+function maskCodeAndLinks(line: string): string {
+  const blank = (match: string) => " ".repeat(match.length)
+  return line
+    .replace(/`[^`]*`/g, blank)
+    .replace(/\[(\/[^\]]*)\]/g, (_m, inner: string) => `[${" ".repeat(inner.length)}]`)
+    .replace(/\]\(([^)]*)\)/g, (_m, inner: string) => `](${" ".repeat(inner.length)})`)
+}
 
 export function lintMarkdownContent(file: string, source: string): LintResult {
   const errors: LintMessage[] = []
@@ -97,11 +110,13 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     }
 
     // 3. Product & protocol capitalization check (Error)
+    const lineForCapsCheck = maskCodeAndLinks(line)
     for (const { wrong, correct } of REQUIRED_CAPITALIZATIONS) {
       let match: RegExpExecArray | null
       wrong.lastIndex = 0
-      while ((match = wrong.exec(line)) !== null) {
-        // Skip if matched inside link or code snippet if case matches correct
+      while ((match = wrong.exec(lineForCapsCheck)) !== null) {
+        // Matches inside a code span or a link target/path-shaped label are
+        // already blanked out by maskCodeAndLinks above.
         if (match[0] !== correct) {
           errors.push({
             file,
