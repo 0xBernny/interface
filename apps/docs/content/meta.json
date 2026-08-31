@@ -22,7 +22,8 @@
       "pages": [
         "concepts/risk",
         "concepts/funding-and-fees",
-        "concepts/liquidation"
+        "concepts/liquidation",
+        "concepts/oracles"
       ]
     },
     {
@@ -41,7 +42,7 @@
     },
     {
       "label": "Guides",
-      "pages": ["guides/troubleshooting"]
+      "pages": ["guides/pools", "guides/earn", "guides/referrals", "guides/faucet", "guides/troubleshooting"]
     },
     {
       "label": "Resources",

@@ -159,9 +159,14 @@ even when your fork has drifted behind.
 - Prefer workspace imports (`@workspace/ui/...`) over deep relative paths.
 - Use design tokens, not raw values — `check:tokens` enforces this. Text sizes
   and radii have named tokens in `packages/ui/src/styles/globals.css`.
-- For docs content, run `bun run --cwd apps/docs check:content`. Use
-  `bun run --cwd apps/docs check:content -- --fix` only for the mechanically
-  fixable subset: `updated:` dates and manifest ordering.
+- For docs content, follow
+  [`apps/docs/CONTRIBUTING.md`](./apps/docs/CONTRIBUTING.md) — it covers the
+  frontmatter contract, the `content/meta.json` manifest, the concept / guide /
+  reference page templates, and the
+  [documentation PR template](./.github/PULL_REQUEST_TEMPLATE/documentation.md).
+  Run `bun run --cwd apps/docs check:content`, `check:links`, and `lint:prose`;
+  `check:content -- --fix` only mechanically fixes `updated:` dates and manifest
+  ordering.
 - Comment non-obvious intent only. Don't restate the code.
 
 ### 3. Format
