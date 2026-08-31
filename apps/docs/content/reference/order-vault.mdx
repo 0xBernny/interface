@@ -103,4 +103,4 @@ The generated client is intentionally minimal. It records only the two transfer 
 - `recordTransferIn` to accept collateral into custody
 - `transferOut` to release collateral when the order settles or is cancelled
 
-This is why the vault is best thought of as the escrow ledger for live orders rather than as a full order-management API. The actual lifecycle rules live in the order and execution handlers, while the vault enforces the asset movement that those lifecycle decisions require.
+This is why the vault is best thought of as the escrow ledger for live orders rather than as a full order-management API. The actual lifecycle rules live in the order and execution handlers, while the vault only enforces the asset movement that those lifecycle decisions require.

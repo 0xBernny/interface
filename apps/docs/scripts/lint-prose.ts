@@ -43,6 +43,19 @@ const PASSIVE_VOICE_PATTERNS = [
   /\bwill be processed by\b/i,
 ]
 
+/** Blanks out inline code spans and link targets/path-shaped labels, keeping
+ * every other character's column position intact. The correct-capitalization
+ * rule exists to catch prose mentions of these proper nouns; a route like
+ * `/reference/synthetics-reader` or a URL like `stellar.expert` is neither —
+ * it is required to be lowercase-kebab to work as a link or an identifier. */
+function maskCodeAndLinks(line: string): string {
+  const blank = (match: string) => " ".repeat(match.length)
+  return line
+    .replace(/`[^`]*`/g, blank)
+    .replace(/\[(\/[^\]]*)\]/g, (_m, inner: string) => `[${" ".repeat(inner.length)}]`)
+    .replace(/\]\(([^)]*)\)/g, (_m, inner: string) => `](${" ".repeat(inner.length)})`)
+}
+
 export function lintMarkdownContent(file: string, source: string): LintResult {
   const errors: LintMessage[] = []
   const warnings: LintMessage[] = []
@@ -103,11 +116,13 @@ export function lintMarkdownContent(file: string, source: string): LintResult {
     }
 
     // 3. Product & protocol capitalization check (Error)
+    const lineForCapsCheck = maskCodeAndLinks(line)
     for (const { wrong, correct } of REQUIRED_CAPITALIZATIONS) {
       let match: RegExpExecArray | null
       wrong.lastIndex = 0
-      while ((match = wrong.exec(proseLine)) !== null) {
-        // Skip if matched inside link or code snippet if case matches correct
+      while ((match = wrong.exec(lineForCapsCheck)) !== null) {
+        // Matches inside a code span or a link target/path-shaped label are
+        // already blanked out by maskCodeAndLinks above.
         if (match[0] !== correct) {
           errors.push({
             file,

@@ -1,8 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises"
 import { join } from "node:path"
 
-import { contentRoot, headingEntries, loadPages } from "./content.ts"
-import { validateFrontmatter } from "../src/lib/frontmatter.ts"
+import { contentRoot, headingEntries, loadPages } from "./content"
+import { validateFrontmatter } from "../src/lib/frontmatter"
+import { parseMermaid } from "../src/lib/mermaid"
 
 const isFix = process.argv.includes("--fix")
 const pages = await loadPages()
@@ -59,6 +60,26 @@ for (const page of pages) {
     const src = match[2]
     if (alt.trim() === "") {
       errors.push(`${page.route}: image "${src}" missing required alt text`)
+    }
+  }
+
+  // DX-054: Enforce Mermaid diagram captions and valid syntax
+  const mermaidMatches = page.body.matchAll(/```mermaid([^\n]*)\n([\s\S]*?)```/g)
+  for (const match of mermaidMatches) {
+    const metaStr = match[1]
+    const code = match[2].trim()
+    const captionMatch = metaStr.match(/caption=(?:"([^"]+)"|'([^']+)'|([^\s]+))/)
+    const titleMatch = metaStr.match(/title=(?:"([^"]+)"|'([^']+)'|([^\s]+))/)
+    const caption = captionMatch?.[1] || captionMatch?.[2] || captionMatch?.[3]
+    const title = titleMatch?.[1] || titleMatch?.[2] || titleMatch?.[3]
+
+    try {
+      const ast = parseMermaid(code, { caption, title, file: page.route })
+      if (!caption && !ast.accDescr && !ast.accTitle && !title) {
+        errors.push(`${page.route}: mermaid diagram missing required caption="..."`)
+      }
+    } catch (err: any) {
+      errors.push(`${page.route}: ${err.message || String(err)}`)
     }
   }
 }
