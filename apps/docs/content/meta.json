@@ -42,7 +42,7 @@
     },
     {
       "label": "Guides",
-      "pages": ["guides/faucet", "guides/troubleshooting"]
+      "pages": ["guides/pools", "guides/faucet", "guides/troubleshooting"]
     },
     {
       "label": "Resources",
