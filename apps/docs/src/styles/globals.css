@@ -1,4 +1,4 @@
-/* Print stylesheet for documentation pages (DX-063 / issue #575).
+/* Print stylesheet for documentation pages (DX-063 / issue 575).
    Its rules live in the `docs-print` layer, declared FIRST in the layer order
    (before Tailwind's `theme, base, components, utilities`). For `!important`
    declarations the cascade gives priority to the earliest layer, so

@@ -76,7 +76,7 @@ Likely causes, in order:
 3. **The transaction that would have created it failed.** Check `TxStatus` for a failure state and the message against [/reference/errors](/reference/errors) — a position that never opened has nothing to display.
 
 **Checks:**
-- Confirm the transaction hash on Stellar Expert actually invoked `exchange-router` successfully.
+- Confirm the transaction hash on Stellar Expert actually invoked `ExchangeRouter` successfully.
 - Check the orders list for a pending order with the same parameters.
 - Confirm you're on the same network and market you traded on.
 
