@@ -20,6 +20,7 @@
     {
       "label": "Concepts",
       "pages": [
+        "concepts/order-types",
         "concepts/risk",
         "concepts/funding-and-fees",
         "concepts/liquidation",
@@ -42,7 +43,15 @@
     },
     {
       "label": "Guides",
-      "pages": ["guides/pools", "guides/earn", "guides/referrals", "guides/faucet", "guides/troubleshooting"]
+      "pages": [
+        "guides/trading",
+        "guides/positions",
+        "guides/pools",
+        "guides/earn",
+        "guides/referrals",
+        "guides/faucet",
+        "guides/troubleshooting"
+      ]
     },
     {
       "label": "Resources",
