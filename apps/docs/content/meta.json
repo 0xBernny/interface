@@ -22,7 +22,8 @@
       "pages": [
         "concepts/risk",
         "concepts/funding-and-fees",
-        "concepts/liquidation"
+        "concepts/liquidation",
+        "concepts/oracles"
       ]
     },
     {
