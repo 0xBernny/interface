@@ -140,6 +140,24 @@ This builds the content and starts the Nitro dev server. Open the printed URL,
 find your page in the sidebar, and check it in both light and dark themes at a
 mobile and a desktop width.
 
+## Visual regression testing
+
+Visual regression specs under `e2e/docs-visual.spec.ts` test the layout shell, kitchen-sink MDX fixture, sidebar, TOC, search dialog, and 404 page across light and dark themes on desktop and mobile viewports.
+
+To run the visual suite:
+
+```bash
+bun run test:e2e -- docs-visual
+```
+
+To update baselines after deliberate UI token or chrome changes:
+
+```bash
+bun run test:e2e -- docs-visual --update-snapshots
+```
+
+Review the resulting diffs in `e2e/docs-visual.spec.ts-snapshots/` before committing.
+
 ## Sourcing claims
 
 Every statement about protocol mechanics must be traceable to contract code,
