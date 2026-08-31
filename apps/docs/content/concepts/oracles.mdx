@@ -93,27 +93,20 @@ seconds old and the dot turns red.
 
 From source to liquidation check, the value flows like this:
 
-```text
- SO4 oracle service ─┐
- Pyth Hermes ────────┤  first source that answers wins
- Binance REST ───────┤  (fetchTokenPrices, oracle.ts)
- GMX oracle ─────────┤
- DUMMY_PRICES ───────┘
-        │
-        ▼
- TokenPrice { minPrice, maxPrice, updatedAt, source }
-        │
-        ├──▶ trade page: mark price + staleness dot
-        │
-        ▼
- position valuation ──▶ maintenance-margin check ──▶ liquidation
-   (contract + client, see /concepts/liquidation)
+```mermaid caption="Oracle price ingestion pipeline and liquidation check flow"
+graph TD
+  SO4[SO4 oracle service] --> TP[TokenPrice<br/>minPrice, maxPrice, updatedAt, source]
+  Pyth[Pyth Hermes] --> TP
+  Binance[Binance REST] --> TP
+  GMX[GMX oracle] --> TP
+  Dummy[DUMMY_PRICES] --> TP
+  TP --> Trade[trade page: mark price + staleness dot]
+  TP --> PosVal[position valuation]
+  PosVal --> Margin[maintenance-margin check]
+  Margin --> Liq[liquidation]
 ```
 
-Caption: the client only owns the top half — choosing a source and shaping a
-`TokenPrice`. Position valuation and the liquidation decision run against that
-price in contract and client code covered by
-[/concepts/liquidation](/concepts/liquidation).
+The client only owns the top half — choosing a source and shaping a `TokenPrice`. Position valuation and the liquidation decision run against that price in contract and client code covered by [/concepts/liquidation](/concepts/liquidation).
 
 ## Related
 
