@@ -218,3 +218,89 @@ console.log(
       ? ` and ${versionedPageCount} archived routes across ${versionIds.length} version(s) (${versionIds.join(", ")}).`
       : "."),
 )
+
+// --- 404 page generation (DX-049) ---
+// Build a static 404.html that keeps sidebar + search available, suggests closest
+// pages via Levenshtein, prefills search, links to section index, and is served
+// with real 404 status (via Nitro static 404.html convention).
+{
+  const metaRaw = await readFile(join(contentRoot, "meta.json"), "utf8")
+  const meta = JSON.parse(metaRaw) as { sections: Array<{ label: string; pages: string[] }> }
+  // Build sidebar HTML (static) – mirrors DocsNavigation
+  const sidebarHtml = meta.sections
+    .map(
+      (section) => `
+        <section aria-labelledby="nav-${escape(section.label)}">
+          <h2 id="nav-${escape(section.label)}" class="mb-2 text-xs font-semibold text-text-primary">${escape(section.label)}</h2>
+          <ul class="space-y-1">
+            ${section.pages
+              .map((p) => {
+                const route = `/${p}`
+                const page = pages.find((pg) => pg.route === route)
+                const title = page ? escape(page.frontmatter.title) : escape(p.split("/").pop()!.replace(/-/g, " "))
+                return `<li><a href="${escape(route)}" class="block rounded-md px-2 py-1.5 text-sm text-text-secondary transition-colors hover:bg-surface-interactive hover:text-text-primary">${title}</a></li>`
+              })
+              .join("")}
+          </ul>
+        </section>`
+    )
+    .join("")
+
+  const pageIndex = pages.map((p) => ({ route: p.route, title: p.frontmatter.title }))
+  // Include home as well
+  pageIndex.unshift({ route: "/", title: "SO4 Docs" })
+  const pageIndexJson = JSON.stringify(pageIndex)
+  const sectionsJson = JSON.stringify(meta.sections)
+
+  const notFoundHtml = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Not found · SO4 docs</title><meta name="robots" content="noindex"><link rel="stylesheet" href="/assets/${stylesheet}"><style>[data-reading-progress]{display:none}</style></head><body class="bg-surface-canvas text-text-primary">
+<header class="sticky top-0 z-40 border-b border-border bg-surface-canvas" data-slot="docs-header">
+  <div class="mx-auto flex h-16 max-w-screen-2xl items-center gap-3 px-4 md:px-6 lg:px-8">
+    <a href="/" class="text-sm font-semibold text-text-primary">SO4 docs</a>
+    <div class="ml-auto flex items-center gap-2">
+      <button type="button" data-open-search class="rounded-md border border-border bg-surface-canvas px-3 py-1.5 text-sm text-text-secondary hover:bg-surface-hover">Search</button>
+      <a href="https://so4.market" class="text-sm font-medium text-text-link">Open interface</a>
+    </div>
+  </div>
+</header>
+<div class="mx-auto flex max-w-screen-2xl items-start px-4 md:px-6 lg:px-8">
+  <aside data-slot="docs-sidebar" class="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 pe-6 lg:block xl:w-64">
+    <nav aria-label="Documentation navigation" class="space-y-6">${sidebarHtml}</nav>
+  </aside>
+  <main id="main-content" tabindex="-1" class="min-w-0 flex-1 py-8 outline-none lg:px-8 xl:px-12" data-pagefind-ignore>
+    <div class="mx-auto max-w-3xl px-4 py-10 md:px-6">
+      <h1 class="text-3xl font-semibold text-foreground">Page not found</h1>
+      <p class="mt-3 text-sm text-text-secondary">No page at <code id="not-found-path" class="rounded bg-surface-sunken px-1 py-0.5 font-mono text-xs"></code>. Try one of these instead.</p>
+      <section id="suggestions-section" aria-labelledby="suggestions-heading" class="mt-6 hidden">
+        <h2 id="suggestions-heading" class="text-sm font-semibold text-text-primary">Did you mean?</h2>
+        <ul id="suggestions-list" class="mt-2 space-y-2"></ul>
+      </section>
+      <p id="section-link-wrap" class="mt-4 hidden text-sm"><a id="section-link" href="/" class="font-medium text-primary hover:underline"></a></p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button type="button" data-open-search class="rounded-md border border-border bg-surface-canvas px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-hover">Search docs</button>
+        <a href="/" class="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">Go to docs home</a>
+      </div>
+      <span id="search-prefill" data-search-prefill="" class="hidden" aria-hidden="true"></span>
+    </div>
+  </main>
+  <aside data-slot="docs-toc" class="sticky top-16 hidden max-h-[calc(100dvh-4rem)] w-56 shrink-0 overflow-y-auto py-8 ps-6 xl:block" aria-hidden="true"></aside>
+</div>
+<div id="search-dialog" role="dialog" aria-modal="true" aria-label="Search documentation" hidden class="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/50 backdrop-blur-sm">
+  <div class="bg-surface-canvas border border-border rounded-xl shadow-2xl max-w-xl w-full mx-4 overflow-hidden">
+    <div class="p-4 border-b border-border flex items-center gap-3">
+      <input id="search-input" type="search" data-search-input placeholder="Search documentation..." class="w-full bg-transparent text-text-primary placeholder:text-text-tertiary outline-none text-base" />
+      <button type="button" data-close-search class="px-2.5 py-1 text-xs rounded border border-border text-text-secondary hover:text-text-primary">Esc</button>
+    </div>
+    <div class="max-h-96 overflow-y-auto p-4 text-sm text-text-tertiary text-center">Type to search…</div>
+  </div>
+</div>
+<script id="page-index" type="application/json">${pageIndexJson.replace(/</g, "\\u003c")}</script>
+<script id="sections-index" type="application/json">${sectionsJson.replace(/</g, "\\u003c")}</script>
+<script src="/assets/not-found.js" defer></script>
+</body></html>`
+
+  await Bun.write(join(outputRoot, "404.html"), notFoundHtml)
+  // Also write 404/index.html for hosting that expects folder
+  await mkdir(join(outputRoot, "404"), { recursive: true })
+  await Bun.write(join(outputRoot, "404", "index.html"), notFoundHtml)
+  console.log("Built 404 page with sidebar + search + suggestions")
+}

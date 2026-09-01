@@ -1,6 +1,7 @@
 import { defineNitroConfig } from "nitro/config"
 
 export default defineNitroConfig({
+  errorHandler: "./error.ts",
   publicAssets: [
     {
       dir: "public",
