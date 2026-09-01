@@ -17,6 +17,7 @@ import {
   SheetTrigger,
 } from "@workspace/ui/components/sheet"
 import { MAIN_CONTENT_ID, SkipLink } from "@workspace/ui/components/skip-link"
+import { ReadingProgress } from "./ReadingProgress"
 
 export interface DocsLayoutProps {
   header?: ReactNode
@@ -41,8 +42,9 @@ export function DocsLayout({
       <SkipLink />
       <header
         data-slot="docs-header"
-        className="sticky top-0 z-40 border-b border-border bg-surface-canvas"
+        className="sticky top-0 z-40 border-b border-border bg-surface-canvas relative"
       >
+        <ReadingProgress />
         <div className="mx-auto flex h-16 max-w-screen-2xl items-center gap-3 px-4 md:px-6 lg:px-8">
           <div className="lg:hidden">
             <Sheet>
