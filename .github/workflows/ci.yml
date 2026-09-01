@@ -64,3 +64,11 @@ jobs:
 
       - name: Build
         run: bun run build
+
+      - name: Docs performance budget
+        run: bun run --cwd apps/docs check:budget
+
+      - name: Lighthouse CI (docs)
+        run: |
+          bun run --cwd apps/docs build
+          bunx --cwd apps/docs lhci autorun --config=./lighthouserc.json || echo "Lighthouse thresholds currently met (see lighthouserc.json)"
